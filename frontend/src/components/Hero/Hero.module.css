@@ -1,0 +1,30 @@
+.cta {
+  background-color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+  color: light-dark(var(--mantine-color-white), var(--mantine-color-black));
+}
+
+.horizontal-backdrop {
+  background: light-dark(
+    linear-gradient(
+      to right,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(255, 255, 255, 0.8) 40%,
+      transparent 70%
+    ),
+    linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.8) 40%, transparent 70%)
+  );
+  z-index: 1;
+}
+
+.vertical-backdrop {
+  background: light-dark(
+    linear-gradient(
+      to top,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(255, 255, 255, 0.8) 5%,
+      transparent 15%
+    ),
+    linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.8) 5%, transparent 20%)
+  );
+  z-index: 1;
+}
