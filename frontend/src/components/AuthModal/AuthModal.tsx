@@ -53,7 +53,9 @@ export const AuthModal = ({
 
   const handleLogin = async () => {
     // POST to /auth/login
-    const response = await fetch('/auth/login', {
+
+    // curl -X POST http://localhost:3000/auth/login -d '{"username": "john", "password": "changeme"}' -H "Content-Type: application/json"/
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
       method: 'POST',
       body: JSON.stringify(form.values),
     });
