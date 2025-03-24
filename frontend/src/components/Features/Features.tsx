@@ -28,8 +28,8 @@ const FEATURES: Feature[] = [
   },
   {
     icon: <IconHeart />,
-    title: 'Favorite Games',
-    description: 'Mark your favorite titles and build a personalized game collection.',
+    title: 'Favourite Games',
+    description: 'Mark your favourite titles and build a personalized game collection.',
   },
   {
     icon: <IconStar />,

@@ -1,4 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
+import { Public } from 'src/utils';
 import { GameService } from './games.service';
 export interface PopularGame {
   id: number;
@@ -24,16 +25,13 @@ export interface GameDetails {
 export class GamesController {
   constructor(private readonly gameService: GameService) {}
 
+  @Public()
   @Get('popular')
   async getPopularGames(): Promise<unknown> {
+    // TODO: Move this to a service
     const popularGames = await this.gameService.getPopularGames();
     const gameIds = popularGames.map((g) => g.game_id);
-    console.log('gameIds', gameIds);
-    console.log('gameIds.length', gameIds.length);
     const gameDetails = await this.gameService.getGameDetails(gameIds);
-
-    console.log('gameDetails', gameDetails);
-    console.log('gameDetails.length', gameDetails.length);
     return gameDetails;
   }
 }

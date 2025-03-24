@@ -15,11 +15,15 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { upperFirst, useToggle } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import { IconX } from '@tabler/icons-react';
+import { useNavigate } from '@tanstack/react-router';
 import { TwitterButton } from '../AuthButtons/AppleButton';
 import { GoogleButton } from '../AuthButtons/GoogleButton';
 
 type SocialProvider = 'google' | 'apple';
+
+const sleep = (time: number) => new Promise((resolve) => setTimeout(resolve, time));
 
 export const AuthModal = ({
   opened,
@@ -29,10 +33,12 @@ export const AuthModal = ({
   toggleModal: () => void;
 }) => {
   const [type, toggle] = useToggle(['login', 'register']);
+  const navigate = useNavigate({ from: '/' });
+
   const form = useForm({
     initialValues: {
       email: '',
-      name: '',
+      username: '',
       password: '',
       terms: true,
     },
@@ -54,14 +60,32 @@ export const AuthModal = ({
   const handleLogin = async () => {
     // POST to /auth/login
 
-    // curl -X POST http://localhost:3000/auth/login -d '{"username": "john", "password": "changeme"}' -H "Content-Type: application/json"/
     const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(form.values),
     });
     const data = await response.json();
 
-    console.log('login', data);
+    if (data?.access_token) {
+      localStorage.setItem('token', data.access_token);
+      toggleModal();
+      notifications.show({
+        title: 'Successfully logged in!',
+        message: '',
+      });
+
+      await sleep(1000);
+      navigate({ to: '/about' });
+    } else {
+      notifications.show({
+        title: 'Error',
+        message: 'Invalid credentials',
+        color: 'red',
+      });
+    }
   };
 
   const handleRegister = () => {
@@ -100,10 +124,10 @@ export const AuthModal = ({
           <Stack>
             {type === 'register' && (
               <TextInput
-                label="Name"
-                placeholder="Your name"
-                value={form.values.name}
-                onChange={(event) => form.setFieldValue('name', event.currentTarget.value)}
+                label="Username"
+                placeholder="Your username"
+                value={form.values.username}
+                onChange={(event) => form.setFieldValue('username', event.currentTarget.value)}
                 radius="md"
               />
             )}

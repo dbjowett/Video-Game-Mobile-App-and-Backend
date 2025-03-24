@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import * as argon2 from 'argon2';
 import { UsersService } from '../users/users.service';
 import { SignInDto } from './dto/signin.dto';
 
@@ -11,18 +12,25 @@ export class AuthService {
   ) {}
 
   async signIn(signInDto: SignInDto): Promise<{ access_token: string }> {
-    const { email, password, terms } = signInDto;
+    const { email, password } = signInDto;
+    const user = await this.usersService.findByEmail(email);
 
-    // Find the user by email
-    const user = await this.usersService.findOne(email);
-    if (!user || user.password !== password) {
+    if (!user || !argon2.verify(user.password, password)) {
+      console.log('User not found');
       throw new UnauthorizedException();
     }
+    const payload = { sub: user.id, email: user.email };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
+  }
 
-    // Create the payload for JWT
-    const payload = { sub: user.userId, username: user.username };
-
-    // Return the JWT token
+  async signUp(signInDto: SignInDto): Promise<{ access_token: string }> {
+    const { email, password } = signInDto;
+    const hashedPassword = await argon2.hash(password);
+    const user = await this.usersService.create(email, hashedPassword);
+    const payload = { sub: user.id, username: user.email };
+    // generate response
     return {
       access_token: await this.jwtService.signAsync(payload),
     };

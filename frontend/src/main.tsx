@@ -3,8 +3,10 @@ import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import './assets/index.css';
 
-// Import the generated route tree
 import { MantineProvider } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
+
+// Import the generated route tree
 import { routeTree } from './routeTree.gen';
 import { theme } from './theme/mantineTheme';
 
@@ -18,13 +20,13 @@ declare module '@tanstack/react-router' {
   }
 }
 
-// Render the app
 const rootElement = document.getElementById('root')!;
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
       <MantineProvider theme={theme}>
+        <Notifications />
         <RouterProvider router={router} />
       </MantineProvider>
     </StrictMode>

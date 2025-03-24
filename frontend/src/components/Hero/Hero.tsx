@@ -11,6 +11,7 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
+
 import { motion } from 'motion/react';
 
 import { IconArrowRight } from '@tabler/icons-react';
@@ -38,11 +39,11 @@ type HeroProps = ContainerProps & {
   };
 };
 export const Hero = ({
-  badge = 'Find your next favorite game',
+  badge = 'Find your next favourite game',
   scrollToFeatures,
   title = 'Discover the Best Games',
   onSignUpClick,
-  description = 'Explore a vast library of the best games, find your next favorite game, and join the community.',
+  description = 'Explore a vast library of the best games, find your next favourite game, and join the community.',
   callToAction = {
     label: 'Sign Up',
     href: '/signup',
