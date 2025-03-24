@@ -1,8 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
 import * as argon2 from 'argon2';
 import { UsersService } from '../users/users.service';
-import { SignInDto } from './dto/signin.dto';
 
 @Injectable()
 export class AuthService {
@@ -11,26 +11,34 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(signInDto: SignInDto): Promise<{ access_token: string }> {
-    const { email, password } = signInDto;
+  async validateUser(
+    email: string,
+    password: string,
+  ): Promise<Omit<User, 'password'> | null> {
     const user = await this.usersService.findByEmail(email);
-
-    if (!user || !argon2.verify(user.password, password)) {
-      console.log('User not found');
-      throw new UnauthorizedException();
+    if (user && (await argon2.verify(user.password, password))) {
+      const { password, ...safeUser } = user;
+      return safeUser;
     }
+    return null;
+  }
+
+  async signIn(
+    user: Omit<User, 'password'>,
+  ): Promise<{ access_token: string }> {
     const payload = { sub: user.id, email: user.email };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
   }
 
-  async signUp(signInDto: SignInDto): Promise<{ access_token: string }> {
-    const { email, password } = signInDto;
+  async signUp(
+    email: string,
+    password: string,
+  ): Promise<{ access_token: string }> {
     const hashedPassword = await argon2.hash(password);
     const user = await this.usersService.create(email, hashedPassword);
-    const payload = { sub: user.id, username: user.email };
-    // generate response
+    const payload = { sub: user.id, email: user.email };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };

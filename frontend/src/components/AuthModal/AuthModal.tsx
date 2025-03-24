@@ -2,7 +2,6 @@ import {
   ActionIcon,
   Anchor,
   Button,
-  Checkbox,
   Divider,
   Flex,
   Group,
@@ -60,7 +59,8 @@ export const AuthModal = ({
   const handleLogin = async () => {
     // POST to /auth/login
 
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
+    // TODO: Call signup if user
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/signin`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -152,13 +152,13 @@ export const AuthModal = ({
               radius="md"
             />
 
-            {type === 'register' && (
+            {/* {type === 'register' && (
               <Checkbox
                 label="I accept terms and conditions"
                 checked={form.values.terms}
                 onChange={(event) => form.setFieldValue('terms', event.currentTarget.checked)}
               />
-            )}
+            )} */}
           </Stack>
 
           <Group justify="space-between" mt="xl">

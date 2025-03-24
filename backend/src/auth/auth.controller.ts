@@ -1,28 +1,27 @@
-import { Body, Controller, Post } from '@nestjs/common';
-
-import { Prisma } from '@prisma/client';
+import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { User } from '@prisma/client';
 import { Public } from 'src/utils';
 import { AuthService } from './auth.service';
+
+export interface AuthenticatedRequest extends Request {
+  user: Omit<User, 'password'>;
+}
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Public()
   @Post('signin')
-  async signIn(@Body() signInDto: Prisma.UserCreateInput) {
-    return this.authService.signIn({
-      email: signInDto.email,
-      password: signInDto.password,
-    });
+  @UseGuards(AuthGuard('local'))
+  async signIn(@Request() req: AuthenticatedRequest) {
+    return this.authService.signIn(req.user);
   }
 
   @Public()
   @Post('signup')
-  async signUp(@Body() signUpDto: Prisma.UserCreateInput) {
-    return this.authService.signUp({
-      email: signUpDto.email,
-      password: signUpDto.password,
-    });
+  async signUp(@Body() body: { email: string; password: string }) {
+    const { email, password } = body;
+    return this.authService.signUp(email, password);
   }
 }
