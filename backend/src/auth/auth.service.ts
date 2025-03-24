@@ -43,4 +43,19 @@ export class AuthService {
       access_token: await this.jwtService.signAsync(payload),
     };
   }
+
+  async validateGoogleUser(
+    googleId: string,
+    name: string,
+    email: string,
+  ): Promise<Omit<User, 'password'>> {
+    let user = await this.usersService.findByGoogleId(googleId);
+
+    if (!user) {
+      user = await this.usersService.createGoogleUser(googleId, name, email);
+    }
+
+    const { password, ...result } = user;
+    return result;
+  }
 }

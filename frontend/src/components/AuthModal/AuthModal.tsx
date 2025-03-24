@@ -16,8 +16,8 @@ import { useForm } from '@mantine/form';
 import { upperFirst, useToggle } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconX } from '@tabler/icons-react';
-import { useNavigate } from '@tanstack/react-router';
-import { TwitterButton } from '../AuthButtons/AppleButton';
+import { useNavigate, useSearch } from '@tanstack/react-router';
+import { useEffect } from 'react';
 import { GoogleButton } from '../AuthButtons/GoogleButton';
 
 type SocialProvider = 'google' | 'apple';
@@ -53,12 +53,22 @@ export const AuthModal = ({
   };
 
   const handleSocialLogin = (provider: SocialProvider) => {
-    console.log('provider', provider);
+    if (provider === 'google') window.location.href = 'http://localhost:3000/auth/google';
   };
 
-  const handleLogin = async () => {
-    // POST to /auth/login
+  const search = useSearch({ from: '/' });
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token');
+    if (token) {
+      localStorage.setItem('access_token', token);
+      // remove token
+      navigate({ to: '/home', replace: true });
+    }
+  }, [search, navigate]);
+
+  const handleLogin = async () => {
     // TODO: Call signup if user
     const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/signin`, {
       method: 'POST',
@@ -78,7 +88,7 @@ export const AuthModal = ({
       });
 
       await sleep(1000);
-      navigate({ to: '/about' });
+      navigate({ to: '/home' });
     } else {
       notifications.show({
         title: 'Error',
@@ -113,9 +123,9 @@ export const AuthModal = ({
           <GoogleButton radius="xl" onClick={() => handleSocialLogin('google')}>
             Google
           </GoogleButton>
-          <TwitterButton radius="xl" onClick={() => handleSocialLogin('apple')}>
+          {/* <TwitterButton radius="xl" onClick={() => handleSocialLogin('apple')}>
             Apple
-          </TwitterButton>
+          </TwitterButton> */}
         </Group>
 
         <Divider label="Or continue with email" labelPosition="center" my="lg" />

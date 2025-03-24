@@ -17,4 +17,24 @@ export class UsersService {
       data: { email, password },
     });
   }
+
+  async findByGoogleId(googleId: string): Promise<User | null> {
+    return this.databaseService.user.findUnique({
+      where: { googleId },
+    });
+  }
+
+  async createGoogleUser(
+    googleId: string,
+    name: string,
+    email: string,
+  ): Promise<User> {
+    return this.databaseService.user.create({
+      data: {
+        googleId,
+        name,
+        email,
+      },
+    });
+  }
 }
