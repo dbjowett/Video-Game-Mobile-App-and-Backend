@@ -28,10 +28,6 @@ export class GamesController {
   @Public()
   @Get('popular')
   async getPopularGames(): Promise<unknown> {
-    // TODO: Move this to a service
-    const popularGames = await this.gameService.getPopularGames();
-    const gameIds = popularGames.map((g) => g.game_id);
-    const gameDetails = await this.gameService.getGameDetails(gameIds);
-    return gameDetails;
+    return await this.gameService.getPopGamesWithDetails();
   }
 }
