@@ -5,6 +5,7 @@ import { Icon } from '@tabler/icons-react';
 import { motion } from 'motion/react';
 import { FC, ReactElement, ReactNode, useState } from 'react';
 
+import { SearchGameInput } from '../SearchGameInput';
 import styles from './AppLayout.module.scss';
 import { LinkOption } from './components/LinkOption';
 import { LinksSkeleton } from './components/LinksSkeleton';
@@ -51,8 +52,8 @@ export const DashboardLayout: FC<LayoutProps> = ({ children, linkItems }) => {
 
 const Sidebar = ({ open, setOpen, linkItems }: SidebarProps) => {
   const [settingsView, setSettingsView] = useState<boolean>(false);
-  const isLoading = false;
 
+  const isLoading = false;
   return (
     <motion.nav
       layout
@@ -66,6 +67,7 @@ const Sidebar = ({ open, setOpen, linkItems }: SidebarProps) => {
         <motion.div layout style={{ height: '100%' }}>
           <TitleSection open={open} />
 
+          <SearchGameInput />
           <div className={styles.NavigationWrapper}>
             <motion.div
               animate={settingsView ? 'hidden' : 'visible'}

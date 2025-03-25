@@ -16,7 +16,7 @@ export class GameService {
     );
   }
 
-  async getGameDetails(gameIds: number[]): Promise<GameDetails[]> {
+  async getGameDetailsById(gameIds: number[]): Promise<GameDetails[]> {
     const query = `fields name, cover.*; where id = (${gameIds.join(',')});`;
     return this.igdbService.request<GameDetails[]>('games', query);
   }
@@ -29,11 +29,16 @@ export class GameService {
 
     const popularGames = await this.getPopularGames();
     const gameIds = popularGames.map((g) => g.game_id);
-    const gameDetails = await this.getGameDetails(gameIds);
+    const gameDetails = await this.getGameDetailsById(gameIds);
 
     this.cache.set(cacheKey, gameDetails);
     setTimeout(() => this.cache.delete(cacheKey), 3600 * 1000);
 
     return gameDetails;
+  }
+
+  async getGames(query: string) {
+    const igdbQuery = `fields name, cover.url, total_rating; search "${query}";`;
+    return this.igdbService.request<GameDetails[]>('games', igdbQuery);
   }
 }

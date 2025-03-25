@@ -1,0 +1,1 @@
+export { SearchGameInput } from './SearchGameInput';

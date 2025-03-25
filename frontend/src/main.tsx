@@ -7,9 +7,11 @@ import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 
 // Import the generated route tree
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { routeTree } from './routeTree.gen';
 import { theme } from './theme/mantineTheme';
 
+const queryClient = new QueryClient();
 // Create a new router instance
 const router = createRouter({ routeTree });
 
@@ -25,10 +27,12 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <MantineProvider theme={theme}>
-        <Notifications />
-        <RouterProvider router={router} />
-      </MantineProvider>
+      <QueryClientProvider client={queryClient}>
+        <MantineProvider theme={theme}>
+          <Notifications />
+          <RouterProvider router={router} />
+        </MantineProvider>
+      </QueryClientProvider>
     </StrictMode>
   );
 }
