@@ -1,15 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import * as argon2 from 'argon2';
 import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private usersService: UsersService) {}
 
   async validateUser(
     email: string,
@@ -23,24 +19,17 @@ export class AuthService {
     return null;
   }
 
-  async signIn(
-    user: Omit<User, 'password'>,
-  ): Promise<{ access_token: string }> {
-    const payload = { sub: user.id, email: user.email };
+  async signIn(user: Omit<User, 'password'>): Promise<{ message: string }> {
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      message: `Welcome ${user.email}! You are now signed in.`,
     };
   }
 
-  async signUp(
-    email: string,
-    password: string,
-  ): Promise<{ access_token: string }> {
+  async signUp(email: string, password: string): Promise<{ message: string }> {
     const hashedPassword = await argon2.hash(password);
-    const user = await this.usersService.create(email, hashedPassword);
-    const payload = { sub: user.id, email: user.email };
+    await this.usersService.create(email, hashedPassword);
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      message: `User ${email} registered successfully.`,
     };
   }
 
@@ -54,6 +43,14 @@ export class AuthService {
     if (!user) {
       user = await this.usersService.createGoogleUser(googleId, name, email);
     }
+
+    const { password, ...result } = user;
+    return result;
+  }
+
+  async deserializeUser(id: string): Promise<Omit<User, 'password'> | null> {
+    const user = await this.usersService.findById(id);
+    if (!user) return null;
 
     const { password, ...result } = user;
     return result;

@@ -40,11 +40,27 @@ export class AuthController {
     return { message: 'Redirecting to Google login...' };
   }
 
+  @Get('session')
+  getSession(@Req() req) {
+    console.log('Session:', req.session);
+    console.log('User in session:', req.user);
+    return {
+      session: req.session,
+      user: req.user,
+    };
+  }
+
   @Get('google/redirect')
   @UseGuards(AuthGuard('google'))
-  async googleRedirect(@Req() req: AuthenticatedRequest, @Res() res) {
-    const { access_token } = await this.authService.signIn(req.user);
-
-    res.redirect(process.env.FE_URL + `?token=${access_token}`);
+  async googleAuthRedirect(@Req() req, @Res() res) {
+    if (req.user) {
+      req.login(req.user, (err: Error) => {
+        if (err)
+          return res.redirect(process.env.FE_URL + 'login?error=login_failed');
+        res.redirect(process.env.FE_URL + 'home');
+      });
+    } else {
+      res.redirect(process.env.FE_URL + 'login?error=not_logged_in');
+    }
   }
 }

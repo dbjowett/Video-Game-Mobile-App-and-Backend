@@ -10,10 +10,17 @@ import { DatabaseService } from './database/database.service';
 import { GamesController } from './games/games.controller';
 import { GameService } from './games/games.service';
 import { IgdbService } from './igdb/igdb.service';
+import { ProfileModule } from './profile/profile.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), AuthModule, UsersModule, DatabaseModule],
+  imports: [
+    ConfigModule.forRoot(),
+    AuthModule,
+    UsersModule,
+    DatabaseModule,
+    ProfileModule,
+  ],
   controllers: [AppController, GamesController, AuthController],
   providers: [
     AppService,

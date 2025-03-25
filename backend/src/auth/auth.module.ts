@@ -1,21 +1,22 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { UsersService } from 'src/users/users.service';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
+import { SessionSerializer } from './auth.serializer';
 import { AuthService } from './auth.service';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 
 @Module({
-  imports: [
-    UsersModule,
-    JwtModule.register({
-      global: true,
-      secret: 'super-secret-secret',
-      signOptions: { expiresIn: '60s' },
-    }),
+  imports: [UsersModule, PassportModule.register({ session: true })],
+  providers: [
+    AuthService,
+    SessionSerializer,
+    LocalStrategy,
+    GoogleStrategy,
+    UsersService,
   ],
-  providers: [AuthService, LocalStrategy, GoogleStrategy],
   controllers: [AuthController],
   exports: [AuthService],
 })

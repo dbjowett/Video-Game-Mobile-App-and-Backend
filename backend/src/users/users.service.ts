@@ -11,6 +11,11 @@ export class UsersService {
       where: { email },
     });
   }
+  async findById(userId: string): Promise<User | null> {
+    return this.databaseService.user.findUnique({
+      where: { id: userId },
+    });
+  }
 
   async create(email: string, password: string): Promise<User> {
     return this.databaseService.user.create({
