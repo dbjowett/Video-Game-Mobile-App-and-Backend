@@ -129,7 +129,7 @@ export const Hero = ({
               transition={{ duration: 0.8, delay: 0.6, ease: 'easeInOut' }}
               viewport={{ once: true }}
             >
-              <motion.div whileHover={{ scale: 1.1 }}>
+              <motion.div whileHover={{ scale: 1.02 }}>
                 <Button
                   component={Link}
                   onClick={onSignUpClick}

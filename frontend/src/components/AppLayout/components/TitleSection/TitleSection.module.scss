@@ -1,0 +1,31 @@
+.TitleContainer {
+  align-items: center;
+  display: flex;
+  height: var(--page-header-height);
+  align-items: center;
+  // padding: 14px 14px 14px 14px;
+  marigin-bottom: 14px;
+
+  & .TitleSection {
+    align-items: center;
+    border-radius: var(--mantine-radius-md);
+    display: flex;
+    height: 2.5rem;
+    padding: 0 var(--spacing-md);
+    position: relative;
+    width: 100%;
+
+    & .LogoContainer {
+      display: grid;
+      height: 100%;
+      place-content: center;
+      width: 2.5rem;
+    }
+
+    & .TitleText {
+      font-family: Inter, sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+    }
+  }
+}

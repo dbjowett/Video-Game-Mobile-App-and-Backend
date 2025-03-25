@@ -1,0 +1,53 @@
+.Selected {
+  & .Option {
+    background-color: var(--colour-selection);
+    color: var(--colour-bright);
+    cursor: default;
+  }
+}
+
+.Category {
+  & .Option {
+    background-color: unset;
+    color: unset;
+    cursor: default;
+  }
+
+  &:hover {
+    background-color: unset;
+  }
+}
+
+.Option {
+  align-items: center;
+  border-radius: var(--mantine-radius-md);
+  display: flex;
+  height: 40px;
+  position: relative;
+  transition-duration: 150ms;
+  transition-property: color, background-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+}
+
+.OptionDefault {
+  @extend .Option;
+
+  color: #637484;
+
+  &:hover {
+    background-color: var(--colour-selection);
+  }
+}
+
+.OptionTitle {
+  font-size: var(--mantine-font-size-md);
+  font-weight: 500;
+}
+
+.IconContainer {
+  display: grid;
+  height: 100%;
+  place-content: center;
+  width: 40px;
+}
