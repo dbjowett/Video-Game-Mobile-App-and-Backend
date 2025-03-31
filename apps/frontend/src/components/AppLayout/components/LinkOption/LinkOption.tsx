@@ -18,7 +18,7 @@ interface OptionProps {
   isCategory?: boolean;
 }
 
-export const LinkOption = ({ Icon, title, open, path, onClick, isCategory }: OptionProps) => {
+export const LinkOption = ({ Icon, title, open, path, onClick }: OptionProps) => {
   const [opened, { close, open: openTooltip }] = useDisclosure(false);
   return (
     <Link

@@ -7,7 +7,6 @@ import { auth } from './utils/auth';
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 
-// Import the generated route tree
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { routeTree } from './routeTree.gen';
 import { theme } from './theme/mantineTheme';
