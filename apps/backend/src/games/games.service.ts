@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { GameDetails, PopularGame } from '@shared/types';
 import { IgdbService } from 'src/igdb/igdb.service';
-import { GameDetails, PopularGame } from './games.controller';
 
 @Injectable()
 export class GameService {
