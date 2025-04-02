@@ -9,7 +9,7 @@ import { Heart } from 'lucide-react-native';
 import React from 'react';
 import Animated, { FadeInRight, FadeOutLeft } from 'react-native-reanimated';
 
-const IGDB_URL = 'https://images.igdb.com/igdb/image/upload/t_thumb/co27j9.jpg';
+// const IGDB_URL = 'https://images.igdb.com/igdb/image/upload/t_thumb/co27j9.jpg';
 
 const getHumanDate = (time?: number): string | null => {
   if (!time) return null;
@@ -33,78 +33,92 @@ export default function TabOneScreen() {
   const renderRow: ListRenderItem<Game> = ({ item }) => {
     return (
       <Link href={`/games/${item.id}`} asChild>
-        <TouchableOpacity>
+        <TouchableOpacity style={styles.itemContainer}>
           <Animated.View style={styles.listing} entering={FadeInRight} exiting={FadeOutLeft}>
-            <Image source={{ uri: `https:${item.cover.url}` }} style={styles.image} />
-            <TouchableOpacity style={{ position: 'absolute', right: 30, top: 30 }}>
+            <Image
+              source={{ uri: `https:${item.cover.url.replace('t_thumb', 't_cover_big_2x')}` }}
+              style={styles.image}
+            />
+            <TouchableOpacity style={styles.heartIcon}>
               <Heart size={24} color={'#fff'} />
             </TouchableOpacity>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}
-            >
+            <View style={styles.textContainer}>
               <View>
-                <Text style={{ fontWeight: 600 }}>{item.name}</Text>
+                <Text style={styles.gameName}>{item.name}</Text>
               </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 4,
-                  alignSelf: 'baseline',
-                }}
-              >
-                <Text style={{ fontWeight: 600 }}>{Math.trunc(item?.total_rating)}%</Text>
+              <View style={styles.lowerContainer}>
+                <Text style={styles.rating}>{Math.trunc(item?.total_rating)}%</Text>
+
+                <Text style={styles.rating}>{Math.trunc(item?.total_rating)}%</Text>
               </View>
             </View>
-            <Text style={{ fontSize: 12 }}>{getHumanDate(item?.first_release_date)}</Text>
+            <Text style={styles.releaseDate}>{getHumanDate(item?.first_release_date)}</Text>
           </Animated.View>
         </TouchableOpacity>
       </Link>
     );
   };
+
   return (
     <View style={styles.container}>
       <Stack.Screen
-        options={{
-          header: () => <CategoryHeader onCategoryChange={onCategoryChange} />,
-        }}
+        options={{ header: () => <CategoryHeader onCategoryChange={onCategoryChange} /> }}
       />
-      <FlatList data={games} renderItem={renderRow} />
+      <FlatList style={styles.listContainer} numColumns={2} data={games} renderItem={renderRow} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: 'auto',
-    borderColor: '#fff',
-    borderWidth: 1,
-    marginTop: 130,
     flex: 1,
+    marginTop: 130,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  listContainer: {
+    paddingTop: 10,
+    width: '100%',
+    paddingHorizontal: 8,
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+  itemContainer: {
+    width: '50%',
+    padding: 8,
   },
   listing: {
     flex: 1,
-    padding: 16,
-    width: '100%',
-    gap: 4,
-    marginVertical: 8,
+    gap: 1,
+    marginVertical: 0,
+    position: 'relative',
   },
   image: {
     height: 300,
     borderRadius: 8,
+  },
+  heartIcon: {
+    position: 'absolute',
+    right: 12,
+    top: 12,
+  },
+  textContainer: {
+    marginTop: 4,
+  },
+  gameName: {
+    flex: 1,
+    marginRight: 8,
+    fontWeight: 600,
+    flexWrap: 'wrap',
+  },
+  lowerContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  rating: {
+    fontWeight: '600',
+  },
+  releaseDate: {
+    fontSize: 12,
   },
 });

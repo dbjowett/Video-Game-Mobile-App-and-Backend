@@ -7,6 +7,8 @@ export const exploreGamesKey = ['games', 'explore'] as const;
 export function useExploreGames() {
   return useQuery({
     queryKey: [...exploreGamesKey],
-    queryFn: async () => api.get(`/explore`) as Promise<Game[]>,
+    queryFn: async () => {
+      return api.get(`popular`) as Promise<Game[]>;
+    },
   });
 }

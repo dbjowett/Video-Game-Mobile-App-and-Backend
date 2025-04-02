@@ -23,8 +23,8 @@ export class IgdbService implements OnModuleInit {
     grant_type: this.GRANT_TYPE,
   }).toString();
 
-  private accessToken: string | null = null; // access token
-  private tokenExpiresAt: number = 0; // expiration time
+  private accessToken: string | null = null;
+  private tokenExpiresAt: number = 0;
 
   async onModuleInit() {
     await this.refreshAccessToken();

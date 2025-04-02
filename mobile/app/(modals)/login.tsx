@@ -1,4 +1,4 @@
-// import { useWarmUpBrowser } from "@/hooks/useWarmUpBrowser";
+// import { useWarmUpBrowser } from '@/hooks/useWarmUpBrowser';
 import { isLoaded } from 'expo-font';
 import { useRouter } from 'expo-router';
 import React from 'react';

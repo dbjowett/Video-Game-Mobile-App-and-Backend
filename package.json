@@ -2,6 +2,7 @@
   "name": "vg_app",
   "version": "1.0.0",
   "description": "",
+  "private": "true",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",

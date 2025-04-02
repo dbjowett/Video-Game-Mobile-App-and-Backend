@@ -11,6 +11,5 @@ export const Route = createFileRoute('/_app/')({
 
 function RouteComponent() {
   const user = Route.useLoaderData();
-  console.log(user);
   return <div>Hello {user.name}!</div>;
 }

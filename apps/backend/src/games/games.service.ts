@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { GameDetails, PopularGame } from '@shared/types';
 import { IgdbService } from 'src/igdb/igdb.service';
+import { ExploreQueryDto } from './games.dto';
 
 @Injectable()
 export class GameService {
@@ -39,6 +40,13 @@ export class GameService {
 
   async getGames(query: string) {
     const igdbQuery = `fields name, cover.url, total_rating; search "${query}";`;
+    return this.igdbService.request<GameDetails[]>('games', igdbQuery);
+  }
+  async getGamesQuery(queryParams: ExploreQueryDto) {
+    let igdbQuery = `fields game_id, cover.url value, popularity_type; sort value desc; limit 10; where popularity_type = 2;`;
+    if (queryParams.query) {
+      igdbQuery = igdbQuery + `search "${queryParams.query}"`;
+    }
     return this.igdbService.request<GameDetails[]>('games', igdbQuery);
   }
 }
