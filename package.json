@@ -4,8 +4,8 @@
   "description": "",
   "private": "true",
   "scripts": {
-    "build": "turbo run build",
     "dev": "turbo run dev",
+    "build": "turbo run build",
     "lint": "turbo run lint"
   },
   "workspaces": [
@@ -15,5 +15,5 @@
     "turbo": "^2.4.4"
   },
   "license": "ISC",
-  "packageManager": "pnpm@10.7.0"
+  "packageManager": "pnpm@10.7.1"
 }

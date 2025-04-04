@@ -15,6 +15,7 @@ model User {
   password       String?
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
+  refreshToken   RefreshToken[]
   favouriteGames FavouriteGame[]
 }
 
@@ -26,9 +27,11 @@ model FavouriteGame {
   updatedAt DateTime @updatedAt
 }
 
-model Session {
-  id        String   @id
-  sid       String   @unique
-  data      String
-  expiresAt DateTime
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

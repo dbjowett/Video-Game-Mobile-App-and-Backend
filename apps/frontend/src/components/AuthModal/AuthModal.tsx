@@ -85,8 +85,34 @@ export const AuthModal = ({
     }
   };
 
-  const handleRegister = () => {
-    console.log('register');
+  const handleRegister = async () => {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/signup`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(form.values),
+    });
+    const data = await response.json();
+    console.log('data', data);
+
+    if (data?.access_token) {
+      localStorage.setItem('token', data.access_token);
+      toggleModal();
+      notifications.show({
+        title: 'Successfully logged in!',
+        message: '',
+      });
+
+      await sleep(1000);
+      navigate({ to: '/' });
+    } else {
+      notifications.show({
+        title: 'Error',
+        message: 'Invalid credentials',
+        color: 'red',
+      });
+    }
   };
 
   return (

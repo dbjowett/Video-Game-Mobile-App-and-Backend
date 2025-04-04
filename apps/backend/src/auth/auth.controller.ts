@@ -9,13 +9,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { User } from '@prisma/client';
-import { Public } from 'src/utils';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
-
-export interface AuthenticatedRequest extends Request {
-  user: Omit<User, 'password'>;
-}
+import { AuthDto, RefreshTokenDto } from './dto';
+import { AuthenticatedRequest } from './types';
 
 @Controller('auth')
 export class AuthController {
@@ -23,42 +20,40 @@ export class AuthController {
 
   @Post('signin')
   @UseGuards(AuthGuard('local'))
-  async signIn(@Request() req: AuthenticatedRequest) {
-    return this.authService.signIn(req.user);
+  async signIn(@Request() req: AuthenticatedRequest, res: Response) {
+    return this.authService.signIn(req.user, res);
   }
 
-  @Public()
   @Post('signup')
-  async signUp(@Body() body: { email: string; password: string }) {
+  async signUp(@Body() body: AuthDto) {
     const { email, password } = body;
     return this.authService.signUp(email, password);
   }
 
+  @UseGuards(AuthGuard('jwt-refresh'))
+  @Post('refresh')
+  async refresh(@Body() body: RefreshTokenDto, @Res() res: Response) {
+    const { refreshToken } = body;
+    return this.authService.refresh(refreshToken, res);
+  }
+
+  @Post('logout')
+  async logout(@Body() body: RefreshTokenDto) {
+    const { refreshToken } = body;
+    return this.authService.logout(refreshToken);
+  }
+
+  // ** Google Auth  ** //
   @Get('google')
   @UseGuards(AuthGuard('google'))
   async googleLogin() {
     return { message: 'Redirecting to Google login...' };
   }
 
-  @Get('session')
-  getSession(@Req() req) {
-    return {
-      session: req.session,
-      user: req.user,
-    };
-  }
-
   @Get('google/redirect')
   @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req, @Res() res) {
-    if (req.user) {
-      req.login(req.user, (err: Error) => {
-        if (err)
-          return res.redirect(process.env.FE_URL + 'login?error=login_failed');
-        res.redirect(process.env.FE_URL);
-      });
-    } else {
-      res.redirect(process.env.FE_URL + 'login?error=not_logged_in');
-    }
+  async googleRedirect(@Req() req: AuthenticatedRequest, @Res() res: Response) {
+    const { access_token } = await this.authService.signIn(req.user, res);
+    res.redirect(process.env.FE_URL + `?token=${access_token}`);
   }
 }

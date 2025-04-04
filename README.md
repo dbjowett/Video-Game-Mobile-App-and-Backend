@@ -37,3 +37,11 @@ The backend is powered by NestJS and runs on a server that is automatically star
 ### 4. Frontend (Vite)
 
 The frontend is built with Vite for fast development, and it uses Tanstack Router for routing and Tanstack Query for data fetching and state management.
+
+TODO:
+
+- [x] (BE) Remove session code (session library, session schema type, session setup, migration)
+- [x] (BE) Error if user signs up with existing email
+- [x] (BE) Add back JWT code (create JWT for successful login, & google sign in, look into Google sign in with Native (SDK?))
+- [ ] (App) Implement login page with sign in with google and user+pass login
+- [ ] (App) Remove sign in modal
