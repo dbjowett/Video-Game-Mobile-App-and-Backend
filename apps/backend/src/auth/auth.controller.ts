@@ -56,7 +56,17 @@ export class AuthController {
   @Get('google/redirect')
   @UseGuards(AuthGuard('google'))
   async googleRedirect(@Req() req: AuthenticatedRequest, @Res() res: Response) {
-    const { access_token } = await this.authService.signIn(req.user, res);
-    res.redirect(process.env.FE_URL + `?token=${access_token}`);
+    const { access_token, refresh_token } = await this.authService.signIn(
+      req.user,
+      res,
+    );
+
+    res.cookie('refreshToken', refresh_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
+
+    res.redirect(`${process.env.FE_URL}/login?token=${access_token}`);
   }
 }

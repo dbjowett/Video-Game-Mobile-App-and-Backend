@@ -40,8 +40,19 @@ The frontend is built with Vite for fast development, and it uses Tanstack Route
 
 TODO:
 
-- [x] (BE) Remove session code (session library, session schema type, session setup, migration)
-- [x] (BE) Error if user signs up with existing email
-- [x] (BE) Add back JWT code (create JWT for successful login, & google sign in, look into Google sign in with Native (SDK?))
+### BE
+
+- [x] Remove session code (session library, session schema type, session setup, migration)
+- [x] Error if user signs up with existing email
+- [x] Add back JWT code (create JWT for successful login, & google sign in, look into Google sign in with Native (SDK?))
+- [ ] Ensure refresh token in working correctly
+
+### FE
+
+- [ ] Profile not getting fetched every time on protected routes
+- [ ]
+
+### APP
+
 - [ ] (App) Implement login page with sign in with google and user+pass login
 - [ ] (App) Remove sign in modal

@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { AuthModal } from '../components/AuthModal';
 import { Features } from '../components/Features';
 import { Hero } from '../components/Hero';
+import { useOAuthTokenHandler } from '../hooks/useOAuthHandler';
 import { api } from '../utils/api';
 
 interface GameDetails {
@@ -47,6 +48,7 @@ export const Route = createFileRoute('/login')({
 function RouteComponent() {
   const [opened, { toggle: toggleModal }] = useDisclosure(false);
   const featuresRef = useRef<HTMLDivElement>(null);
+  useOAuthTokenHandler();
 
   const data = Route.useLoaderData();
   const imageGridItems = createImageGridItems(data);
