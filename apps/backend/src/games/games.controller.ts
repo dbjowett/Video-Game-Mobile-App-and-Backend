@@ -3,7 +3,6 @@ import { Public } from 'src/utils';
 import { ExploreQueryDto } from './games.dto';
 import { GameService } from './games.service';
 
-// @UseGuards(AuthenticatedGuard)
 @Controller('games')
 export class GamesController {
   constructor(private readonly gameService: GameService) {}

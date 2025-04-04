@@ -12,5 +12,8 @@ const RootComponent = () => (
 export const Route = createRootRouteWithContext<{
   auth: Auth;
 }>()({
+  loader: async ({ context }) => {
+    await context.auth.loadUser();
+  },
   component: RootComponent,
 });

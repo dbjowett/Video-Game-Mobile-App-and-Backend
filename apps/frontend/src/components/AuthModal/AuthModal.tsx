@@ -17,6 +17,8 @@ import { upperFirst, useToggle } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconX } from '@tabler/icons-react';
 import { useNavigate } from '@tanstack/react-router';
+import { api } from '../../utils/api';
+import { auth } from '../../utils/auth';
 import { GoogleButton } from '../AuthButtons/GoogleButton';
 
 type SocialProvider = 'google' | 'apple';
@@ -55,61 +57,34 @@ export const AuthModal = ({
     if (provider === 'google') window.location.href = 'http://localhost:3000/auth/google';
   };
 
-  const handleLogin = async () => {
-    // TODO: Call signup if user
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/signin`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(form.values),
-    });
-    const data = await response.json();
+  const handleAuth = async (type: 'login' | 'register') => {
+    const endpoint = type === 'login' ? 'auth/signin' : 'auth/signup';
+    try {
+      const data = await api
+        .post(endpoint, {
+          json: form.values,
+        })
+        .json<{ access_token: string }>();
 
-    if (data?.access_token) {
-      localStorage.setItem('token', data.access_token);
-      toggleModal();
-      notifications.show({
-        title: 'Successfully logged in!',
-        message: '',
-      });
+      if (data?.access_token) {
+        localStorage.setItem('token', data.access_token);
+        await auth.loadUser();
+        toggleModal();
+        notifications.show({
+          title: 'Successfully logged in!',
+          message: '',
+        });
 
-      await sleep(1000);
-      navigate({ to: '/' });
-    } else {
-      notifications.show({
-        title: 'Error',
-        message: 'Invalid credentials',
-        color: 'red',
-      });
-    }
-  };
-
-  const handleRegister = async () => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/signup`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(form.values),
-    });
-    const data = await response.json();
-    console.log('data', data);
-
-    if (data?.access_token) {
-      localStorage.setItem('token', data.access_token);
-      toggleModal();
-      notifications.show({
-        title: 'Successfully logged in!',
-        message: '',
-      });
-
-      await sleep(1000);
-      navigate({ to: '/' });
-    } else {
+        await sleep(1000);
+        navigate({ to: '/' });
+      } else {
+        throw new Error('No access token received');
+      }
+    } catch (err) {
+      console.error(`${type} error`, err);
       notifications.show({
         title: 'Error',
-        message: 'Invalid credentials',
+        message: 'Invalid credentials or server error',
         color: 'red',
       });
     }
@@ -143,7 +118,7 @@ export const AuthModal = ({
 
         <Divider label="Or continue with email" labelPosition="center" my="lg" />
 
-        <form onSubmit={form.onSubmit(type === 'register' ? handleRegister : handleLogin)}>
+        <form onSubmit={form.onSubmit(() => handleAuth(type as 'login' | 'register'))}>
           <Stack>
             {type === 'register' && (
               <TextInput

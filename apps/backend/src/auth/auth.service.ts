@@ -69,39 +69,26 @@ export class AuthService {
     }
   }
 
-  async refresh(refreshToken: string, res: Response): Promise<Tokens> {
-    try {
-      const payload = await this.jwtService.verifyAsync(refreshToken, {
+  async refresh(user: UserPayload, res: Response): Promise<Tokens> {
+    const newPayload = { sub: user.id, email: user.email };
+
+    const [access_token, new_refresh_token] = await Promise.all([
+      this.jwtService.signAsync(newPayload, { expiresIn: '15m' }),
+      this.jwtService.signAsync(newPayload, {
+        expiresIn: '7d',
         secret: process.env.JWT_REFRESH_SECRET,
-      });
+      }),
+    ]);
 
-      const user = await this.usersService.findById(payload.sub);
-      if (!user) {
-        throw new Error('User not found');
-      }
+    await this.usersService.updateRefreshToken(user.id, new_refresh_token);
 
-      const newPayload = { sub: user.id, email: user.email };
+    res.cookie('refreshToken', new_refresh_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
 
-      const [access_token, new_refresh_token] = await Promise.all([
-        this.jwtService.signAsync(newPayload, { expiresIn: '15m' }),
-        this.jwtService.signAsync(newPayload, {
-          expiresIn: '7d',
-          secret: process.env.JWT_REFRESH_SECRET,
-        }),
-      ]);
-
-      await this.usersService.updateRefreshToken(user.id, new_refresh_token);
-
-      res.cookie('refreshToken', new_refresh_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-      });
-
-      return { access_token, refresh_token: new_refresh_token };
-    } catch (err) {
-      throw new Error('Invalid or expired refresh token');
-    }
+    return { access_token, refresh_token: new_refresh_token };
   }
 
   async logout(refreshToken: string): Promise<void> {

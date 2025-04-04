@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Response } from 'express';
+import { Request as ExpressRequest, Response } from 'express';
 import { AuthService } from './auth.service';
 import { AuthDto, RefreshTokenDto } from './dto';
 import { AuthenticatedRequest } from './types';
@@ -30,19 +30,40 @@ export class AuthController {
     return this.authService.signUp(email, password);
   }
 
-  @UseGuards(AuthGuard('jwt-refresh'))
   @Post('refresh')
-  async refresh(@Body() body: RefreshTokenDto, @Res() res: Response) {
-    const { refreshToken } = body;
-    return this.authService.refresh(refreshToken, res);
+  @UseGuards(AuthGuard('jwt-refresh'))
+  async refresh(@Request() req: any, @Res() res: Response) {
+    return this.authService.refresh(req.user, res);
   }
 
   @Post('logout')
-  async logout(@Body() body: RefreshTokenDto) {
-    const { refreshToken } = body;
-    return this.authService.logout(refreshToken);
-  }
+  async logout(
+    @Body() body: RefreshTokenDto,
+    @Req() req: ExpressRequest,
+    @Res() res: Response,
+  ) {
+    const refreshToken = body.refreshToken || req.cookies?.refreshToken;
 
+    if (!refreshToken) {
+      return res.status(400).json({ message: 'Refresh token not provided' });
+    }
+
+    try {
+      await this.authService.logout(refreshToken);
+
+      res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+      });
+
+      return res.status(200).json({ message: 'Logged out successfully' });
+    } catch (err) {
+      return res
+        .status(401)
+        .json({ message: 'Invalid or expired refresh token' });
+    }
+  }
   // ** Google Auth  ** //
   @Get('google')
   @UseGuards(AuthGuard('google'))
