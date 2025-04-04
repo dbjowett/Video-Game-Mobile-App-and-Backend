@@ -5,13 +5,14 @@ import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { GoogleStrategy } from './strategies/google.strategy';
+import { JwtRefreshTokenStrategy } from './strategies/jwt-refresh.strategy';
 import { JwtAccessStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 
 const JWT_CONFIG = {
   global: true,
   secret: process.env.JWT_SECRET,
-  signOptions: { expiresIn: '60s' },
+  signOptions: { expiresIn: '5s' },
 };
 
 @Module({
@@ -20,6 +21,7 @@ const JWT_CONFIG = {
     AuthService,
     LocalStrategy,
     JwtAccessStrategy,
+    JwtRefreshTokenStrategy,
     GoogleStrategy,
     UsersService,
   ],
