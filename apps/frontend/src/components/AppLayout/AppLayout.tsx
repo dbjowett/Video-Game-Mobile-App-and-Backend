@@ -1,10 +1,11 @@
-import { Flex } from '@mantine/core';
+import { Button, Flex, Text } from '@mantine/core';
 import { COLLAPSE_DURATION, routeVariants, SIDEBAR_WIDTH } from './config';
 
-import { Icon, IconSearch } from '@tabler/icons-react';
+import { Icon, IconLogout, IconSearch } from '@tabler/icons-react';
 import { motion } from 'motion/react';
 import { FC, ReactElement, ReactNode, useState } from 'react';
 
+import { auth } from '../../utils/auth';
 import { SearchGameInput } from '../SearchGameInput';
 import styles from './AppLayout.module.scss';
 import { LinkOption } from './components/LinkOption';
@@ -100,7 +101,14 @@ const Sidebar = ({ open, setOpen, linkItems }: SidebarProps) => {
             </motion.div>
           </div>
         </motion.div>
-
+        <motion.div layout>
+          <Flex>
+            <Text>Logout</Text>
+            <Button variant="subtle" onClick={() => auth.logout()}>
+              <IconLogout />
+            </Button>
+          </Flex>
+        </motion.div>
         <ToggleSection open={open} setOpen={setOpen} />
       </Flex>
     </motion.nav>

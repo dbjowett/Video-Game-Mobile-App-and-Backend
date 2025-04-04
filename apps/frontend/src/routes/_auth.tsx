@@ -1,13 +1,16 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_auth')({
-  beforeLoad: ({ context, location }) => {
+  loader: async ({ context, location }) => {
+    await context.auth.loadUser();
+
     if (context.auth.status === 'loggedOut') {
       throw redirect({
         to: '/login',
         search: { redirect: location.href },
       });
     }
-    return { email: context.auth.user?.email };
+
+    return { user: context.auth.user };
   },
 });
