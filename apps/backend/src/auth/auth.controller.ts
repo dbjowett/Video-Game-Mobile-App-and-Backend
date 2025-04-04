@@ -20,8 +20,9 @@ export class AuthController {
 
   @Post('signin')
   @UseGuards(AuthGuard('local'))
-  async signIn(@Request() req: AuthenticatedRequest, res: Response) {
-    return this.authService.signIn(req.user, res);
+  async signIn(@Request() req: AuthenticatedRequest, @Res() res: Response) {
+    const tokens = await this.authService.signIn(req.user, res);
+    return res.status(200).json(tokens);
   }
 
   @Post('signup')
@@ -42,28 +43,9 @@ export class AuthController {
     @Req() req: ExpressRequest,
     @Res() res: Response,
   ) {
-    const refreshToken = body.refreshToken || req.cookies?.refreshToken;
-
-    if (!refreshToken) {
-      return res.status(400).json({ message: 'Refresh token not provided' });
-    }
-
-    try {
-      await this.authService.logout(refreshToken);
-
-      res.clearCookie('refreshToken', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-      });
-
-      return res.status(200).json({ message: 'Logged out successfully' });
-    } catch (err) {
-      return res
-        .status(401)
-        .json({ message: 'Invalid or expired refresh token' });
-    }
+    return this.authService.logout(body.refreshToken, req, res);
   }
+
   // ** Google Auth  ** //
   @Get('google')
   @UseGuards(AuthGuard('google'))

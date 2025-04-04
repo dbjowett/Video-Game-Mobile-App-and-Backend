@@ -1,8 +1,8 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
-import * as argon2 from 'argon2';
-import { Response } from 'express';
+import argon2 from 'argon2';
+import { Request, Response } from 'express';
 import { UsersService } from '../users/users.service';
 import { Tokens, UserPayload } from './types';
 
@@ -17,7 +17,7 @@ export class AuthService {
     return await argon2.hash(data);
   }
 
-  async verifyData(data: string, hashedData: string): Promise<boolean> {
+  async verifyData(hashedData: string, data: string): Promise<boolean> {
     return await argon2.verify(hashedData, data);
   }
 
@@ -49,7 +49,13 @@ export class AuthService {
 
   async signIn(user: UserPayload, res: Response): Promise<Tokens> {
     const { access_token, refresh_token } = await this.getTokens(user);
-    res.cookie('refreshToken', refresh_token, { httpOnly: true });
+
+    res.cookie('refreshToken', refresh_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
+
     return { access_token, refresh_token };
   }
 
@@ -91,18 +97,32 @@ export class AuthService {
     return { access_token, refresh_token: new_refresh_token };
   }
 
-  async logout(refreshToken: string): Promise<void> {
+  async logout(
+    bodyToken: string | undefined,
+    req: Request,
+    res: Response,
+  ): Promise<void> {
+    const refreshToken = bodyToken || req.cookies?.refreshToken;
+
+    if (!refreshToken) {
+      res.status(400).json({ message: 'Refresh token not provided' });
+      return;
+    }
+
     try {
-      const payload = await this.jwtService.verifyAsync(refreshToken, {
-        secret: process.env.JWT_REFRESH_SECRET,
+      await this.usersService.deleteRefreshTokenById(refreshToken);
+
+      res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
       });
 
-      await this.usersService.deleteRefreshTokenById(payload.tokenId);
+      res.status(200).json({ message: 'Logged out successfully' });
     } catch (err) {
-      throw new Error('Invalid or expired refresh token');
+      res.status(401).json({ message: 'Invalid or expired refresh token' });
     }
   }
-
   // ** Google Auth  ** //
   async validateGoogleUser(
     googleId: string,
