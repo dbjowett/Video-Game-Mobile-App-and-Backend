@@ -14,7 +14,7 @@ export class Auth {
 
   async loadUser(): Promise<void> {
     try {
-      const user = await api.get('auth/profile').json<User>();
+      const user = await api.get('profile').json<User>();
       this.user = user;
       this.status = 'loggedIn';
     } catch (err) {

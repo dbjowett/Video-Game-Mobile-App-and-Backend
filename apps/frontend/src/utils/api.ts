@@ -22,10 +22,8 @@ export const api: KyInstance = ky.create({
                 credentials: 'include',
               })
               .json<{ access_token: string }>();
-
             if (data?.access_token) {
               localStorage.setItem('token', data.access_token);
-
               return await api(request, {
                 ...options,
                 retry: { limit: 0 },
@@ -41,7 +39,6 @@ export const api: KyInstance = ky.create({
             location.assign('/login');
           }
         }
-
         return response;
       },
     ],

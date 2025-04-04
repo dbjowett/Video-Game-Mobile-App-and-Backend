@@ -111,9 +111,6 @@ export const AuthModal = ({
           <GoogleButton radius="xl" onClick={() => handleSocialLogin('google')}>
             Google
           </GoogleButton>
-          {/* <TwitterButton radius="xl" onClick={() => handleSocialLogin('apple')}>
-            Apple
-          </TwitterButton> */}
         </Group>
 
         <Divider label="Or continue with email" labelPosition="center" my="lg" />
