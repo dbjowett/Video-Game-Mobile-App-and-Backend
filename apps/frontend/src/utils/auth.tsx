@@ -1,4 +1,5 @@
-import { api } from './api';
+import { useQuery } from '@tanstack/react-query';
+import { api, apiNoAuth } from './api';
 
 export type User = {
   id: string;
@@ -13,6 +14,8 @@ export class Auth {
   user: User | null = null;
 
   async loadUser(): Promise<void> {
+    if (this.status !== 'loading') return;
+
     try {
       const user = await api.get('profile').json<User>();
       this.user = user;
@@ -40,3 +43,9 @@ export class Auth {
 }
 
 export const auth = new Auth();
+
+export const useUser = () =>
+  useQuery({
+    queryKey: ['user'],
+    queryFn: () => apiNoAuth.get('profile').json<User>(),
+  });

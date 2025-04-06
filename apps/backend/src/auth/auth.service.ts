@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import argon2 from 'argon2';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { UsersService } from '../users/users.service';
 import { Tokens, UserPayload } from './types';
 
@@ -97,13 +97,7 @@ export class AuthService {
     return { access_token, refresh_token: new_refresh_token };
   }
 
-  async logout(
-    bodyToken: string | undefined,
-    req: Request,
-    res: Response,
-  ): Promise<void> {
-    const refreshToken = bodyToken || req.cookies?.refreshToken;
-
+  async logout(refreshToken: string | undefined, res: Response): Promise<void> {
     if (!refreshToken) {
       res.status(400).json({ message: 'Refresh token not provided' });
       return;

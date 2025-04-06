@@ -44,7 +44,10 @@ export class AuthController {
     @Req() req: ExpressRequest,
     @Res() res: Response,
   ) {
-    return this.authService.logout(body.refreshToken, req, res);
+    return this.authService.logout(
+      req.cookies.refreshToken || body.refreshToken,
+      res,
+    );
   }
 
   // ** Google Auth  ** //
@@ -68,6 +71,6 @@ export class AuthController {
       sameSite: 'strict',
     });
 
-    res.redirect(`${process.env.FE_URL}/login?token=${access_token}`);
+    res.redirect(`${process.env.FE_URL}login?token=${access_token}`);
   }
 }

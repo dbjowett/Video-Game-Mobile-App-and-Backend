@@ -6,6 +6,7 @@ import { Features } from '../components/Features';
 import { Hero } from '../components/Hero';
 import { useOAuthTokenHandler } from '../hooks/useOAuthHandler';
 import { api } from '../utils/api';
+import { useUser } from '../utils/auth';
 
 interface GameDetails {
   id: number;
@@ -46,7 +47,10 @@ export const Route = createFileRoute('/login')({
 });
 
 function RouteComponent() {
+  const { data: user } = useUser();
+  const isLoggedIn = !!user;
   const [opened, { toggle: toggleModal }] = useDisclosure(false);
+
   const featuresRef = useRef<HTMLDivElement>(null);
   useOAuthTokenHandler();
 
@@ -57,13 +61,22 @@ function RouteComponent() {
     featuresRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleSignUpClick = () => {
+    if (isLoggedIn) {
+      window.location.href = '/';
+    } else {
+      toggleModal();
+    }
+  };
+
   return (
     <>
       <Hero
         w="100%"
         imageGridItems={imageGridItems}
-        onSignUpClick={toggleModal}
+        onSignUpClick={handleSignUpClick}
         scrollToFeatures={handleScrollToFeatures}
+        isLoggedIn={isLoggedIn}
       />
       <Features ref={featuresRef} />
       <AuthModal opened={opened} toggleModal={toggleModal} />

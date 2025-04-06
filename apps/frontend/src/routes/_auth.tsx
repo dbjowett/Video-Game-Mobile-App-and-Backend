@@ -1,4 +1,6 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { IconVideo } from '@tabler/icons-react';
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
+import { DashboardLayout } from '../components/AppLayout/AppLayout';
 
 export const Route = createFileRoute('/_auth')({
   loader: async ({ context, location }) => {
@@ -13,4 +15,15 @@ export const Route = createFileRoute('/_auth')({
 
     return { user: context.auth.user };
   },
+  component: AppLayoutComponent,
 });
+
+function AppLayoutComponent() {
+  return (
+    <div>
+      <DashboardLayout linkItems={[{ Icon: IconVideo, path: '/about', content: 'About' }]}>
+        <Outlet />
+      </DashboardLayout>
+    </div>
+  );
+}

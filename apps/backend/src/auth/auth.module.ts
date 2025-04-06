@@ -12,7 +12,7 @@ import { LocalStrategy } from './strategies/local.strategy';
 const JWT_CONFIG = {
   global: true,
   secret: process.env.JWT_SECRET,
-  signOptions: { expiresIn: '5s' },
+  signOptions: { expiresIn: '60s' },
 };
 
 @Module({

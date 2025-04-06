@@ -22,6 +22,7 @@ import classes from './Hero.module.css';
 type ImageItem = { src: string; alt: string };
 
 type HeroProps = ContainerProps & {
+  isLoggedIn: boolean;
   imageGridItems: ImageItem[][];
   imageGridItemSize?: { width: number; height: number };
   badge?: string;
@@ -39,6 +40,7 @@ type HeroProps = ContainerProps & {
   };
 };
 export const Hero = ({
+  isLoggedIn,
   badge = 'Find your next favourite game',
   scrollToFeatures,
   title = 'Discover the Best Games',
@@ -138,7 +140,7 @@ export const Hero = ({
                   className={classes.cta}
                   rightSection={<IconArrowRight />}
                 >
-                  {callToAction.label}
+                  {isLoggedIn ? 'Go to Dashboard' : callToAction.label}
                 </Button>
               </motion.div>
             </motion.div>

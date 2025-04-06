@@ -44,3 +44,19 @@ export const api: KyInstance = ky.create({
     ],
   },
 });
+
+export const apiNoAuth: KyInstance = ky.create({
+  prefixUrl: import.meta.env.VITE_API_URL,
+  credentials: 'include',
+  retry: { limit: 0 },
+  hooks: {
+    beforeRequest: [
+      (request) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+          request.headers.set('Authorization', `Bearer ${token}`);
+        }
+      },
+    ],
+  },
+});
