@@ -71,6 +71,8 @@ export class AuthController {
       sameSite: 'strict',
     });
 
-    res.redirect(`${process.env.FE_URL}login?token=${access_token}`);
+    res.redirect(
+      `${process.env.FE_URL}login?token=${access_token}&refresh=${refresh_token}`,
+    );
   }
 }

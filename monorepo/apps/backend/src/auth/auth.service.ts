@@ -49,13 +49,6 @@ export class AuthService {
 
   async signIn(user: UserPayload, res: Response): Promise<Tokens> {
     const { access_token, refresh_token } = await this.getTokens(user);
-
-    res.cookie('refreshToken', refresh_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-    });
-
     return { access_token, refresh_token };
   }
 

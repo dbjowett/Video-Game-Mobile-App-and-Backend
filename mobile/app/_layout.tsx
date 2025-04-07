@@ -8,8 +8,6 @@ import 'react-native-reanimated';
 
 import { useColourScheme } from '@/components/useColourScheme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { X } from 'lucide-react-native';
-import { TouchableOpacity } from 'react-native';
 export { ErrorBoundary } from 'expo-router';
 
 export const unstable_settings = { initialRouteName: '(tabs)' };
@@ -50,25 +48,15 @@ export default function RootLayout() {
 }
 
 const StackScreens = () => {
+  const isLoggedIn = false;
   useEffect(() => {
-    router.push('/(modals)/login');
+    if (!isLoggedIn) router.replace('/login');
   }, []);
 
   return (
     <Stack>
+      <Stack.Screen name="login" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="(modals)/login"
-        options={{
-          title: 'Login or Signup',
-          presentation: 'modal',
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()}>
-              <X size={24} color="black" />
-            </TouchableOpacity>
-          ),
-        }}
-      />
     </Stack>
   );
 };
