@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "eslint ."
@@ -20,10 +20,12 @@
     "@tanstack/react-form": "^1.3.0",
     "@tanstack/react-query": "^5.71.10",
     "expo": "~52.0.27",
+    "expo-dev-client": "^5.0.20",
     "expo-font": "~13.0.3",
     "expo-haptics": "^14.0.1",
     "expo-linking": "~7.0.4",
     "expo-router": "~4.0.17",
+    "expo-secure-store": "~14.0.1",
     "expo-splash-screen": "~0.29.21",
     "expo-status-bar": "~2.0.1",
     "expo-system-ui": "~4.0.7",

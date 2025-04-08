@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   Req,
   Request,
   Res,
@@ -65,14 +66,24 @@ export class AuthController {
 
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
-  async googleRedirect(@Req() req: AuthenticatedRequest, @Res() res: Response) {
+  async googleRedirect(
+    @Req() req: AuthenticatedRequest,
+    @Res() res: Response,
+    @Query('state') state: string,
+  ) {
     const { access_token, refresh_token } = await this.authService.signIn(
       req.user,
       res,
     );
 
-    res.redirect(
-      `${process.env.FE_URL}login?token=${access_token}&refresh=${refresh_token}`,
-    );
+    if (state === 'mobile') {
+      res.redirect(
+        `vg-app://login?token=${access_token}&refresh=${refresh_token}`, // Redirect to mobile app
+      );
+    } else {
+      res.redirect(
+        `${process.env.FE_URL}login?token=${access_token}`, // Redirect to web app
+      );
+    }
   }
 }

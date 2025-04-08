@@ -1,10 +1,12 @@
+import { Tokens, Values } from '@/api/types/auth';
+import { apiNoAuth } from '@/api/utils/api';
+import { useSession } from '@/components/AuthContext';
+import { useGoogleCallback } from '@/hooks/useGoogleCallback';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import ky from 'ky';
 import React, { useState } from 'react';
 import {
-  Alert,
   Button,
   SafeAreaView,
   StyleSheet,
@@ -15,75 +17,48 @@ import {
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 
-interface Values {
-  email: string;
-  password: string;
-}
+const DEFAULT__VALUES = {
+  email: '',
+  password: '',
+};
 
 const Page = () => {
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [showGoogleLogin, setShowGoogleLogin] = useState(false);
+  const { signIn } = useSession();
   const router = useRouter();
 
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [showGoogleLogin, setShowGoogleLogin] = useState(false);
+
+  const signUpMutation = useMutation<Tokens, Error, Values>({
+    mutationFn: async (data) => {
+      return await apiNoAuth.post('/api/signup', { json: data }).json<Tokens>();
+    },
+    onSuccess: async ({ access_token, refresh_token }) => signIn({ access_token, refresh_token }),
+  });
+
+  const signInMutation = useMutation<Tokens, Error, Values>({
+    mutationFn: async (data: Values): Promise<Tokens> => {
+      return await apiNoAuth.post('/auth/signin', { json: data }).json<Tokens>();
+    },
+    onSuccess: async ({ access_token, refresh_token }) => signIn({ access_token, refresh_token }),
+  });
+
+  useGoogleCallback(({ access_token, refresh_token }) => {
+    signIn({ access_token, refresh_token });
+    setShowGoogleLogin(false);
+    router.push('/');
+  });
+
   const form = useForm({
-    defaultValues: {
-      email: '',
-      password: '',
-    } as Values,
-    onSubmit: async (data) => {
-      isSignUp ? handleSignUp(data) : handleSignIn(data);
+    defaultValues: DEFAULT__VALUES,
+    onSubmit: async ({ value }) => {
+      isSignUp ? signUpMutation.mutateAsync(value) : signInMutation.mutateAsync(value);
     },
   });
-
-  const signUpMutation = useMutation(async (data) => {
-    const response = await ky.post('/api/signup', { json: data }).json();
-    return response;
-  });
-
-  const signInMutation = useMutation(async (data) => {
-    const response = await ky.post('/api/login', { json: data }).json();
-    return response;
-  });
-
-  const handleSignIn = async (data: Values) => {
-    try {
-      await signInMutation.mutateAsync(data);
-
-      Alert.alert('Success', 'Logged in successfully');
-    } catch (error) {
-      Alert.alert('Error', 'Login failed');
-    }
-  };
-
-  const handleSignUp = async (data) => {
-    try {
-      await signUpMutation.mutateAsync(data);
-      router.push('/');
-      Alert.alert('Success', 'Signed up successfully');
-    } catch (error) {
-      Alert.alert('Error', 'Sign up failed');
-    }
-  };
-
-  const toggleSignUpSignIn = () => {
-    setIsSignUp(!isSignUp);
-  };
-
-  const handleGoogleLogin = (url) => {
-    console.log('URRL', url);
-
-    // http://localhost:5173/login?token=eyJ...
-    if (url.includes('token')) {
-      setShowGoogleLogin(false);
-      Alert.alert('Success', 'Logged in with Google');
-      router.push('/');
-    }
-  };
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.header}>{isSignUp ? 'Sign Up' : 'Sign In'}</Text>
-
       {!showGoogleLogin ? (
         <>
           <TouchableOpacity style={styles.googleButton} onPress={() => setShowGoogleLogin(true)}>
@@ -130,7 +105,7 @@ const Page = () => {
 
             <Button title={isSignUp ? 'Sign Up' : 'Sign In'} onPress={form.handleSubmit} />
 
-            <TouchableOpacity onPress={toggleSignUpSignIn}>
+            <TouchableOpacity onPress={() => setIsSignUp((prev) => !prev)}>
               <Text style={styles.toggleText}>
                 {isSignUp ? 'Already have an account? Sign in' : 'Don’t have an account? Sign up'}
               </Text>
@@ -141,7 +116,6 @@ const Page = () => {
         <WebView
           userAgent="http.agent"
           source={{ uri: `${process.env.EXPO_PUBLIC_API_URL}/auth/google?platform=mobile` }}
-          onNavigationStateChange={(event) => handleGoogleLogin(event.url)}
         />
       )}
     </SafeAreaView>

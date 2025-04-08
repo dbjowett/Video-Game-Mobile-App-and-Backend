@@ -77,10 +77,10 @@ const CategoryHeader = ({ onCategoryChange }: Props) => {
   const colours = useColours();
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colours.background }}>
       <View style={styles.container}>
         <View style={styles.actionRow}>
-          <Link href={'/(modals)/booking'} asChild>
+          <Link href={'/(modals)/search'} asChild>
             <TouchableOpacity style={styles.searchBtn}>
               <Ionicons name="search" size={24} />
               <View>
