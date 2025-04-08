@@ -21,6 +21,14 @@ export class AuthService {
     return await argon2.verify(hashedData, data);
   }
 
+  setCookie(res: Response, refresh_token: string): void {
+    res.cookie('refreshToken', refresh_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
+  }
+
   async getTokens(user: UserPayload): Promise<Tokens> {
     const payload = { sub: user.id, email: user.email };
 
@@ -49,6 +57,8 @@ export class AuthService {
 
   async signIn(user: UserPayload, res: Response): Promise<Tokens> {
     const { access_token, refresh_token } = await this.getTokens(user);
+    this.setCookie(res, refresh_token);
+
     return { access_token, refresh_token };
   }
 
@@ -71,7 +81,7 @@ export class AuthService {
   async refresh(user: UserPayload, res: Response): Promise<Tokens> {
     const newPayload = { sub: user.id, email: user.email };
 
-    const [access_token, new_refresh_token] = await Promise.all([
+    const [new_access_token, new_refresh_token] = await Promise.all([
       this.jwtService.signAsync(newPayload, { expiresIn: '15m' }),
       this.jwtService.signAsync(newPayload, {
         expiresIn: '7d',
@@ -80,14 +90,9 @@ export class AuthService {
     ]);
 
     await this.usersService.updateRefreshToken(user.id, new_refresh_token);
+    this.setCookie(res, new_refresh_token);
 
-    res.cookie('refreshToken', new_refresh_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-    });
-
-    return { access_token, refresh_token: new_refresh_token };
+    return { access_token: new_access_token, refresh_token: new_refresh_token };
   }
 
   async logout(refreshToken: string | undefined, res: Response): Promise<void> {

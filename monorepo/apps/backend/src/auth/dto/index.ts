@@ -1,5 +1,5 @@
 import { Optional } from '@nestjs/common';
-import { IsBoolean, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 
 export class AuthDto {
   @IsNotEmpty()
@@ -12,10 +12,6 @@ export class AuthDto {
 
   @Optional()
   username: string;
-
-  @Optional()
-  @IsBoolean()
-  terms: boolean;
 }
 
 export class RefreshTokenDto {

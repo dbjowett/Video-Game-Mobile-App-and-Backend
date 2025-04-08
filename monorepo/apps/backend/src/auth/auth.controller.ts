@@ -8,10 +8,12 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { Request as ExpressRequest, Response } from 'express';
 import { AuthService } from './auth.service';
 import { AuthDto, RefreshTokenDto } from './dto';
+import { GoogleAuthGuard } from './guards/google-guard';
+import { JwtRefreshAuthGuard } from './guards/jwt-refresh-guard';
+import { LocalAuthGuard } from './guards/local-guard';
 import { AuthenticatedRequest } from './types';
 
 @Controller('auth')
@@ -19,10 +21,14 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('signin')
-  @UseGuards(AuthGuard('local'))
+  @UseGuards(LocalAuthGuard)
   async signIn(@Request() req: AuthenticatedRequest, @Res() res: Response) {
-    const tokens = await this.authService.signIn(req.user, res);
-    return res.status(200).json(tokens);
+    const { access_token, refresh_token } = await this.authService.signIn(
+      req.user,
+      res,
+    );
+
+    return res.status(200).json({ access_token, refresh_token });
   }
 
   @Post('signup')
@@ -32,7 +38,7 @@ export class AuthController {
   }
 
   @Post('refresh')
-  @UseGuards(AuthGuard('jwt-refresh'))
+  @UseGuards(JwtRefreshAuthGuard)
   async refresh(@Request() req: any, @Res() res: Response) {
     const tokens = await this.authService.refresh(req.user, res);
     return res.status(200).json(tokens);
@@ -52,24 +58,18 @@ export class AuthController {
 
   // ** Google Auth  ** //
   @Get('google')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleAuthGuard)
   async googleLogin() {
     return { message: 'Redirecting to Google login...' };
   }
 
   @Get('google/redirect')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleAuthGuard)
   async googleRedirect(@Req() req: AuthenticatedRequest, @Res() res: Response) {
     const { access_token, refresh_token } = await this.authService.signIn(
       req.user,
       res,
     );
-
-    res.cookie('refreshToken', refresh_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-    });
 
     res.redirect(
       `${process.env.FE_URL}login?token=${access_token}&refresh=${refresh_token}`,

@@ -1,6 +1,6 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 
-import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { AuthenticatedRequest } from 'src/auth/types';
 import { ProfileService } from './profile.service';
 
@@ -9,7 +9,7 @@ export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
   @Get()
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   async getUserProfile(@Req() req: AuthenticatedRequest): Promise<unknown> {
     return await this.profileService.getUserProfile(req.user.id);
   }
