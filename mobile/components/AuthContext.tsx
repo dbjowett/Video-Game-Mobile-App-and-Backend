@@ -33,7 +33,7 @@ export function useSession() {
 
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const router = useRouter();
 
   useEffect(() => {

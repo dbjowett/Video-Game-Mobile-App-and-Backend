@@ -1,19 +1,27 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Tabs } from 'expo-router';
+import { Redirect, Tabs } from 'expo-router';
 import React from 'react';
 
+import { useSession } from '@/components/AuthContext';
 import { useColours } from '@/hooks/useColours';
 import { CalendarClock, Heart, Search, User } from 'lucide-react-native';
+import { Text } from 'react-native';
 
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
+interface IconProps {
   color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+  size: string;
 }
 
 export default function TabLayout() {
+  const { isLoading, session } = useSession();
   const colours = useColours();
+
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (!session) {
+    return <Redirect href="/login" />;
+  }
 
   return (
     <Tabs screenOptions={{ tabBarActiveTintColor: colours.tabIconSelected }}>
@@ -22,7 +30,7 @@ export default function TabLayout() {
         options={{
           title: 'Explore',
           tabBarLabel: 'Explore',
-          tabBarIcon: ({ color, size }) => <Search size={size} color={color} />,
+          tabBarIcon: ({ color, size }: IconProps) => <Search size={size} color={color} />,
         }}
       />
 
@@ -31,25 +39,26 @@ export default function TabLayout() {
         options={{
           title: 'Upcoming',
           tabBarLabel: 'Upcoming',
-          tabBarIcon: ({ color, size }) => <CalendarClock size={size} color={color} />,
+          tabBarIcon: ({ color, size }: IconProps) => <CalendarClock size={size} color={color} />,
         }}
       />
 
       <Tabs.Screen
         name="wishlist"
         options={{
+          // headerShown: false,
           title: 'Wishlist',
           tabBarLabel: 'Wishlist',
-          tabBarIcon: ({ color, size }) => <Heart size={size} color={color} />,
+          tabBarIcon: ({ color, size }: IconProps) => <Heart size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          // headerShown: false,
+          headerShown: false,
           title: 'Profile',
           tabBarLabel: 'Profile',
-          tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
+          tabBarIcon: ({ color, size }: IconProps) => <User size={size} color={color} />,
         }}
       />
     </Tabs>
