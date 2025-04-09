@@ -12,14 +12,14 @@ interface IconProps {
 }
 
 export default function TabLayout() {
-  const { isLoading, session } = useSession();
+  const { isLoading, isLoggedIn } = useSession();
   const colours = useColours();
 
   if (isLoading) {
     return <Text>Loading...</Text>;
   }
 
-  if (!session) {
+  if (!isLoggedIn) {
     return <Redirect href="/login" />;
   }
 
