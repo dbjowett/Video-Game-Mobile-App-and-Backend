@@ -28,9 +28,9 @@ export class UsersService {
     });
   }
 
-  async deleteRefreshTokenById(tokenId: string): Promise<void> {
+  async deleteRefreshTokenByUserId(userId: string): Promise<void> {
     await this.databaseService.refreshToken.deleteMany({
-      where: { id: tokenId },
+      where: { userId },
     });
   }
 

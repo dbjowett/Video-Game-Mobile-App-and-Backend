@@ -9,10 +9,11 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Request as ExpressRequest, Response } from 'express';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
-import { AuthDto, RefreshTokenDto } from './dto';
+import { AuthDto } from './dto';
 import { GoogleAuthGuard } from './guards/google-guard';
+import { JwtAuthGuard } from './guards/jwt-guard';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-guard';
 import { LocalAuthGuard } from './guards/local-guard';
 import { AuthenticatedRequest } from './types';
@@ -46,15 +47,9 @@ export class AuthController {
   }
 
   @Post('logout')
-  async logout(
-    @Body() body: RefreshTokenDto,
-    @Req() req: ExpressRequest,
-    @Res() res: Response,
-  ) {
-    return this.authService.logout(
-      req.cookies.refreshToken || body.refreshToken,
-      res,
-    );
+  @UseGuards(JwtAuthGuard)
+  async logout(@Req() req: AuthenticatedRequest, @Res() res: Response) {
+    return this.authService.logout(req.user.id, res);
   }
 
   // ** Google Auth  ** //

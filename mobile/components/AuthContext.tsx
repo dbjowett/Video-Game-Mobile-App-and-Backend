@@ -56,7 +56,6 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     access_token: string;
     refresh_token: string;
   }) => {
-    console.log('Signing in with tokens', access_token, refresh_token);
     if (!access_token || !refresh_token) {
       throw new Error('No access token received from login');
     }
@@ -67,7 +66,11 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    await api.post('auth/logout');
+    try {
+      await api.post('auth/logout');
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
     await SecureStore.deleteItemAsync('accessToken');
     await SecureStore.deleteItemAsync('refreshToken');
     setSession(null);

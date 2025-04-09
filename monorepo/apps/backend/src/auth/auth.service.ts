@@ -57,6 +57,8 @@ export class AuthService {
 
   async signIn(user: UserPayload, res: Response): Promise<Tokens> {
     const { access_token, refresh_token } = await this.getTokens(user);
+
+    await this.usersService.updateRefreshToken(user.id, refresh_token);
     this.setCookie(res, refresh_token);
 
     return { access_token, refresh_token };
@@ -67,6 +69,7 @@ export class AuthService {
       const hashedPassword = await this.hashData(password);
       const user = await this.usersService.create(email, hashedPassword);
       const { access_token, refresh_token } = await this.getTokens(user);
+      await this.usersService.updateRefreshToken(user.id, refresh_token);
 
       return { access_token, refresh_token };
     } catch (error) {
@@ -95,14 +98,9 @@ export class AuthService {
     return { access_token: new_access_token, refresh_token: new_refresh_token };
   }
 
-  async logout(refreshToken: string | undefined, res: Response): Promise<void> {
-    if (!refreshToken) {
-      res.status(400).json({ message: 'Refresh token not provided' });
-      return;
-    }
-
+  async logout(userId: string | undefined, res: Response): Promise<void> {
     try {
-      await this.usersService.deleteRefreshTokenById(refreshToken);
+      await this.usersService.deleteRefreshTokenByUserId(userId);
 
       res.clearCookie('refreshToken', {
         httpOnly: true,
