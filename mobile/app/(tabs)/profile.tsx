@@ -7,9 +7,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 const Page = () => {
   const { signOut } = useSession();
   const { data: user, isLoading } = useUser();
-  console.log(user);
   if (isLoading) return <Loader2 style={styles.loader} />;
-
   return (
     <View style={styles.container}>
       <View>
@@ -33,7 +31,6 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '360deg' }],
   },
   container: {
-    backgroundColor: 'white',
     flex: 1,
     alignContent: 'center',
     justifyContent: 'center',

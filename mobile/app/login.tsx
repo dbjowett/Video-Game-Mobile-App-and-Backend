@@ -5,16 +5,9 @@ import { useGoogleCallback } from '@/hooks/useGoogleCallback';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
+import { Gamepad2, LogIn } from 'lucide-react-native';
 import React, { useState } from 'react';
-import {
-  Button,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 const DEFAULT__VALUES = {
@@ -58,11 +51,14 @@ const Page = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Gamepad2 style={styles.icon} size={80} />
       <Text style={styles.header}>{isSignUp ? 'Sign Up' : 'Sign In'}</Text>
       {!showGoogleLogin ? (
         <>
           <TouchableOpacity style={styles.googleButton} onPress={() => setShowGoogleLogin(true)}>
-            <Text style={styles.buttonText}>Sign in with Google</Text>
+            <Text style={styles.buttonText}>
+              {isSignUp ? 'Sign up with Google' : 'Sign in with Google'}
+            </Text>
           </TouchableOpacity>
 
           <View style={styles.form}>
@@ -72,6 +68,7 @@ const Page = () => {
                 <>
                   <Text>Email:</Text>
                   <TextInput
+                    autoCapitalize="none"
                     style={styles.input}
                     placeholder="Email"
                     value={field.state.value}
@@ -90,6 +87,7 @@ const Page = () => {
                 <>
                   <Text>Password:</Text>
                   <TextInput
+                    autoCapitalize="none"
                     style={styles.input}
                     placeholder="Password"
                     value={field.state.value}
@@ -103,7 +101,10 @@ const Page = () => {
               )}
             </form.Field>
 
-            <Button title={isSignUp ? 'Sign Up' : 'Sign In'} onPress={form.handleSubmit} />
+            <TouchableOpacity style={styles.signUpBtn} onPress={form.handleSubmit}>
+              <Text style={styles.signUpBtnText}>{isSignUp ? 'Sign Up' : 'Sign In'}</Text>
+              <LogIn color="white" size={18} />
+            </TouchableOpacity>
 
             <TouchableOpacity onPress={() => setIsSignUp((prev) => !prev)}>
               <Text style={styles.toggleText}>
@@ -124,10 +125,14 @@ const Page = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
     flex: 1,
     justifyContent: 'center',
     padding: 20,
+    margin: 20,
+  },
+  icon: {
+    alignSelf: 'center',
+    marginBottom: 40,
   },
   header: {
     fontSize: 24,
@@ -165,6 +170,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#007BFF',
     marginTop: 20,
+  },
+  signUpBtn: {
+    flexDirection: 'row',
+    gap: 8,
+    backgroundColor: 'black',
+    height: 52,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  signUpBtnText: {
+    color: 'white',
+    fontSize: 18,
   },
 });
 
