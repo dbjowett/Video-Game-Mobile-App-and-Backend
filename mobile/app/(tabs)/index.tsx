@@ -4,6 +4,7 @@ import { useExploreGames } from '@/api';
 import { Game } from '@/api/types/game';
 import CategoryHeader from '@/components/CategoryHeader';
 import { Text, View } from '@/components/Themed';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { Link, Stack } from 'expo-router';
 import { Heart } from 'lucide-react-native';
 import React from 'react';
@@ -19,11 +20,8 @@ const getHumanDate = (time?: number): string | null => {
 };
 // getHumanDate(item?.first_release_date);
 
-export default function TabOneScreen() {
+export default function Page() {
   const { data: games, isError, isPending } = useExploreGames();
-
-  if (isPending) return <Text>Loading...</Text>;
-  if (isError) return <Text>Error...</Text>;
 
   const onCategoryChange = () => {
     console.log(onCategoryChange);
@@ -58,12 +56,18 @@ export default function TabOneScreen() {
     );
   };
 
+  const headerHeight = useHeaderHeight();
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: headerHeight + 100 }]}>
       <Stack.Screen
         options={{ header: () => <CategoryHeader onCategoryChange={onCategoryChange} /> }}
       />
-      <FlatList style={styles.listContainer} numColumns={2} data={games} renderItem={renderRow} />
+      {isError && <Text>Error...</Text>}
+      {isPending ? (
+        <Text>Loading...</Text>
+      ) : (
+        <FlatList style={styles.listContainer} numColumns={2} data={games} renderItem={renderRow} />
+      )}
     </View>
   );
 }
@@ -71,7 +75,7 @@ export default function TabOneScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 130,
+    // marginTop: 130,
     alignItems: 'center',
     justifyContent: 'center',
   },

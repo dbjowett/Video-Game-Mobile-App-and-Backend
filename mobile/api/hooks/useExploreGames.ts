@@ -8,7 +8,7 @@ export function useExploreGames() {
   return useQuery({
     queryKey: [...exploreGamesKey],
     queryFn: async () => {
-      return api.get(`popular`).json<Game[]>();
+      return api.get(`games/popular`).json<Game[]>();
     },
   });
 }
