@@ -24,7 +24,7 @@ export default function TabLayout() {
   }
 
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: colours.tabIconSelected }}>
+    <Tabs screenOptions={{ headerShown: false, tabBarActiveTintColor: colours.tabIconSelected }}>
       <Tabs.Screen
         name="index"
         options={{
@@ -55,9 +55,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          headerShown: false,
           title: 'Profile',
-          tabBarLabel: 'Profile',
           tabBarIcon: ({ color, size }: IconProps) => <User size={size} color={color} />,
         }}
       />

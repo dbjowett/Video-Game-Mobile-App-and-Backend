@@ -21,7 +21,6 @@ const getHumanDate = (time?: number): string | null => {
 
 export default function TabOneScreen() {
   const { data: games, isError, isPending } = useExploreGames();
-  console.log(games, isError);
 
   if (isPending) return <Text>Loading...</Text>;
   if (isError) return <Text>Error...</Text>;

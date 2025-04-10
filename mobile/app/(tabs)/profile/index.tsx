@@ -1,15 +1,20 @@
 import { useUser } from '@/api/hooks/useUser';
 import { useSession } from '@/components/AuthContext';
+import { useHeaderHeight } from '@react-navigation/elements';
+
+import { Text, View } from '@/components/Themed';
 import { Loader2, LogOut } from 'lucide-react-native';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 
 const Page = () => {
   const { signOut } = useSession();
   const { data: user, isLoading } = useUser();
+  const headerHeight = useHeaderHeight();
   if (isLoading) return <Loader2 style={styles.loader} />;
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: headerHeight }]}>
       <View>
         <Text>Signed in as:</Text>
         <Text style={styles.emailText}>{user?.email}</Text>
