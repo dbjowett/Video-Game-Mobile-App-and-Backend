@@ -1,4 +1,5 @@
 import { deleteTokensFromStore, storeTokens } from '@/components/AuthContext';
+import { router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import ky from 'ky';
 import { Tokens } from '../types/auth';
@@ -7,6 +8,7 @@ export const apiNoAuth = ky.create({
   prefixUrl: process.env.EXPO_PUBLIC_API_URL,
   credentials: 'include',
   retry: { limit: 0 },
+  throwHttpErrors: true,
 });
 
 export const api = apiNoAuth.extend({
@@ -25,13 +27,16 @@ export const api = apiNoAuth.extend({
       async (request, _, response) => {
         if (response.status === 401) {
           try {
-            const refreshToken = await SecureStore.getItemAsync('refreshToken');
-            const data = await apiNoAuth
-              .post('auth/refresh', { json: { refreshToken } })
-              .json<Tokens>();
+            const newTokens = await refreshToken();
 
-            if (data?.access_token && data?.refresh_token) {
-              const { access_token, refresh_token } = data;
+            if (!newTokens) {
+              await deleteTokensFromStore();
+              router.navigate('/login');
+              return;
+            }
+
+            if (newTokens?.access_token && newTokens?.refresh_token) {
+              const { access_token, refresh_token } = newTokens;
               await storeTokens({ access_token, refresh_token });
             } else {
               throw new Error('No access token received from refresh');
@@ -39,7 +44,7 @@ export const api = apiNoAuth.extend({
           } catch (err) {
             console.error('Token refresh failed:', err);
             await deleteTokensFromStore();
-            location.assign('/login');
+            router.navigate('/login');
             throw err;
           }
         }
@@ -47,3 +52,26 @@ export const api = apiNoAuth.extend({
     ],
   },
 });
+
+async function refreshToken() {
+  const refreshToken = await SecureStore.getItemAsync('refreshToken');
+
+  if (!refreshToken) {
+    await deleteTokensFromStore();
+    router.navigate('/login');
+    return null;
+  }
+
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${refreshToken}`,
+  };
+
+  const data = await apiNoAuth.post('auth/refresh', { headers }).json<Tokens>();
+
+  if (data?.access_token && data?.refresh_token) {
+    await storeTokens({ access_token: data.access_token, refresh_token: data.refresh_token });
+    return data;
+  }
+
+  throw new Error('No access token received from refresh');
+}

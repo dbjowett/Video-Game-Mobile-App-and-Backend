@@ -1,16 +1,16 @@
-import { Optional } from '@nestjs/common';
-import { IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty, Length } from 'class-validator';
 
 export class AuthDto {
-  @IsNotEmpty()
-  // @IsEmail()
+  @IsNotEmpty({ message: 'Email is required' })
+  @IsEmail({}, { message: 'Please provide a valid email address' })
   email: string;
 
   @IsNotEmpty()
-  // @IsStrongPassword()
+  // @IsStrongPassword() // TODO: Comment this in for prod
   password: string;
 
-  @Optional()
+  @IsNotEmpty({ message: 'Username is required' })
+  @Length(3, 20, { message: 'Username must be between 3 and 20 characters' })
   username: string;
 }
 

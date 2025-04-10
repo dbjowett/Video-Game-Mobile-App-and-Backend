@@ -60,8 +60,12 @@ export default function Page() {
   return (
     <View style={[styles.container, { paddingTop: headerHeight + 100 }]}>
       <Stack.Screen
-        options={{ header: () => <CategoryHeader onCategoryChange={onCategoryChange} /> }}
+        options={{
+          headerShown: true,
+          header: () => <CategoryHeader onCategoryChange={onCategoryChange} />,
+        }}
       />
+
       {isError && <Text>Error...</Text>}
       {isPending ? (
         <Text>Loading...</Text>

@@ -64,10 +64,18 @@ export class AuthService {
     return { access_token, refresh_token };
   }
 
-  async signUp(email: string, password: string): Promise<Tokens> {
+  async signUp(
+    email: string,
+    password: string,
+    username: string,
+  ): Promise<Tokens> {
     try {
       const hashedPassword = await this.hashData(password);
-      const user = await this.usersService.create(email, hashedPassword);
+      const user = await this.usersService.create(
+        email,
+        hashedPassword,
+        username,
+      );
       const { access_token, refresh_token } = await this.getTokens(user);
       await this.usersService.updateRefreshToken(user.id, refresh_token);
 
@@ -116,13 +124,17 @@ export class AuthService {
   // ** Google Auth  ** //
   async validateGoogleUser(
     googleId: string,
-    name: string,
+    username: string,
     email: string,
   ): Promise<Omit<User, 'password'>> {
     let user = await this.usersService.findByGoogleId(googleId);
 
     if (!user) {
-      user = await this.usersService.createGoogleUser(googleId, name, email);
+      user = await this.usersService.createGoogleUser(
+        googleId,
+        username,
+        email,
+      );
     }
 
     const { password, ...result } = user;

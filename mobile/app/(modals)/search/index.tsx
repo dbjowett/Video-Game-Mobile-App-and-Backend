@@ -1,4 +1,5 @@
-import { Text, TextInput, View } from 'react-native';
+import { Text, View } from '@/components/Themed';
+import { TextInput } from 'react-native';
 
 const Page = () => {
   return (

@@ -10,7 +10,7 @@ datasource db {
 model User {
   id             String          @id @default(cuid())
   email          String          @unique
-  name           String?
+  username       String
   googleId       String?         @unique
   password       String?
   createdAt      DateTime        @default(now())
@@ -30,7 +30,7 @@ model FavouriteGame {
 model RefreshToken {
   id        String   @id @default(cuid())
   userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   token     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -34,9 +34,13 @@ export class UsersService {
     });
   }
 
-  async create(email: string, password: string): Promise<User> {
+  async create(
+    email: string,
+    password: string,
+    username: string,
+  ): Promise<User> {
     return this.databaseService.user.create({
-      data: { email, password },
+      data: { email, password, username },
     });
   }
 
@@ -48,13 +52,13 @@ export class UsersService {
 
   async createGoogleUser(
     googleId: string,
-    name: string,
+    username: string,
     email: string,
   ): Promise<User> {
     return this.databaseService.user.create({
       data: {
         googleId,
-        name,
+        username,
         email,
       },
     });

@@ -7,7 +7,15 @@ import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { Gamepad2, LogIn } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { WebView } from 'react-native-webview';
 
 const DEFAULT__VALUES = {
@@ -24,16 +32,28 @@ const Page = () => {
 
   const signUpMutation = useMutation<Tokens, Error, Values>({
     mutationFn: async (data) => {
-      return await apiNoAuth.post('/api/signup', { json: data }).json<Tokens>();
+      return await apiNoAuth.post('api/signup', { json: data }).json<Tokens>();
     },
     onSuccess: async ({ access_token, refresh_token }) => signIn({ access_token, refresh_token }),
+    onError: (error) => {
+      Alert.alert('Something went wrong. Please try again later.');
+    },
   });
 
   const signInMutation = useMutation<Tokens, Error, Values>({
     mutationFn: async (data: Values): Promise<Tokens> => {
-      return await apiNoAuth.post('/auth/signin', { json: data }).json<Tokens>();
+      try {
+        return await apiNoAuth.post('auth/signin', { json: data }).json<Tokens>();
+      } catch (error) {
+        throw new Error('Error logging in');
+      }
     },
-    onSuccess: async ({ access_token, refresh_token }) => signIn({ access_token, refresh_token }),
+    onSuccess: async ({ access_token, refresh_token }) => {
+      signIn({ access_token, refresh_token });
+    },
+    onError: (error) => {
+      Alert.alert('Please check your credentials or make an account');
+    },
   });
 
   useGoogleCallback(({ access_token, refresh_token }) => {
