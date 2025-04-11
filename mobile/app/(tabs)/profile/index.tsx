@@ -1,17 +1,17 @@
 import { useUpdateUser } from '@/api/hooks/useUpdateUser';
 import { useUser } from '@/api/hooks/useUser';
 import { useSession } from '@/components/AuthContext';
-import { Text, View } from '@/components/Themed';
+import { Text, View as ThemedView } from '@/components/Themed';
 import { useHeaderHeight } from '@react-navigation/elements';
-import { Loader2, LogOut, Save } from 'lucide-react-native';
+import { CircleUserRound, CircleX, Loader2, LogOut, Pencil, Save } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { Image, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 const Page = () => {
   const headerHeight = useHeaderHeight();
   const { signOut } = useSession();
   const { data: user, isLoading } = useUser();
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditingName, setIsEditingName] = useState<boolean>(false);
   const [newUsername, setNewUsername] = useState(user?.username || '');
 
   const { mutate } = useUpdateUser();
@@ -19,14 +19,16 @@ const Page = () => {
   if (isLoading) return <Loader2 style={styles.loader} />;
 
   const handleSave = async () => {
-    mutate({ username: newUsername });
-    setIsEditing(false);
+    if (newUsername.trim() !== user?.username) {
+      mutate({ username: newUsername });
+    }
+    setIsEditingName(false);
   };
 
   // Handle canceling the edit
   const handleCancel = () => {
     setNewUsername(user?.username || ''); // Reset to the original username
-    setIsEditing(false);
+    setIsEditingName(false);
   };
 
   return (
@@ -34,34 +36,60 @@ const Page = () => {
       <View style={styles.profileContainer}>
         {/* Profile Picture */}
         <View style={styles.imageContainer}>
-          <Image
-            source={{ uri: user?.profileImage }} // Use the user's profile image or a default one
-            style={styles.profileImage}
-          />
+          {user?.profileImage ? (
+            <Image
+              source={{ uri: user?.profileImage }} // Use the user's profile image or a default one
+              style={styles.profileImage}
+            />
+          ) : (
+            <View style={styles.profileImage}>
+              <CircleUserRound color="white" size={40} />
+            </View>
+          )}
+          {/* <TouchableOpacity style={styles.editImgIconContainer} onPress={handleEditImg}>
+            <Pencil color="white" size={18} />
+          </TouchableOpacity> */}
         </View>
 
-        {isEditing ? (
-          <View style={styles.editContainer}>
-            <TextInput
-              style={styles.usernameInput}
-              value={newUsername}
-              onChangeText={setNewUsername}
-            />
-            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-              <Save color="black" />
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View style={styles.usernameContainer}>
-            <Text style={styles.usernameText}>{user?.username}</Text>
-            <TouchableOpacity onPress={() => setIsEditing(true)}>
-              <Text style={styles.editText}>Edit</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+        <ThemedView style={styles.itemWrap}>
+          <Text style={styles.subtext}>Username</Text>
 
+          {isEditingName ? (
+            <View>
+              <TextInput
+                style={styles.mainText}
+                value={newUsername}
+                onChangeText={setNewUsername}
+              />
+            </View>
+          ) : (
+            <View>
+              <Text style={styles.mainText}>{user?.username}</Text>
+            </View>
+          )}
+
+          <View style={styles.editUserIconWrap}>
+            {!isEditingName ? (
+              <TouchableOpacity style={styles.editUserIcon} onPress={() => setIsEditingName(true)}>
+                <Pencil color="white" size={18} />
+              </TouchableOpacity>
+            ) : (
+              <>
+                <TouchableOpacity style={styles.editUserIcon} onPress={handleCancel}>
+                  <CircleX color="white" size={18} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.editUserIcon} onPress={handleSave}>
+                  <Save color="white" size={18} />
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        </ThemedView>
         {/* Email */}
-        <Text style={styles.emailText}>{user?.email}</Text>
+        <ThemedView style={styles.itemWrap}>
+          <Text style={styles.subtext}>Email</Text>
+          <Text style={styles.mainText}>{user?.email}</Text>
+        </ThemedView>
 
         {/* Logout */}
         <TouchableOpacity style={styles.googleButton} onPress={signOut}>
@@ -87,40 +115,63 @@ const styles = StyleSheet.create({
   },
   profileContainer: {
     alignItems: 'center',
-    gap: 10,
+    gap: 20,
   },
   imageContainer: {
+    position: 'relative',
     borderRadius: 50,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-    elevation: 2,
+    borderColor: 'white',
+    borderWidth: 3,
+  },
+  itemWrap: {
+    padding: 14,
+    borderRadius: 8,
+    width: '80%',
+    gap: 4,
+    position: 'relative',
+  },
+  subtext: {
+    fontSize: 12,
+    color: '#6B7181',
+  },
+
+  editImgIconContainer: {
+    position: 'absolute',
+    right: 0,
+    top: 4,
+    opacity: 0.5,
+    backgroundColor: 'black',
+    borderRadius: 50,
+    padding: 4,
   },
   profileImage: {
+    justifyContent: 'center',
+    alignItems: 'center',
     width: 100,
     height: 100,
     borderRadius: 50,
+    backgroundColor: '#BCC0C4',
   },
 
-  usernameContainer: {
+  editUserIconWrap: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
+    gap: 4,
+    position: 'absolute',
+    top: -10,
+    right: -10,
   },
-  usernameText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+  editUserIcon: {
+    opacity: 0.3,
+    backgroundColor: 'black',
+    borderRadius: 50,
+    padding: 4,
   },
-  editText: {
-    color: '#4285F4',
-    fontSize: 12,
+
+  mainText: {
+    fontSize: 18,
+    fontWeight: 500,
   },
+
   editContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -130,29 +181,17 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
-  saveButton: {
-    borderRadius: 8,
-  },
-  cancelButton: {
-    backgroundColor: '#f44336',
-    padding: 10,
-    borderRadius: 8,
-  },
 
-  emailText: {
-    fontSize: 16,
-    color: '#666',
-  },
   googleButton: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
     backgroundColor: '#4285F4',
-    padding: 12,
+
+    height: 52,
     gap: 10,
     borderRadius: 8,
-    minWidth: 160,
-    marginTop: 40,
+    width: '80%',
   },
   buttonText: {
     color: '#fff',
