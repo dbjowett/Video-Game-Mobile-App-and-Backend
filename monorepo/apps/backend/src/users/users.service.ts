@@ -50,16 +50,23 @@ export class UsersService {
     });
   }
 
-  async createGoogleUser(
-    googleId: string,
-    username: string,
-    email: string,
-  ): Promise<User> {
+  async createGoogleUser({
+    googleId,
+    username,
+    email,
+    profileImage,
+  }: {
+    googleId: string;
+    username: string;
+    email: string;
+    profileImage?: string;
+  }): Promise<User> {
     return this.databaseService.user.create({
       data: {
         googleId,
         username,
         email,
+        profileImage,
       },
     });
   }

@@ -122,19 +122,26 @@ export class AuthService {
     }
   }
   // ** Google Auth  ** //
-  async validateGoogleUser(
-    googleId: string,
-    username: string,
-    email: string,
-  ): Promise<Omit<User, 'password'>> {
+  async validateGoogleUser({
+    googleId,
+    username,
+    email,
+    profileImage,
+  }: {
+    googleId: string;
+    username: string;
+    email: string;
+    profileImage?: string;
+  }): Promise<Omit<User, 'password'>> {
     let user = await this.usersService.findByGoogleId(googleId);
 
     if (!user) {
-      user = await this.usersService.createGoogleUser(
+      user = await this.usersService.createGoogleUser({
         googleId,
         username,
         email,
-      );
+        profileImage,
+      });
     }
 
     const { password, ...result } = user;

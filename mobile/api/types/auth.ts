@@ -1,18 +1,19 @@
 export interface Values {
-  email: string;
   password: string;
+  email: string;
 }
 
 export interface Tokens {
-  access_token: string;
   refresh_token: string;
+  access_token: string;
 }
 
 export interface User {
+  profileImage: string;
   createdAt: string;
   updatedAt: string;
+  username: string;
   googleId: string;
   email: string;
-  name: string;
   id: string;
 }

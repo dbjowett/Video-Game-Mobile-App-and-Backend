@@ -20,13 +20,17 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     profile: any,
     done: VerifyCallback,
   ): Promise<any> {
-    const { id, displayName, emails } = profile;
+    const { id: googleId, displayName: username, emails, photos } = profile;
 
-    const user = await this.authService.validateGoogleUser(
-      id,
-      displayName,
-      emails[0].value,
-    );
+    const profileImage = photos?.[0]?.value; // undefined if not available
+    const email = emails[0].value;
+
+    const user = await this.authService.validateGoogleUser({
+      googleId,
+      username,
+      email,
+      profileImage,
+    });
 
     if (!user) return done(new UnauthorizedException(), null);
     return done(null, user);

@@ -12,6 +12,7 @@ model User {
   email          String          @unique
   username       String
   googleId       String?         @unique
+  profileImage   String?
   password       String?
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
