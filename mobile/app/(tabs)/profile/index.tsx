@@ -32,7 +32,7 @@ const Page = () => {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: headerHeight }]}>
+    <ThemedView style={[styles.container, { paddingTop: headerHeight }]}>
       <View style={styles.profileContainer}>
         {/* Profile Picture */}
         <View style={styles.imageContainer}>
@@ -57,6 +57,7 @@ const Page = () => {
           {isEditingName ? (
             <View>
               <TextInput
+                autoFocus
                 style={styles.mainText}
                 value={newUsername}
                 onChangeText={setNewUsername}
@@ -97,7 +98,7 @@ const Page = () => {
           <LogOut color="white" size={18} />
         </TouchableOpacity>
       </View>
-    </View>
+    </ThemedView>
   );
 };
 
@@ -120,8 +121,11 @@ const styles = StyleSheet.create({
   imageContainer: {
     position: 'relative',
     borderRadius: 50,
-    borderColor: 'white',
-    borderWidth: 3,
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   itemWrap: {
     padding: 14,
@@ -129,6 +133,11 @@ const styles = StyleSheet.create({
     width: '80%',
     gap: 4,
     position: 'relative',
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   subtext: {
     fontSize: 12,
@@ -139,8 +148,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     top: 4,
-    opacity: 0.5,
-    backgroundColor: 'black',
+    opacity: 0.2,
+    // backgroundColor: 'black',
     borderRadius: 50,
     padding: 4,
   },
@@ -161,7 +170,7 @@ const styles = StyleSheet.create({
     right: -10,
   },
   editUserIcon: {
-    opacity: 0.3,
+    opacity: 0.2,
     backgroundColor: 'black',
     borderRadius: 50,
     padding: 4,
@@ -187,11 +196,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     backgroundColor: '#4285F4',
-
     height: 52,
     gap: 10,
     borderRadius: 8,
     width: '80%',
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   buttonText: {
     color: '#fff',

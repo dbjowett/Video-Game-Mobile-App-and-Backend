@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { Public } from 'src/utils';
-import { ExploreQueryDto } from './games.dto';
+import { SearchGamesDto } from './games.dto';
 import { GameService } from './games.service';
 
 @Controller('games')
@@ -19,7 +19,7 @@ export class GamesController {
   // }
 
   @Get()
-  async getGames(@Query() queryParams: ExploreQueryDto): Promise<unknown> {
-    return await this.gameService.getGamesQuery(queryParams);
+  async searchGames(@Query() queryParams: SearchGamesDto): Promise<unknown> {
+    return await this.gameService.searchGames(queryParams);
   }
 }
