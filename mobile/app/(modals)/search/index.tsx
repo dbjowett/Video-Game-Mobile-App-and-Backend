@@ -33,6 +33,7 @@ const Page = () => {
   return (
     <View style={[styles.container, { paddingTop: headerHeight }]}>
       <TextInput
+        autoFocus
         style={styles.input}
         placeholder="Search.."
         onChangeText={onChangeInput}

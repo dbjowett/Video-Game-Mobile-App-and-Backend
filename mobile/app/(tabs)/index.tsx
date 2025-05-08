@@ -70,7 +70,23 @@ export default function Page() {
       {isPending ? (
         <Text>Loading...</Text>
       ) : (
-        <FlatList style={styles.listContainer} numColumns={2} data={games} renderItem={renderRow} />
+        <View>
+          <Text
+            style={{
+              fontSize: 24,
+              fontWeight: '600',
+              paddingHorizontal: 16,
+            }}
+          >
+            Popular
+          </Text>
+          <FlatList
+            style={styles.listContainer}
+            numColumns={2}
+            data={games}
+            renderItem={renderRow}
+          />
+        </View>
       )}
     </View>
   );
