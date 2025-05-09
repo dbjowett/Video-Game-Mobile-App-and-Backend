@@ -21,7 +21,7 @@ interface Game {
 
 const fetchGames = async (query: string) => {
   try {
-    const data = await api.get(`games/?q=${query}`).json<DetailGame[]>();
+    const data = await api.get(`games/search/?q=${query}`).json<DetailGame[]>();
     return data.map((game: DetailGame) => ({
       image: game.cover?.url ? `https:${game.cover.url}` : '',
       value: game.name,

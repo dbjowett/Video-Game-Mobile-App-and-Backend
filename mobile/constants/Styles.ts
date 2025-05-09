@@ -1,4 +1,3 @@
-import Colors from '@/constants/Colours';
 import { StyleSheet } from 'react-native';
 
 export const defaultStyles = StyleSheet.create({
@@ -15,7 +14,7 @@ export const defaultStyles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   btn: {
-    backgroundColor: Colors.primary,
+    backgroundColor: '#FF6B00',
     height: 50,
     borderRadius: 8,
     justifyContent: 'center',
@@ -39,7 +38,7 @@ export const defaultStyles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderTopColor: Colors.grey,
+    borderTopColor: '#ABABAB',
     borderTopWidth: StyleSheet.hairlineWidth,
   },
 });
