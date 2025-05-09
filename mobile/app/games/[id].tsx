@@ -1,8 +1,9 @@
 import { useGameDetails } from '@/api/hooks/useGameDetails';
 import { defaultStyles } from '@/constants/Styles';
+import { useColours } from '@/hooks/useColours';
 import { imageLoader } from '@/utils';
-import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
+import { ChevronLeft, Heart, Share as ShareIcon } from 'lucide-react-native';
 import React, { useLayoutEffect } from 'react';
 import { Dimensions, Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, {
@@ -19,6 +20,7 @@ const { width } = Dimensions.get('window');
 
 const Page = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const colours = useColours();
 
   const { data: game, isLoading } = useGameDetails(id);
 
@@ -34,6 +36,17 @@ const Page = () => {
       });
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  const handleFavourite = async () => {
+    // TODO: Implement add/remove to favourites
+    // Need fave list from user
+    const isFave = false;
+    if (isFave) {
+      // await removeFromFavourites(game.id);
+    } else {
+      // await addToFavourites(game.id);
     }
   };
 
@@ -58,20 +71,22 @@ const Page = () => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
+      headerTitle: '',
+      headerTransparent: true,
       headerBackground: () => <Animated.View style={[styles.header, headerAnimatedStyle]} />,
       headerRight: () => (
         <View style={styles.bar}>
           <TouchableOpacity style={styles.roundButton} onPress={shareListing}>
-            <Ionicons size={22} name="share-outline" />
+            <ShareIcon size={22} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.roundButton} onPress={shareListing}>
-            <Ionicons size={22} name="heart-outline" />
+          <TouchableOpacity style={styles.roundButton} onPress={handleFavourite}>
+            <Heart size={22} />
           </TouchableOpacity>
         </View>
       ),
       headerLeft: () => (
         <TouchableOpacity style={styles.roundButton} onPress={() => router.back()}>
-          <Ionicons size={22} name="chevron-back" />
+          <ChevronLeft size={22} />
         </TouchableOpacity>
       ),
     });
@@ -92,7 +107,7 @@ const Page = () => {
   });
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <Animated.ScrollView
         contentContainerStyle={styles.contentWrap}
         ref={scrollRef}
@@ -110,11 +125,23 @@ const Page = () => {
           }}
         >
           <TouchableOpacity style={styles.footerText}>
-            <Text style={styles.footerPrice}>Rating: {game.total_rating.toFixed(0)}</Text>
-            <Text>%</Text>
+            {/* <Text style={styles.footerPrice}>Rating: {game.total_rating.toFixed(0)}</Text>
+            <Text>%</Text> */}
           </TouchableOpacity>
 
-          <TouchableOpacity style={[defaultStyles.btn, { paddingRight: 20, paddingLeft: 20 }]}>
+          <TouchableOpacity
+            style={[
+              defaultStyles.btn,
+              {
+                paddingRight: 20,
+                paddingLeft: 20,
+                flexDirection: 'row',
+                gap: 10,
+                backgroundColor: colours.primary,
+              },
+            ]}
+          >
+            <Heart size={22} color="white" />
             <Text style={defaultStyles.btnText}>Add to wishlist</Text>
           </TouchableOpacity>
         </View>
@@ -127,8 +154,9 @@ export default Page;
 
 const styles = StyleSheet.create({
   contentWrap: {
-    backgroundColor: '#fff',
+    backgroundColor: 'white',
     paddingBottom: 200,
+    flexGrow: 1,
   },
   title: {
     padding: 20,
@@ -147,6 +175,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 50,
     backgroundColor: 'white',
+    opacity: 0.7,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: Colors.grey,
     alignItems: 'center',
