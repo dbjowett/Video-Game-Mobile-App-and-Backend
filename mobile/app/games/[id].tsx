@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   image: {
     width: width,
     height: IMG_HEIGHT,
-    borderRadius: 10,
+    // borderRadius: 10,
   },
 
   roundButton: {

@@ -1,8 +1,9 @@
 import { useGameSearch } from '@/api/hooks/useGameSearch';
 import { View } from '@/components/Themed';
 import { useHeaderHeight } from '@react-navigation/elements';
+import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, TextInput } from 'react-native';
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 
 const useDebouncedValue = (value: string, delay = 500) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -43,21 +44,20 @@ const Page = () => {
 
       {/* TODO: MAKE INTO LIST */}
       {data?.map((item) => (
-        <View
-          key={item.id}
-          style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: '#ccc' }}
-        >
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-            <Image
-              source={{ uri: item.image }}
-              style={{ width: 50, height: 50, borderRadius: 25 }}
-            />
-            <View style={{ flex: 1, gap: 5 }}>
-              <Text style={styles.gameTitle}>{item.value}</Text>
-              <Text style={styles.gamedescription}>{item.description}</Text>
+        <TouchableOpacity onPress={() => router.push(`/games/${item.id}`)} key={item.id}>
+          <View style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <Image
+                source={{ uri: item.image }}
+                style={{ width: 50, height: 50, borderRadius: 25 }}
+              />
+              <View style={{ flex: 1, gap: 5 }}>
+                <Text style={styles.gameTitle}>{item.value}</Text>
+                <Text style={styles.gamedescription}>{item.description}</Text>
+              </View>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
       ))}
     </View>
   );
