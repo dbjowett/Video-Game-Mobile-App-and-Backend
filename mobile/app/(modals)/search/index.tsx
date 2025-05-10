@@ -5,8 +5,8 @@ import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 
-const useDebouncedValue = (value: string, delay = 500) => {
-  const [debouncedValue, setDebouncedValue] = useState(value);
+const useDebouncedValue = <T,>(value: T, delay = 500) => {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -29,8 +29,6 @@ const Page = () => {
 
   const { data, isLoading, isFetching } = useGameSearch(debouncedInput);
 
-  console.log('data', data);
-
   return (
     <View style={[styles.container, { paddingTop: headerHeight }]}>
       <TextInput
@@ -44,7 +42,13 @@ const Page = () => {
 
       {/* TODO: MAKE INTO LIST */}
       {data?.map((item) => (
-        <TouchableOpacity onPress={() => router.push(`/games/${item.id}`)} key={item.id}>
+        <TouchableOpacity
+          onPress={() => {
+            router.dismissAll();
+            router.push(`/games/${item.id}`);
+          }}
+          key={item.id}
+        >
           <View style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
               <Image

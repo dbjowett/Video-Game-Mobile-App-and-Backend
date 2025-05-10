@@ -1,7 +1,7 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Slot } from 'expo-router';
+import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useEffect } from 'react';
 import 'react-native-reanimated';
@@ -32,9 +32,25 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <SessionProvider>
         <ThemeProvider value={colourScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Slot />
+          <StackScreens />
         </ThemeProvider>
       </SessionProvider>
     </QueryClientProvider>
   );
 }
+
+const StackScreens = () => {
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: '#FDFFFF' },
+      }}
+    >
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="games/[id]" />
+
+      <Stack.Screen name="(modals)/search" options={{ presentation: 'modal' }} />
+    </Stack>
+  );
+};

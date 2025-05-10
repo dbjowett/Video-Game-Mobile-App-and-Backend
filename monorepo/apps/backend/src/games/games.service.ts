@@ -44,7 +44,7 @@ export class GameService {
   }
 
   async getGameDetails(id: number) {
-    const igdbQuery = `fields name, cover.url, total_rating; where id = ${id};`;
+    const igdbQuery = `fields name, summary, cover.url, total_rating; where id = ${id};`;
     return this.igdbService.request<GameDetails[]>('games', igdbQuery);
   }
 
