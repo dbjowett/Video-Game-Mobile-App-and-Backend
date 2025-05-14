@@ -45,8 +45,6 @@ export default function Page() {
               </View>
               <View style={styles.lowerContainer}>
                 <Text style={styles.rating}>{Math.trunc(item?.total_rating)}%</Text>
-
-                <Text style={styles.rating}>{Math.trunc(item?.total_rating)}%</Text>
               </View>
             </View>
             <Text style={styles.releaseDate}>{getHumanDate(item?.first_release_date)}</Text>
@@ -58,7 +56,7 @@ export default function Page() {
 
   const headerHeight = useHeaderHeight();
   return (
-    <View style={[styles.container, { paddingTop: headerHeight + 100 }]}>
+    <View style={[styles.container, { paddingTop: 80 }]}>
       <Stack.Screen
         options={{
           headerShown: true,
@@ -73,12 +71,13 @@ export default function Page() {
         <View>
           <Text
             style={{
-              fontSize: 24,
+              fontSize: 18,
               fontWeight: '600',
               paddingHorizontal: 16,
+              paddingBottom: 8,
             }}
           >
-            Popular
+            🔥 Popular Today
           </Text>
           <FlatList
             style={styles.listContainer}
@@ -94,8 +93,6 @@ export default function Page() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    // marginTop: 130,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -136,9 +133,13 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
   },
   rating: {
+    backgroundColor: '#f0f0f0',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginTop: 2,
     fontWeight: '600',
   },
   releaseDate: {

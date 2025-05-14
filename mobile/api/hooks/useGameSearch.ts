@@ -6,6 +6,7 @@ interface DetailGame {
     url: string;
   };
   name: string;
+  summary: string;
   id: string;
   total_rating: number;
   description: string;

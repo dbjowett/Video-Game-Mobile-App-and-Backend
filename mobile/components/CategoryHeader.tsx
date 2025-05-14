@@ -9,7 +9,6 @@ import {
   Gamepad,
   Gamepad2,
   Hammer,
-  ListFilter,
   Swords,
   Volleyball,
 } from 'lucide-react-native';
@@ -89,11 +88,12 @@ const CategoryHeader = ({ onCategoryChange }: Props) => {
               </View>
             </TouchableOpacity>
           </Link>
-          <TouchableOpacity>
+          {/* <TouchableOpacity>
             <ListFilter color={ICON_COLOUR} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
-        <ScrollView
+        {/* ** CATEGORIES **   */}
+        {/* <ScrollView
           ref={scrollRef}
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -119,7 +119,7 @@ const CategoryHeader = ({ onCategoryChange }: Props) => {
               </Text>
             </TouchableOpacity>
           ))}
-        </ScrollView>
+        </ScrollView> */}
       </View>
     </SafeAreaView>
   );
@@ -127,15 +127,13 @@ const CategoryHeader = ({ onCategoryChange }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
-    height: 130,
+    height: 68,
   },
   actionRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
-    paddingBottom: 16,
     gap: 10,
   },
 

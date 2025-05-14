@@ -3,7 +3,7 @@ import { View } from '@/components/Themed';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import { FlatList, Image, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 
 const useDebouncedValue = <T,>(value: T, delay = 500) => {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
@@ -27,7 +27,7 @@ const Page = () => {
 
   const debouncedInput = useDebouncedValue(input, 300);
 
-  const { data, isLoading, isFetching } = useGameSearch(debouncedInput);
+  const { data: searchedGames, isLoading, isFetching } = useGameSearch(debouncedInput);
 
   return (
     <View style={[styles.container, { paddingTop: headerHeight }]}>
@@ -40,29 +40,31 @@ const Page = () => {
       />
       {isLoading && <Text>Loading...</Text>}
 
-      {/* TODO: MAKE INTO LIST */}
-      {data?.map((item) => (
-        <TouchableOpacity
-          onPress={() => {
-            router.dismissAll();
-            router.push(`/games/${item.id}`);
-          }}
-          key={item.id}
-        >
-          <View style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-              <Image
-                source={{ uri: item.image }}
-                style={{ width: 50, height: 50, borderRadius: 25 }}
-              />
-              <View style={{ flex: 1, gap: 5 }}>
-                <Text style={styles.gameTitle}>{item.value}</Text>
-                <Text style={styles.gamedescription}>{item.description}</Text>
+      <FlatList
+        data={searchedGames}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            onPress={() => {
+              router.dismissAll();
+              router.push(`/games/${item.id}`);
+            }}
+          >
+            <View style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Image
+                  source={{ uri: item.image }}
+                  style={{ width: 50, height: 50, borderRadius: 25 }}
+                />
+                <View style={{ flex: 1, gap: 5 }}>
+                  <Text style={styles.gameTitle}>{item.value}</Text>
+                  <Text style={styles.gamedescription}>{item.description}</Text>
+                </View>
               </View>
             </View>
-          </View>
-        </TouchableOpacity>
-      ))}
+          </TouchableOpacity>
+        )}
+      />
     </View>
   );
 };
@@ -82,7 +84,7 @@ const styles = StyleSheet.create({
   },
   input: {
     maxHeight: 50,
-    margin: 12,
+    marginHorizontal: 16,
     fontSize: 18,
     borderColor: '#c2c2c2',
     borderWidth: StyleSheet.hairlineWidth,

@@ -8,6 +8,7 @@ interface DetailedGame {
     id: string;
     url: string;
   };
+  summary: string;
   total_rating: number;
 }
 

@@ -1,4 +1,5 @@
 import { useGameDetails } from '@/api/hooks/useGameDetails';
+import { MoreText } from '@/components/MoreText';
 import { defaultStyles } from '@/constants/Styles';
 import { useColours } from '@/hooks/useColours';
 import { imageLoader } from '@/utils';
@@ -115,6 +116,9 @@ const Page = () => {
       >
         <Animated.Image source={{ uri }} style={[styles.image, imageAnimatedStyle]} />
         <Text style={styles.title}>{game.name} </Text>
+        <View style={styles.summary}>
+          <MoreText text={game.summary} />
+        </View>
       </Animated.ScrollView>
       <Animated.View style={defaultStyles.footer} entering={SlideInDown.delay(200)}>
         <View
@@ -164,10 +168,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
+  summary: {
+    paddingHorizontal: 20,
+    fontSize: 16,
+    lineHeight: 24,
+    color: Colors.grey,
+  },
+
   image: {
     width: width,
     height: IMG_HEIGHT,
-    // borderRadius: 10,
+    zIndex: 1,
   },
 
   roundButton: {
