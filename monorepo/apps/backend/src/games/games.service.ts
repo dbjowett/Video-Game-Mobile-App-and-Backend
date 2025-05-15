@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { GameDetails, PopularGame } from '@shared/types';
+import { DatabaseService } from 'src/database/database.service';
 import { IgdbService } from 'src/igdb/igdb.service';
 import { SearchGamesDto } from './games.dto';
 
@@ -7,7 +8,10 @@ import { SearchGamesDto } from './games.dto';
 export class GameService {
   private cache: Map<string, any> = new Map();
 
-  constructor(private readonly igdbService: IgdbService) {}
+  constructor(
+    private readonly igdbService: IgdbService,
+    private readonly databaseService: DatabaseService,
+  ) {}
 
   async getPopularGames(): Promise<PopularGame[]> {
     const query = `fields game_id, value, popularity_type; sort value desc; limit 10; where popularity_type = 5;`;
@@ -51,5 +55,31 @@ export class GameService {
   async searchGames(queryParams: SearchGamesDto) {
     const igdbQuery = `fields name, cover.url, total_rating; search "${queryParams.q}";`;
     return this.igdbService.request<GameDetails[]>('games', igdbQuery);
+  }
+
+  async addToFavourites(userId: string, gameId: string): Promise<unknown> {
+    return this.databaseService.favouriteGame.create({
+      data: {
+        userId,
+        gameId,
+      },
+    });
+  }
+
+  async removeFromFavourites(userId: string, gameId: string): Promise<unknown> {
+    return this.databaseService.favouriteGame.deleteMany({
+      where: {
+        userId,
+        gameId,
+      },
+    });
+  }
+
+  async getFavourites(userId: string): Promise<unknown> {
+    return this.databaseService.favouriteGame.findMany({
+      where: {
+        userId,
+      },
+    });
   }
 }
