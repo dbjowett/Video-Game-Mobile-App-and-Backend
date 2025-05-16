@@ -3,7 +3,15 @@ import { View } from '@/components/Themed';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { FlatList, Image, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 
 const useDebouncedValue = <T,>(value: T, delay = 500) => {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
@@ -38,7 +46,11 @@ const Page = () => {
         onChangeText={onChangeInput}
         value={input}
       />
-      {isLoading && <Text>Loading...</Text>}
+      {isLoading && (
+        <View style={styles.loadingWrapper}>
+          <ActivityIndicator />
+        </View>
+      )}
 
       <FlatList
         data={searchedGames}
@@ -72,6 +84,12 @@ const Page = () => {
 export default Page;
 
 const styles = StyleSheet.create({
+  loadingWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
   container: {
     flex: 1,
   },

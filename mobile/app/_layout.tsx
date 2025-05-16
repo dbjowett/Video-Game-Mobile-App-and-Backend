@@ -44,13 +44,18 @@ const StackScreens = () => {
     <Stack
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: '#FDFFFF' },
+        // contentStyle: { backgroundColor: '#FDFFFF' },
       }}
     >
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="games/[id]" />
 
-      <Stack.Screen name="(modals)/search" options={{ presentation: 'modal' }} />
+      <Stack.Screen
+        name="(modals)/search"
+        options={{
+          presentation: 'transparentModal',
+        }}
+      />
     </Stack>
   );
 };

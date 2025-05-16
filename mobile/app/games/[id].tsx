@@ -9,7 +9,15 @@ import { imageLoader } from '@/utils';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { ChevronLeft, Heart, Share as ShareIcon } from 'lucide-react-native';
 import React, { useLayoutEffect } from 'react';
-import { Dimensions, Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Dimensions,
+  Share,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Animated, {
   interpolate,
   SlideInDown,
@@ -104,8 +112,13 @@ const Page = () => {
   }, [isFaved]);
 
   if (isLoading) {
-    return <Text>Loading...</Text>;
+    return (
+      <View style={styles.loadingWrapper}>
+        <ActivityIndicator />
+      </View>
+    );
   }
+
   if (!game) {
     router.back();
     return null;
@@ -127,9 +140,6 @@ const Page = () => {
         <Animated.Image source={{ uri }} style={[styles.image, imageAnimatedStyle]} />
         <Text style={styles.title}>{game.name} </Text>
         <View style={styles.summary}>
-          <MoreText text={game.summary} />
-          <MoreText text={game.summary} />
-          <MoreText text={game.summary} />
           <MoreText text={game.summary} />
         </View>
       </Animated.ScrollView>
@@ -179,6 +189,18 @@ const Page = () => {
 export default Page;
 
 const styles = StyleSheet.create({
+  loadingWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  loadingSpinner: {
+    fontSize: 20,
+    color: Colors.primary,
+    // spin animation
+  },
+
   contentWrap: {
     backgroundColor: 'white',
     paddingBottom: 200,
