@@ -8,6 +8,9 @@ export const apiNoAuth = ky.create({
   prefixUrl: process.env.EXPO_PUBLIC_API_URL,
   credentials: 'include',
   retry: { limit: 0 },
+  headers: {
+    'Content-Type': 'application/json',
+  },
   throwHttpErrors: true,
 });
 
@@ -24,7 +27,7 @@ export const api = apiNoAuth.extend({
       },
     ],
     afterResponse: [
-      async (request, _, response) => {
+      async (_, __, response) => {
         if (response.status === 401) {
           try {
             const newTokens = await refreshToken();

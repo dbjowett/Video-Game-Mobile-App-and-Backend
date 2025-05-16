@@ -1,4 +1,7 @@
+import { useAddFavouriteGame } from '@/api/hooks/useAddFavouriteGame';
 import { useGameDetails } from '@/api/hooks/useGameDetails';
+import { useGetFavouriteGames } from '@/api/hooks/useGetFavouriteGames';
+import { useRemoveFavouriteGame } from '@/api/hooks/useRemoveFavouriteGame';
 import { MoreText } from '@/components/MoreText';
 import { defaultStyles } from '@/constants/Styles';
 import { useColours } from '@/hooks/useColours';
@@ -20,10 +23,16 @@ const IMG_HEIGHT = 500;
 const { width } = Dimensions.get('window');
 
 const Page = () => {
+  const { data: favouriteGames, isLoading: isLoadingGames } = useGetFavouriteGames();
+
   const { id } = useLocalSearchParams<{ id: string }>();
+
+  const { mutateAsync: addGameAsync } = useAddFavouriteGame(id);
+  const { mutateAsync: removeGameAsync } = useRemoveFavouriteGame(id);
   const colours = useColours();
 
   const { data: game, isLoading } = useGameDetails(id);
+  const isFaved = favouriteGames?.some((game) => game.gameId.toString() === id);
 
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef.current ? scrollRef : null);
@@ -41,13 +50,10 @@ const Page = () => {
   };
 
   const handleFavourite = async () => {
-    // TODO: Implement add/remove to favourites
-    // Need fave list from user
-    const isFave = false;
-    if (isFave) {
-      // await removeFromFavourites(game.id);
+    if (!isFaved) {
+      await addGameAsync(id);
     } else {
-      // await addToFavourites(game.id);
+      await removeGameAsync(id);
     }
   };
 
@@ -81,7 +87,11 @@ const Page = () => {
             <ShareIcon size={22} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.roundButton} onPress={handleFavourite}>
-            <Heart size={22} />
+            <Heart
+              size={22}
+              fill={isFaved ? 'red' : 'transparent'}
+              stroke={isFaved ? 'red' : colours.primary}
+            />
           </TouchableOpacity>
         </View>
       ),
@@ -91,7 +101,7 @@ const Page = () => {
         </TouchableOpacity>
       ),
     });
-  }, []);
+  }, [isFaved]);
 
   if (isLoading) {
     return <Text>Loading...</Text>;
@@ -118,6 +128,9 @@ const Page = () => {
         <Text style={styles.title}>{game.name} </Text>
         <View style={styles.summary}>
           <MoreText text={game.summary} />
+          <MoreText text={game.summary} />
+          <MoreText text={game.summary} />
+          <MoreText text={game.summary} />
         </View>
       </Animated.ScrollView>
       <Animated.View style={defaultStyles.footer} entering={SlideInDown.delay(200)}>
@@ -134,6 +147,7 @@ const Page = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
+            onPress={handleFavourite}
             style={[
               defaultStyles.btn,
               {
@@ -145,8 +159,16 @@ const Page = () => {
               },
             ]}
           >
-            <Heart size={22} color="white" />
-            <Text style={defaultStyles.btnText}>Add to wishlist</Text>
+            <Heart
+              size={22}
+              color="white"
+              fill={isFaved ? 'red' : 'transparent'}
+              stroke={isFaved ? 'red' : 'white'}
+            />
+
+            <Text style={defaultStyles.btnText}>
+              {!isFaved ? 'Add to wishlist' : 'Remove from wishlist'}
+            </Text>
           </TouchableOpacity>
         </View>
       </Animated.View>
@@ -198,6 +220,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
+  },
+  headerTitle: {
+    color: 'black',
   },
   header: {
     backgroundColor: '#fff',

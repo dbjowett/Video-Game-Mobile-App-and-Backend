@@ -9,7 +9,7 @@ interface Genre {
 }
 
 export interface Game {
-  id: string;
+  id: number;
   name: string;
   cover: Cover;
   total_rating: number;

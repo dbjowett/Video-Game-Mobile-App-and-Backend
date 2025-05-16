@@ -1,10 +1,10 @@
 import { FlatList, Image, ListRenderItem, StyleSheet, TouchableOpacity } from 'react-native';
 
 import { useExploreGames } from '@/api';
+import { useGetFavouriteGames } from '@/api/hooks/useGetFavouriteGames';
 import { Game } from '@/api/types/game';
 import CategoryHeader from '@/components/CategoryHeader';
 import { Text, View } from '@/components/Themed';
-import { useHeaderHeight } from '@react-navigation/elements';
 import { Link, Stack } from 'expo-router';
 import { Heart } from 'lucide-react-native';
 import React from 'react';
@@ -22,12 +22,14 @@ const getHumanDate = (time?: number): string | null => {
 
 export default function Page() {
   const { data: games, isError, isPending } = useExploreGames();
+  const { data: favouriteGames, isLoading: isLoadingGames } = useGetFavouriteGames();
 
   const onCategoryChange = () => {
     console.log(onCategoryChange);
   };
 
   const renderRow: ListRenderItem<Game> = ({ item }) => {
+    const isFavourite = favouriteGames?.some((game) => game.gameId === item.id.toString());
     return (
       <Link href={`/games/${item.id}`} asChild>
         <TouchableOpacity style={styles.itemContainer}>
@@ -37,7 +39,12 @@ export default function Page() {
               style={styles.image}
             />
             <TouchableOpacity style={styles.heartIcon}>
-              <Heart size={24} color={'#fff'} />
+              <Heart
+                size={24}
+                color={'#fff'}
+                fill={isFavourite ? 'red' : 'transparent'}
+                stroke={isFavourite ? 'red' : '#fff'}
+              />
             </TouchableOpacity>
             <View style={styles.textContainer}>
               <View>
@@ -54,7 +61,6 @@ export default function Page() {
     );
   };
 
-  const headerHeight = useHeaderHeight();
   return (
     <View style={[styles.container, { paddingTop: 80 }]}>
       <Stack.Screen
