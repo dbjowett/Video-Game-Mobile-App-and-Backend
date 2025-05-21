@@ -8,7 +8,7 @@ import { useColours } from '@/hooks/useColours';
 import { imageLoader } from '@/utils';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { ChevronLeft, Heart, Share as ShareIcon } from 'lucide-react-native';
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
@@ -24,6 +24,7 @@ import Animated, {
   useAnimatedRef,
   useAnimatedStyle,
   useScrollViewOffset,
+  withTiming,
 } from 'react-native-reanimated';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
@@ -31,6 +32,7 @@ const IMG_HEIGHT = 500;
 const { width } = Dimensions.get('window');
 
 const Page = () => {
+  const [imageLoaded, setIsImageLoaded] = useState<boolean>(false);
   const { data: favouriteGames, isLoading: isLoadingGames } = useGetFavouriteGames();
 
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -66,27 +68,50 @@ const Page = () => {
   };
 
   const headerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollOffset.value, [0, IMG_HEIGHT / 1.4], [0, 1]),
+    opacity: interpolate(scrollOffset.value, [0, IMG_HEIGHT / 1.2], [0, 1]),
   }));
 
-  const imageAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      {
-        translateY: interpolate(
-          scrollOffset.value,
-          [-IMG_HEIGHT, 0, IMG_HEIGHT],
-          [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]
-        ),
-      },
-      {
-        scale: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [2, 1, 1]),
-      },
-    ],
-  }));
+  const titleAnimatedStyle = useAnimatedStyle(() => {
+    if (!imageLoaded) return {};
+    const duration = 100;
+    const isVisible = scrollOffset.value > IMG_HEIGHT / 1.1;
+    return {
+      opacity: withTiming(isVisible ? 1 : 0, { duration }),
+      transform: [
+        {
+          translateX: withTiming(isVisible ? 0 : -20, { duration }),
+        },
+      ],
+    };
+  });
+
+  const imageAnimatedStyle = useAnimatedStyle(() => {
+    if (!imageLoaded) return {};
+    {
+      return {
+        transform: [
+          {
+            translateY: interpolate(
+              scrollOffset.value,
+              [-IMG_HEIGHT, 0, IMG_HEIGHT],
+              [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]
+            ),
+          },
+          {
+            scale: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [2, 1, 1]),
+          },
+        ],
+      };
+    }
+  });
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: '',
+      headerTitle: () => (
+        <Animated.Text style={[styles.headerTitle, titleAnimatedStyle]} numberOfLines={1}>
+          {game?.name}
+        </Animated.Text>
+      ),
       headerTransparent: true,
       headerBackground: () => <Animated.View style={[styles.header, headerAnimatedStyle]} />,
       headerRight: () => (
@@ -124,12 +149,6 @@ const Page = () => {
     return null;
   }
 
-  const uri = imageLoader({
-    src: game?.cover?.url,
-    quality: 6,
-    maxSize: true,
-  });
-
   return (
     <View style={{ flex: 1 }}>
       <Animated.ScrollView
@@ -137,10 +156,40 @@ const Page = () => {
         ref={scrollRef}
         scrollEventThrottle={16}
       >
-        <Animated.Image source={{ uri }} style={[styles.image, imageAnimatedStyle]} />
-        <Text style={styles.title}>{game.name} </Text>
-        <View style={styles.summary}>
-          <MoreText text={game.summary} />
+        <Animated.Image
+          onLoad={() => setIsImageLoaded(true)}
+          source={{
+            uri: imageLoader({
+              src: game?.cover?.url,
+              quality: 6,
+              maxSize: true,
+            }),
+          }}
+          style={[styles.image, imageAnimatedStyle]}
+        />
+        <View style={styles.contentContainer}>
+          <Text style={styles.title}>{game.name} </Text>
+          <View style={styles.summary}>
+            <MoreText text={game.summary} />
+          </View>
+          <View style={styles.summary}>
+            <MoreText text={game.summary} />
+          </View>
+          <View style={styles.summary}>
+            <MoreText text={game.summary} />
+          </View>
+          <View style={styles.summary}>
+            <MoreText text={game.summary} />
+          </View>
+          <View style={styles.summary}>
+            <MoreText text={game.summary} />
+          </View>
+          <View style={styles.summary}>
+            <MoreText text={game.summary} />
+          </View>
+          <View style={styles.summary}>
+            <MoreText text={game.summary} />
+          </View>
         </View>
       </Animated.ScrollView>
       <Animated.View style={defaultStyles.footer} entering={SlideInDown.delay(200)}>
@@ -206,6 +255,13 @@ const styles = StyleSheet.create({
     paddingBottom: 200,
     flexGrow: 1,
   },
+  contentContainer: {
+    backgroundColor: 'white',
+    zIndex: 2,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingBottom: 20,
+  },
   title: {
     padding: 20,
     fontSize: 28,
@@ -244,7 +300,8 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   headerTitle: {
-    color: 'black',
+    fontSize: 28,
+    fontWeight: 'bold',
   },
   header: {
     backgroundColor: '#fff',

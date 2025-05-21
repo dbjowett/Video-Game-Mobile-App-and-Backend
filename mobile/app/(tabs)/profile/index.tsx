@@ -3,9 +3,16 @@ import { useUser } from '@/api/hooks/useUser';
 import { useSession } from '@/components/AuthContext';
 import { Text, View as ThemedView } from '@/components/Themed';
 import { useHeaderHeight } from '@react-navigation/elements';
-import { CircleUserRound, CircleX, Loader2, LogOut, Pencil, Save } from 'lucide-react-native';
+import { CircleUserRound, CircleX, LogOut, Pencil, Save } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { Image, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 const Page = () => {
   const headerHeight = useHeaderHeight();
@@ -16,7 +23,12 @@ const Page = () => {
 
   const { mutate } = useUpdateUser();
 
-  if (isLoading) return <Loader2 style={styles.loader} />;
+  if (isLoading)
+    return (
+      <View style={styles.loadingWrapper}>
+        <ActivityIndicator />
+      </View>
+    );
 
   const handleSave = async () => {
     if (newUsername.trim() !== user?.username) {
@@ -103,10 +115,10 @@ const Page = () => {
 };
 
 const styles = StyleSheet.create({
-  loader: {
-    alignSelf: 'center',
-    marginTop: '50%',
-    transform: [{ rotate: '360deg' }],
+  loadingWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   container: {
     flex: 1,
