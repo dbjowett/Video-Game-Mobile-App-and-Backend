@@ -1,9 +1,16 @@
-import { FlatList, Image, ListRenderItem, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  FlatList,
+  Image,
+  ListRenderItem,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 
-import { useExploreGames } from '@/api';
+import { usePopularGames } from '@/api';
 import { useGetFavouriteGames } from '@/api/hooks/useGetFavouriteGames';
-import { Game } from '@/api/types/game';
-import CategoryHeader from '@/components/CategoryHeader';
+import { ListGame } from '@/api/types/game';
+import LandingHeader from '@/components/CategoryHeader';
 import { Text, View } from '@/components/Themed';
 import { Link, Stack } from 'expo-router';
 import { Heart } from 'lucide-react-native';
@@ -21,14 +28,14 @@ const getHumanDate = (time?: number): string | null => {
 // getHumanDate(item?.first_release_date);
 
 export default function Page() {
-  const { data: games, isError, isPending } = useExploreGames();
+  const { data: popularGames, isError, isPending } = usePopularGames();
   const { data: favouriteGames, isLoading: isLoadingGames } = useGetFavouriteGames();
 
   const onCategoryChange = () => {
     console.log(onCategoryChange);
   };
 
-  const renderRow: ListRenderItem<Game> = ({ item }) => {
+  const renderRow: ListRenderItem<ListGame> = ({ item }) => {
     const isFavourite = favouriteGames?.some((game) => game.gameId === item.id.toString());
     return (
       <Link href={`/games/${item.id}`} asChild>
@@ -61,12 +68,21 @@ export default function Page() {
     );
   };
 
+  const GameList = ({ title, games }: { title: string; games: ListGame[] }) => {
+    return (
+      <View>
+        <Text style={styles.gameListTitle}>{title}</Text>
+        <FlatList horizontal style={styles.listContainer} data={games} renderItem={renderRow} />
+      </View>
+    );
+  };
+
   return (
     <View style={[styles.container, { paddingTop: 80 }]}>
       <Stack.Screen
         options={{
           headerShown: true,
-          header: () => <CategoryHeader onCategoryChange={onCategoryChange} />,
+          header: () => <LandingHeader onCategoryChange={onCategoryChange} />,
         }}
       />
 
@@ -74,24 +90,13 @@ export default function Page() {
       {isPending ? (
         <Text>Loading...</Text>
       ) : (
-        <View>
-          <Text
-            style={{
-              fontSize: 18,
-              fontWeight: '600',
-              paddingHorizontal: 16,
-              paddingBottom: 8,
-            }}
-          >
-            🔥 Popular Today
-          </Text>
-          <FlatList
-            style={styles.listContainer}
-            numColumns={2}
-            data={games}
-            renderItem={renderRow}
-          />
-        </View>
+        <ScrollView>
+          {popularGames
+            ? Object.entries(popularGames).map(([k, v]) => {
+                return <GameList title={k} games={v} />;
+              })
+            : null}
+        </ScrollView>
       )}
     </View>
   );
@@ -101,15 +106,23 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 10,
+  },
+  gameListTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    paddingHorizontal: 16,
+    paddingBottom: 8,
   },
   listContainer: {
-    paddingTop: 10,
-    width: '100%',
-    paddingHorizontal: 8,
+    // borderColor: 'black',
+    // borderWidth: 1,
+    // borderRadius: 8,
+    // height: 100,
   },
   itemContainer: {
-    width: '50%',
-    padding: 8,
+    width: 200,
+    marginHorizontal: 8,
   },
   listing: {
     flex: 1,

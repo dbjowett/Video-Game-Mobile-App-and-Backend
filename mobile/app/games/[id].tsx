@@ -134,7 +134,7 @@ const Page = () => {
         </TouchableOpacity>
       ),
     });
-  }, [isFaved]);
+  }, [isFaved, game]);
 
   if (isLoading) {
     return (
@@ -148,6 +148,7 @@ const Page = () => {
     router.back();
     return null;
   }
+  console.log(game);
 
   return (
     <View style={{ flex: 1 }}>
@@ -244,12 +245,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  loadingSpinner: {
-    fontSize: 20,
-    color: Colors.primary,
-    // spin animation
-  },
-
   contentWrap: {
     backgroundColor: 'white',
     paddingBottom: 200,
@@ -300,8 +295,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   headerTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
+    fontSize: 18,
   },
   header: {
     backgroundColor: '#fff',

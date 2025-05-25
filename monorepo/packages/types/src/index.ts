@@ -17,9 +17,3 @@ export interface Cover {
   width: number;
   height: number;
 }
-
-export interface GameDetails {
-  id: number;
-  cover: Cover;
-  name: string;
-}

@@ -1,21 +1,22 @@
-interface Cover {
-  id: number;
-  url: string;
-}
+import { Cover } from '@shared/types';
 
-interface Genre {
-  id: number;
-  name: string;
-}
+type PopKey =
+  | 'visits'
+  | 'wantToPlay'
+  | 'playing'
+  | 'played'
+  | 'peakPlayers24h'
+  | 'positiveReviews'
+  | 'negativeReviews'
+  | 'totalReviews';
 
-export interface Game {
-  id: number;
-  name: string;
-  cover: Cover;
-  total_rating: number;
-  releaseDate: string;
-  genres: Genre[];
-  first_release_date: number;
+export interface PopularityMultiQuery {
+  name: PopKey;
+  result: {
+    id: number;
+    game_id: number;
+    popularity_type: number;
+  }[];
 }
 
 export type PopGameResults = {

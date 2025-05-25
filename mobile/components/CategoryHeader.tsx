@@ -58,7 +58,7 @@ interface Props {
   onCategoryChange: (category: string) => void;
 }
 
-const CategoryHeader = ({ onCategoryChange }: Props) => {
+const LandingHeader = ({ onCategoryChange }: Props) => {
   const itemsRef = useRef<Array<View>>([]);
   const [activeIdx, setActiveIdx] = useState<number>(0);
   const scrollRef = useRef<ScrollView>(null);
@@ -180,4 +180,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CategoryHeader;
+export default LandingHeader;

@@ -19,6 +19,7 @@ interface LoaderProps {
 }
 
 export const imageLoader = ({ src, quality, maxSize }: LoaderProps) => {
+  if (!src) return;
   const finalSize = quality ? quality : 6;
   const qualityObj = sizes.find((size) => size.quality === finalSize);
   const name = qualityObj?.name.concat(maxSize ? '_2x' : '');

@@ -1,2 +1,2 @@
-export * from './hooks/useExploreGames';
+export * from './hooks/usePopularGames';
 // export * from './hooks/useGameDetails';
