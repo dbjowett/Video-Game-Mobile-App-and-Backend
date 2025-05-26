@@ -20,6 +20,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import ImageViewing from 'react-native-image-viewing';
 import Animated, {
   interpolate,
   SlideInDown,
@@ -35,6 +36,8 @@ const { width } = Dimensions.get('window');
 
 const Page = () => {
   const [imageLoaded, setIsImageLoaded] = useState<boolean>(false);
+  const [isImageViewerVisible, setIsImageViewerVisible] = useState<boolean>(false);
+  const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
 
   const { id } = useLocalSearchParams<{ id: string }>();
   const colours = useColours();
@@ -153,7 +156,6 @@ const Page = () => {
     router.back();
     return null;
   }
-  console.log(game);
 
   return (
     <View style={{ flex: 1 }}>
@@ -187,25 +189,33 @@ const Page = () => {
               showsHorizontalScrollIndicator={false}
             >
               {game.screenshots?.map((screenshot, index) => (
-                <Animated.Image
+                <TouchableOpacity
                   key={index}
-                  source={{
-                    uri: imageLoader({
-                      src: screenshot.url,
-                      quality: 6,
-                      maxSize: true,
-                    }),
+                  onPress={() => {
+                    setActiveImageIndex(index);
+                    setIsImageViewerVisible(true);
                   }}
-                  style={[
-                    styles.screenshot,
-                    {
-                      height: 135,
-                      width: 240,
-                      marginRight: index === game.screenshots.length - 1 ? 20 : 8,
-                      marginLeft: index === 0 ? 20 : 0,
-                    },
-                  ]}
-                />
+                  activeOpacity={0.8}
+                >
+                  <Animated.Image
+                    source={{
+                      uri: imageLoader({
+                        src: screenshot.url,
+                        quality: 6,
+                        maxSize: true,
+                      }),
+                    }}
+                    style={[
+                      styles.screenshot,
+                      {
+                        height: 135,
+                        width: 240,
+                        marginRight: index === game.screenshots.length - 1 ? 20 : 8,
+                        marginLeft: index === 0 ? 20 : 0,
+                      },
+                    ]}
+                  />
+                </TouchableOpacity>
               ))}
             </ScrollView>
           </View>
@@ -286,6 +296,17 @@ const Page = () => {
           </TouchableOpacity>
         </View>
       </Animated.View>
+      <ImageViewing
+        swipeToCloseEnabled
+        images={game.screenshots.map((s) => ({
+          uri: imageLoader({ src: s.url, quality: 10, maxSize: true }),
+        }))}
+        imageIndex={activeImageIndex}
+        visible={isImageViewerVisible}
+        onRequestClose={() => {
+          setIsImageViewerVisible(false);
+        }}
+      />
     </View>
   );
 };
