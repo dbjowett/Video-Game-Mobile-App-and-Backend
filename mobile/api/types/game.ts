@@ -18,16 +18,17 @@ export interface Game {
   first_release_date: number;
 }
 
-export type PopGameResults = {
-  visits: ListGame[];
-  wantToPlay: ListGame[];
-  playing: ListGame[];
-  played: ListGame[];
-  peakPlayers24h: ListGame[];
-  positiveReviews: ListGame[];
-  negativeReviews: ListGame[];
-  totalReviews: ListGame[];
-};
+export type PopKey =
+  | 'visits'
+  | 'wantToPlay'
+  | 'playing'
+  | 'played'
+  | 'peakPlayers24h'
+  | 'positiveReviews'
+  | 'negativeReviews'
+  | 'totalReviews';
+
+export type PopGameResults = Record<PopKey, ListGame[]>;
 
 export interface ListGame {
   id: number;

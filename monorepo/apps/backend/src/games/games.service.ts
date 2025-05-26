@@ -1,4 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { IgdbService } from 'src/igdb/igdb.service';
 import { SearchGamesDto } from './games.dto';
 import { POPULARITY_MULTI_QUERY } from './queries';
@@ -24,31 +28,37 @@ export class GamesService {
   }
 
   async getPopularGames(): Promise<PopGameResults> {
-    const multiQueryRes = await this.getPopularGamesMultiQuery();
+    try {
+      const multiQueryRes = await this.getPopularGamesMultiQuery();
 
-    const promises = multiQueryRes.map(async (res) => ({
-      name: res.name,
-      gameInfo: await this.getListGames(res.result.map((r) => r.game_id)),
-    }));
+      const promises = multiQueryRes.map(async (res) => ({
+        name: res.name,
+        gameInfo: await this.getListGames(res.result.map((r) => r.game_id)),
+      }));
 
-    const results = await Promise.all(promises);
+      const results = await Promise.all(promises);
 
-    const popGames: PopGameResults = {
-      visits: [],
-      wantToPlay: [],
-      playing: [],
-      played: [],
-      peakPlayers24h: [],
-      positiveReviews: [],
-      negativeReviews: [],
-      totalReviews: [],
-    };
-    results.forEach((result) => {
-      if (!popGames.hasOwnProperty(result.name)) return;
-      popGames[result.name] = result.gameInfo;
-    });
+      const popGames: PopGameResults = {
+        visits: [],
+        wantToPlay: [],
+        playing: [],
+        played: [],
+        peakPlayers24h: [],
+        positiveReviews: [],
+        negativeReviews: [],
+        totalReviews: [],
+      };
 
-    return popGames;
+      results.forEach((result) => {
+        if (result.name in popGames) {
+          popGames[result.name] = result.gameInfo;
+        }
+      });
+
+      return popGames;
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to fetch popular games');
+    }
   }
 
   async getPopGamesWithDetails() {
