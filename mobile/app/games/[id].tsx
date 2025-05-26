@@ -12,6 +12,8 @@ import React, { useLayoutEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
+  Linking,
+  ScrollView,
   Share,
   StyleSheet,
   Text,
@@ -33,15 +35,18 @@ const { width } = Dimensions.get('window');
 
 const Page = () => {
   const [imageLoaded, setIsImageLoaded] = useState<boolean>(false);
-  const { data: favouriteGames, isLoading: isLoadingGames } = useGetFavouriteGames();
 
   const { id } = useLocalSearchParams<{ id: string }>();
-
-  const { mutateAsync: addGameAsync } = useAddFavouriteGame(id);
-  const { mutateAsync: removeGameAsync } = useRemoveFavouriteGame(id);
   const colours = useColours();
 
+  // ** Fetch favourite games and game details
+  const { data: favouriteGames } = useGetFavouriteGames();
   const { data: game, isLoading } = useGameDetails(id);
+
+  // ** Mutations for adding/removing favourite games
+  const { mutateAsync: addGameAsync } = useAddFavouriteGame(id);
+  const { mutateAsync: removeGameAsync } = useRemoveFavouriteGame(id);
+
   const isFaved = favouriteGames?.some((game) => game.gameId.toString() === id);
 
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
@@ -173,23 +178,65 @@ const Page = () => {
           <View style={styles.summary}>
             <MoreText text={game.summary} />
           </View>
-          <View style={styles.summary}>
-            <MoreText text={game.summary} />
+          <View style={{ marginTop: 20 }}>
+            <Text style={styles.subtitle}>Screenshots</Text>
+            <ScrollView
+              horizontal
+              contentContainerStyle={styles.screenshotsContent}
+              style={styles.screenshots}
+              showsHorizontalScrollIndicator={false}
+            >
+              {game.screenshots?.map((screenshot, index) => (
+                <Animated.Image
+                  key={index}
+                  source={{
+                    uri: imageLoader({
+                      src: screenshot.url,
+                      quality: 6,
+                      maxSize: true,
+                    }),
+                  }}
+                  style={[
+                    styles.screenshot,
+                    {
+                      height: 135,
+                      width: 240,
+                      marginRight: index === game.screenshots.length - 1 ? 20 : 8,
+                      marginLeft: index === 0 ? 20 : 0,
+                    },
+                  ]}
+                />
+              ))}
+            </ScrollView>
           </View>
-          <View style={styles.summary}>
-            <MoreText text={game.summary} />
-          </View>
-          <View style={styles.summary}>
-            <MoreText text={game.summary} />
-          </View>
-          <View style={styles.summary}>
-            <MoreText text={game.summary} />
-          </View>
-          <View style={styles.summary}>
-            <MoreText text={game.summary} />
-          </View>
-          <View style={styles.summary}>
-            <MoreText text={game.summary} />
+          <View style={{ marginTop: 20 }}>
+            <Text style={styles.subtitle}>Videos</Text>
+            <ScrollView
+              horizontal
+              contentContainerStyle={styles.screenshotsContent}
+              style={styles.screenshots}
+              showsHorizontalScrollIndicator={false}
+            >
+              {game.videos?.map((video, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() =>
+                    Linking.openURL(`https://www.youtube.com/watch?v=${video.video_id}`)
+                  }
+                >
+                  <Animated.Image
+                    source={{ uri: `https://img.youtube.com/vi/${video.video_id}/0.jpg` }}
+                    style={{
+                      height: 135,
+                      width: 240,
+                      marginRight: index === game.videos.length - 1 ? 20 : 8,
+                      marginLeft: index === 0 ? 20 : 0,
+                      borderRadius: 8,
+                    }}
+                  />
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </View>
         </View>
       </Animated.ScrollView>
@@ -250,6 +297,20 @@ const styles = StyleSheet.create({
     paddingBottom: 200,
     flexGrow: 1,
   },
+
+  screenshot: {
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  screenshots: {
+    // paddingHorizontal: 20,
+  },
+
+  screenshotsContent: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+
   contentContainer: {
     backgroundColor: 'white',
     zIndex: 2,
@@ -260,6 +321,12 @@ const styles = StyleSheet.create({
   title: {
     padding: 20,
     fontSize: 28,
+    fontWeight: 'bold',
+  },
+  subtitle: {
+    marginBottom: 10,
+    marginLeft: 20,
+    fontSize: 18,
     fontWeight: 'bold',
   },
 

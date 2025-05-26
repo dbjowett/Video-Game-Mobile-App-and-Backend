@@ -1,16 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
+import { DetailedGame } from '../types/game';
 import { api } from '../utils/api';
-
-interface DetailedGame {
-  id: string;
-  name: string;
-  cover: {
-    id: string;
-    url: string;
-  };
-  summary: string;
-  total_rating: number;
-}
 
 const getGameDetails = async (id: string) => {
   const res = await api.get(`games/${id}`).json<DetailedGame>();

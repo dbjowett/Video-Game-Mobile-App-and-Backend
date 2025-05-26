@@ -6,7 +6,12 @@ import {
 import { IgdbService } from 'src/igdb/igdb.service';
 import { SearchGamesDto } from './games.dto';
 import { POPULARITY_MULTI_QUERY } from './queries';
-import { ListGame, PopGameResults, PopularityMultiQuery } from './types';
+import {
+  DetailedGame,
+  ListGame,
+  PopGameResults,
+  PopularityMultiQuery,
+} from './types';
 
 @Injectable()
 export class GamesService {
@@ -85,14 +90,30 @@ export class GamesService {
   async getGameDetails(id: string) {
     if (isNaN(Number(id))) throw new Error('Invalid game ID');
 
-    const igdbQuery = `fields name, summary, cover.url, total_rating; where id = ${id};`;
-    const data = await this.igdbService.request<ListGame[]>('games', igdbQuery);
+    const igdbQuery = `
+      fields 
+      name, 
+      summary, 
+      cover.url, 
+      screenshots.url, 
+      videos.video_id,
+      game_modes.slug,
+      game_modes.name, 
+      total_rating;
+
+      where id = ${id};
+    `;
+
+    const data = await this.igdbService.request<DetailedGame[]>(
+      'games',
+      igdbQuery,
+    );
     if (data.length < 1) throw new Error('No game found for this id');
     return data[0];
   }
 
   async searchGames(queryParams: SearchGamesDto) {
-    const igdbQuery = `fields name, cover.url, total_rating; search "${queryParams.q}";`;
+    const igdbQuery = `fields name, cover.url, screenshots.url, total_rating; search "${queryParams.q}";`;
     return this.igdbService.request<ListGame[]>('games', igdbQuery);
   }
 
