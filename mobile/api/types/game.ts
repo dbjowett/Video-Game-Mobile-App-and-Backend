@@ -42,27 +42,39 @@ export interface ListGame {
 export interface DetailedGame {
   id: string;
   name: string;
+  summary: string;
+  total_rating: number;
+
   cover: {
     id: string;
     url: string;
   };
-  summary: string;
-  total_rating: number;
 
-  screenshots: {
+  screenshots: Array<{
     id: number;
     url: string;
-  }[];
+  }>;
 
-  videos: {
+  videos: Array<{
     id: number;
     name: string;
     video_id: string; // YouTube video ID
-  }[];
+  }>;
 
-  game_modes: {
+  game_modes: Array<{
     id: number;
     slug: string;
     name: string;
-  }[];
+  }>;
+
+  similar_games: Array<SimilarGame>;
+}
+
+export interface SimilarGame {
+  id: number;
+  name: string;
+  cover: {
+    id: number;
+    url: string;
+  };
 }

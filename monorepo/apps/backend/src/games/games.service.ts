@@ -99,7 +99,9 @@ export class GamesService {
       videos.video_id,
       videos.name,
       game_modes.slug,
-      game_modes.name, 
+      game_modes.name,
+      similar_games.name,
+      similar_games.cover.url, 
       total_rating;
 
       where id = ${id};

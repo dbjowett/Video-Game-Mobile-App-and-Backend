@@ -1,3 +1,4 @@
+import { useUser } from '@/api/hooks/useUser';
 import { useColours } from '@/hooks/useColours';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -13,7 +14,15 @@ import {
   Volleyball,
 } from 'lucide-react-native';
 import React, { useRef, useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 const ICON_SIZE = 26;
@@ -59,6 +68,7 @@ interface Props {
 }
 
 const LandingHeader = ({ onCategoryChange }: Props) => {
+  const { data: user } = useUser();
   const itemsRef = useRef<Array<View>>([]);
   const [activeIdx, setActiveIdx] = useState<number>(0);
   const scrollRef = useRef<ScrollView>(null);
@@ -88,9 +98,13 @@ const LandingHeader = ({ onCategoryChange }: Props) => {
               </View>
             </TouchableOpacity>
           </Link>
-          {/* <TouchableOpacity>
-            <ListFilter color={ICON_COLOUR} />
-          </TouchableOpacity> */}
+          <TouchableOpacity>
+            {/* <ListFilter color={ICON_COLOUR} /> */}
+            <Image
+              source={{ uri: user?.profileImage }} // Use the user's profile image or a default one
+              style={styles.profileImage}
+            />
+          </TouchableOpacity>
         </View>
         {/* ** CATEGORIES **   */}
         {/* <ScrollView
@@ -128,6 +142,22 @@ const LandingHeader = ({ onCategoryChange }: Props) => {
 const styles = StyleSheet.create({
   container: {
     height: 68,
+  },
+  profileImage: {
+    width: 42,
+    height: 42,
+    borderRadius: 50,
+    backgroundColor: '#c2c2c2',
+    borderColor: '#c2c2c2',
+    borderWidth: StyleSheet.hairlineWidth,
+
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowOffset: {
+      width: 1,
+      height: 1,
+    },
   },
   actionRow: {
     flexDirection: 'row',

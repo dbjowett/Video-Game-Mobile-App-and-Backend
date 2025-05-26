@@ -44,7 +44,9 @@ export default function Page() {
   };
 
   const singleGame: ListRenderItem<ListGame> = ({ item }) => {
-    const isFavourite = favouriteGames?.some((game) => game.gameId === item.id.toString());
+    const id = item.id.toString();
+    const isFavourite = favouriteGames?.some((game) => game.gameId === id);
+
     return (
       <Link href={`/games/${item.id}`} asChild>
         <TouchableOpacity style={styles.itemContainer}>
@@ -98,9 +100,9 @@ export default function Page() {
       ) : (
         <ScrollView>
           {popularGames
-            ? Object.entries(popularGames).map(([k, v]) => {
-                return <GameList title={k as PopKey} games={v} />;
-              })
+            ? Object.entries(popularGames).map(([title, games]) => (
+                <GameList key={title} title={title as PopKey} games={games} />
+              ))
             : null}
         </ScrollView>
       )}

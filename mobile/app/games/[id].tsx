@@ -3,7 +3,9 @@ import { useGameDetails } from '@/api/hooks/useGameDetails';
 import { useGetFavouriteGames } from '@/api/hooks/useGetFavouriteGames';
 import { useRemoveFavouriteGame } from '@/api/hooks/useRemoveFavouriteGame';
 import { MoreText } from '@/components/MoreText';
-import { defaultStyles } from '@/constants/Styles';
+import { ScreenshotsSection } from '@/components/ScreenshotsSection';
+import { SimilarGamesSection } from '@/components/SImilarGamesSection';
+import { VideosSection } from '@/components/VideosSection';
 import { useColours } from '@/hooks/useColours';
 import { imageLoader } from '@/utils';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
@@ -12,8 +14,6 @@ import React, { useLayoutEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
-  Linking,
-  ScrollView,
   Share,
   StyleSheet,
   Text,
@@ -23,7 +23,6 @@ import {
 import ImageViewing from 'react-native-image-viewing';
 import Animated, {
   interpolate,
-  SlideInDown,
   useAnimatedRef,
   useAnimatedStyle,
   useScrollViewOffset,
@@ -80,7 +79,6 @@ const Page = () => {
   }));
 
   const titleAnimatedStyle = useAnimatedStyle(() => {
-    if (!imageLoaded) return {};
     const duration = 100;
     const isVisible = scrollOffset.value > IMG_HEIGHT / 1.1;
     return {
@@ -180,84 +178,20 @@ const Page = () => {
           <View style={styles.summary}>
             <MoreText text={game.summary} />
           </View>
-          <View style={{ marginTop: 20 }}>
-            <Text style={styles.subtitle}>Screenshots</Text>
-            <ScrollView
-              horizontal
-              contentContainerStyle={styles.screenshotsContent}
-              style={styles.screenshots}
-              showsHorizontalScrollIndicator={false}
-            >
-              {game.screenshots?.map((screenshot, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => {
-                    setActiveImageIndex(index);
-                    setIsImageViewerVisible(true);
-                  }}
-                  activeOpacity={0.8}
-                >
-                  <Animated.Image
-                    source={{
-                      uri: imageLoader({
-                        src: screenshot.url,
-                        quality: 6,
-                        maxSize: true,
-                      }),
-                    }}
-                    style={[
-                      styles.screenshot,
-                      {
-                        height: 135,
-                        width: 240,
-                        marginRight: index === game.screenshots.length - 1 ? 20 : 8,
-                        marginLeft: index === 0 ? 20 : 0,
-                      },
-                    ]}
-                  />
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-          <View style={{ marginTop: 20 }}>
-            <Text style={styles.subtitle}>Videos</Text>
-            <ScrollView
-              horizontal
-              contentContainerStyle={styles.screenshotsContent}
-              style={styles.screenshots}
-              showsHorizontalScrollIndicator={false}
-            >
-              {game.videos?.map((video, index) => (
-                <View key={index}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      Linking.openURL(`https://www.youtube.com/watch?v=${video.video_id}`)
-                    }
-                  >
-                    <Animated.Image
-                      source={{ uri: `https://img.youtube.com/vi/${video.video_id}/0.jpg` }}
-                      style={{
-                        height: 135,
-                        width: 240,
-                        marginRight: index === game.videos.length - 1 ? 20 : 8,
-                        marginLeft: index === 0 ? 20 : 0,
-                        borderRadius: 8,
-                      }}
-                    />
-                  </TouchableOpacity>
-                  <Text
-                    numberOfLines={1}
-                    style={{ marginLeft: index === 0 ? 20 : 0, width: 240, fontWeight: 'bold' }}
-                  >
-                    {video.name}
-                  </Text>
-                </View>
-              ))}
-            </ScrollView>
-          </View>
+          <ScreenshotsSection
+            screenshots={game.screenshots}
+            onImagePress={(index) => {
+              setActiveImageIndex(index);
+              setIsImageViewerVisible(true);
+            }}
+          />
+          <VideosSection videos={game.videos} />
         </View>
+
+        {/* Similar games game.similar_games */}
+        <SimilarGamesSection similarGames={game.similar_games} />
       </Animated.ScrollView>
-      <Animated.View style={defaultStyles.footer} entering={SlideInDown.delay(200)}>
+      {/* <Animated.View style={defaultStyles.footer} entering={SlideInDown.delay(200)}>
         <View
           style={{
             flexDirection: 'row',
@@ -265,11 +199,6 @@ const Page = () => {
             alignItems: 'center',
           }}
         >
-          <TouchableOpacity style={styles.footerText}>
-            {/* <Text style={styles.footerPrice}>Rating: {game.total_rating.toFixed(0)}</Text>
-            <Text>%</Text> */}
-          </TouchableOpacity>
-
           <TouchableOpacity
             onPress={handleFavourite}
             style={[
@@ -295,7 +224,7 @@ const Page = () => {
             </Text>
           </TouchableOpacity>
         </View>
-      </Animated.View>
+      </Animated.View> */}
       <ImageViewing
         swipeToCloseEnabled
         images={game.screenshots.map((s) => ({
@@ -326,19 +255,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
 
-  screenshot: {
-    borderRadius: 10,
-    overflow: 'hidden',
-  },
-  screenshots: {
-    // paddingHorizontal: 20,
-  },
-
-  screenshotsContent: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-
   contentContainer: {
     backgroundColor: 'white',
     zIndex: 2,
@@ -349,12 +265,6 @@ const styles = StyleSheet.create({
   title: {
     padding: 20,
     fontSize: 28,
-    fontWeight: 'bold',
-  },
-  subtitle: {
-    marginBottom: 10,
-    marginLeft: 20,
-    fontSize: 18,
     fontWeight: 'bold',
   },
 
