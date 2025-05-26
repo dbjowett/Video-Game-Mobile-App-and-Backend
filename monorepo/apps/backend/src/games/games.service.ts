@@ -97,6 +97,7 @@ export class GamesService {
       cover.url, 
       screenshots.url, 
       videos.video_id,
+      videos.name,
       game_modes.slug,
       game_modes.name, 
       total_rating;

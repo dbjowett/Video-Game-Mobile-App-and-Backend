@@ -218,23 +218,30 @@ const Page = () => {
               showsHorizontalScrollIndicator={false}
             >
               {game.videos?.map((video, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() =>
-                    Linking.openURL(`https://www.youtube.com/watch?v=${video.video_id}`)
-                  }
-                >
-                  <Animated.Image
-                    source={{ uri: `https://img.youtube.com/vi/${video.video_id}/0.jpg` }}
-                    style={{
-                      height: 135,
-                      width: 240,
-                      marginRight: index === game.videos.length - 1 ? 20 : 8,
-                      marginLeft: index === 0 ? 20 : 0,
-                      borderRadius: 8,
-                    }}
-                  />
-                </TouchableOpacity>
+                <View key={index}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      Linking.openURL(`https://www.youtube.com/watch?v=${video.video_id}`)
+                    }
+                  >
+                    <Animated.Image
+                      source={{ uri: `https://img.youtube.com/vi/${video.video_id}/0.jpg` }}
+                      style={{
+                        height: 135,
+                        width: 240,
+                        marginRight: index === game.videos.length - 1 ? 20 : 8,
+                        marginLeft: index === 0 ? 20 : 0,
+                        borderRadius: 8,
+                      }}
+                    />
+                  </TouchableOpacity>
+                  <Text
+                    numberOfLines={1}
+                    style={{ marginLeft: index === 0 ? 20 : 0, width: 240, fontWeight: 'bold' }}
+                  >
+                    {video.name}
+                  </Text>
+                </View>
               ))}
             </ScrollView>
           </View>

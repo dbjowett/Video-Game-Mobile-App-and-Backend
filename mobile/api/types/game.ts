@@ -56,6 +56,7 @@ export interface DetailedGame {
 
   videos: {
     id: number;
+    name: string;
     video_id: string; // YouTube video ID
   }[];
 
