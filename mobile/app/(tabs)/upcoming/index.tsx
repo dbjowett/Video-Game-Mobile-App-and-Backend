@@ -1,7 +1,7 @@
 import { ListGame } from '@/api/types/game';
 import { api } from '@/api/utils/api';
+import { useColours } from '@/hooks/useColours';
 import { imageLoader } from '@/utils';
-import { useHeaderHeight } from '@react-navigation/elements';
 import { useQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { ChevronDown } from 'lucide-react-native';
@@ -13,6 +13,7 @@ import {
   ExpandableCalendar,
   WeekCalendar,
 } from 'react-native-calendars';
+import { Theme } from 'react-native-calendars/src/types';
 
 interface Props {
   weekView?: boolean;
@@ -41,6 +42,9 @@ const AgendaItem = ({ item }: { item: ListGame }) => (
         />
       ) : null}
       <Text style={styles.agendaText}>{item.name}</Text>
+      <Text style={{ color: 'grey', fontSize: 12, maxWidth: 100 }} numberOfLines={1}>
+        {item.platforms?.map((p) => p.name).join(', ') || 'Unknown Platform'}
+      </Text>
     </View>
   </TouchableOpacity>
 );
@@ -49,7 +53,7 @@ const initialDate = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
 const initialMonth = new Date().toISOString().slice(0, 7); // "YYYY-MM"
 
 const ExpandableCalendarScreen = ({ weekView }: Props) => {
-  const headerHeight = useHeaderHeight();
+  const listRef = useRef(null);
   const calendarRef = useRef<{ toggleCalendarPosition: () => boolean }>(null);
   const rotation = useRef(new Animated.Value(0));
 
@@ -131,20 +135,39 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
     const newMonth = dateObj.dateString.slice(0, 7); // "YYYY-MM"
     setVisibleMonth(newMonth);
   };
+  const colours = useColours();
+
+  const theme: Theme = useMemo(() => {
+    return {
+      // calendarBackground: '#fff',
+      // textSectionTitleColor: '#000',
+      selectedDayBackgroundColor: colours.primary,
+      arrowColor: colours.primary,
+      // todayTextColor: 'red',
+      // dayTextColor: '#000',
+      // textDisabledColor: '#d9e1e8',
+      // dotColor: 'green',
+      // selectedDotColor: 'pink',
+      // arrowColor: 'black',
+      // monthTextColor: 'black',
+      indicatorColor: colours.primary,
+    };
+  }, []);
 
   return (
     <CalendarProvider date={selectedDate} showTodayButton>
-      <View style={{}}>
+      <View>
         {weekView ? (
           <WeekCalendar
+            theme={theme}
             onDayPress={(day) => setSelectedDate(day.dateString)}
             onMonthChange={onMonthChange}
-            animateScroll
             firstDay={1}
             markedDates={marked}
           />
         ) : (
           <ExpandableCalendar
+            theme={theme}
             onDayPress={(day) => setSelectedDate(day.dateString)}
             onMonthChange={onMonthChange}
             renderHeader={renderHeader}
@@ -155,6 +178,10 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
           />
         )}
         <AgendaList
+          theme={{
+            selectedDotColor: 'pink',
+          }}
+          ref={listRef}
           sections={transformedItems}
           renderItem={renderItem}
           sectionStyle={styles.section}
@@ -179,9 +206,6 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   section: {
-    // borderWidth: 10,
-    // borderColor: '#ddd',
-    // borderRadius: 8,
     backgroundColor: '#f1f1f1',
     color: 'grey',
     textTransform: 'capitalize',

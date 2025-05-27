@@ -150,18 +150,20 @@ export class GamesService {
     const startUnix = Math.floor(start.getTime() / 1000);
     const endUnix = Math.floor(end.getTime() / 1000);
 
-    // Common popular platforms: PC, PS5, Xbox Series X, Switch, PS4, Xbox One
-    const platformIds = [6, 167, 169, 130, 48, 49];
+    const platformIds = [6, 167, 169, 130, 48, 49]; // PC, PS5, Xbox Series X, Switch, PS4, Xbox One
+    const allowedTypes = [0, 1, 2, 4, 8, 9]; // Game, DLC, Expansion, Bundle, Standalone Expansion, Remake
 
     const igdbQuery = `
     ${LIST_GAME_FIELDS_QUERY};
-    where 
+     where 
       first_release_date >= ${startUnix} &
       first_release_date < ${endUnix} &
-      platforms = (${platformIds.join(',')});
-    sort first_release_date asc;
-    limit 200;
-  `;
+      platforms = (${platformIds.join(',')}) &
+      game_type = (${allowedTypes.join(',')}) &
+      (hypes > 1 | total_rating_count > 1);
+      sort first_release_date asc;
+      limit 500;
+    `;
 
     return this.igdbService.request<ListGame[]>('games', igdbQuery);
   }
