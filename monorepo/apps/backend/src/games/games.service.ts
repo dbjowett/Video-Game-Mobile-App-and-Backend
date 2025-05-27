@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -13,6 +14,17 @@ import {
   PopularityMultiQuery,
 } from './types';
 
+// ** Must match `ListGame` interface in `mobile/api/types/game.ts` and frontend type
+const LIST_GAME_FIELDS_QUERY = `
+  fields
+    name,
+    cover.url,
+    total_rating,
+    screenshots.url,
+    first_release_date,
+    platforms.name
+  `;
+
 @Injectable()
 export class GamesService {
   private cache: Map<string, any> = new Map();
@@ -21,7 +33,7 @@ export class GamesService {
   constructor(private readonly igdbService: IgdbService) {}
 
   async getListGames(gameIds: number[]): Promise<ListGame[]> {
-    const query = `fields name, total_rating, cover.*; where id = (${gameIds.join(',')});`;
+    const query = `${LIST_GAME_FIELDS_QUERY}; where id = (${gameIds.join(',')});`;
     return this.igdbService.request<ListGame[]>('games', query);
   }
 
@@ -116,7 +128,41 @@ export class GamesService {
   }
 
   async searchGames(queryParams: SearchGamesDto) {
-    const igdbQuery = `fields name, cover.url, screenshots.url, total_rating; search "${queryParams.q}";`;
+    const igdbQuery = `${LIST_GAME_FIELDS_QUERY}; search "${queryParams.q}";`;
+    return this.igdbService.request<ListGame[]>('games', igdbQuery);
+  }
+
+  async getReleasesByMonth(month: string) {
+    if (!month) {
+      throw new BadRequestException(
+        'Month query param is required in YYYY-MM format.',
+      );
+    }
+
+    const [year, monthNum] = month.split('-').map(Number);
+    if (!year || !monthNum || monthNum < 1 || monthNum > 12) {
+      throw new Error('Invalid month format. Use YYYY-MM.');
+    }
+
+    const start = new Date(Date.UTC(year, monthNum - 1, 1));
+    const end = new Date(Date.UTC(year, monthNum, 1));
+
+    const startUnix = Math.floor(start.getTime() / 1000);
+    const endUnix = Math.floor(end.getTime() / 1000);
+
+    // Common popular platforms: PC, PS5, Xbox Series X, Switch, PS4, Xbox One
+    const platformIds = [6, 167, 169, 130, 48, 49];
+
+    const igdbQuery = `
+    ${LIST_GAME_FIELDS_QUERY};
+    where 
+      first_release_date >= ${startUnix} &
+      first_release_date < ${endUnix} &
+      platforms = (${platformIds.join(',')});
+    sort first_release_date asc;
+    limit 200;
+  `;
+
     return this.igdbService.request<ListGame[]>('games', igdbQuery);
   }
 

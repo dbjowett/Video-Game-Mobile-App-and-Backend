@@ -27,6 +27,11 @@ export class GamesController {
     return await this.gamesService.searchGames(queryParams);
   }
 
+  @Get('releases')
+  async getReleases(@Query('month') month: string): Promise<unknown> {
+    return await this.gamesService.getReleasesByMonth(month);
+  }
+
   @Get(':id')
   async getGameById(@Param('id') id: string): Promise<unknown> {
     return await this.gamesService.getGameDetails(id);

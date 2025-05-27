@@ -6,11 +6,12 @@ const Layout = () => {
       <Stack.Screen
         name="index"
         options={{
-          headerTitle: 'Upcoming',
-          headerLargeTitle: true,
+          headerTitle: 'Upcoming Releases',
+          // headerLargeTitle: true,
           // headerBlurEffect: 'light',
           // headerTransparent: true,
-          headerLargeTitleShadowVisible: false,
+          headerShadowVisible: false,
+          // headerLargeTitleShadowVisible: false,
         }}
       />
     </Stack>

@@ -35,7 +35,16 @@ export interface ListGame {
   id: number;
   cover: Cover;
   name: string;
+  first_release_date?: number; // Unix timestamp
   total_rating: number;
+  platforms?: Array<{
+    id: number;
+    name: string;
+  }>;
+  screenshots?: Array<{
+    id: number;
+    url: string;
+  }>;
 }
 
 // ** Detailed Game
