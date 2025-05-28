@@ -3,7 +3,7 @@ import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
 import { User as UserType } from '@shared/types';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { UserPayload } from 'src/auth/types';
-import { User } from 'src/utils/user.decorator';
+import { User } from 'src/common/utils/user.decorator';
 import { UpdateProfileDto } from './dto';
 import { ProfileService } from './profile.service';
 

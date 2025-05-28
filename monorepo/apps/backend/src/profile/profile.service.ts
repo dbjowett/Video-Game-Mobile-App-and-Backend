@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
+import { omitFields } from 'src/common/utils';
 import { DatabaseService } from 'src/database/database.service';
-import { omitFields } from 'src/utils';
 
 const OMMITED_FIELDS: (keyof User)[] = ['password', 'updatedAt', 'googleId'];
 

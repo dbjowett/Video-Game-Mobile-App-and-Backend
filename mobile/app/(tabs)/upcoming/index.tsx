@@ -56,6 +56,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
   const listRef = useRef(null);
   const calendarRef = useRef<{ toggleCalendarPosition: () => boolean }>(null);
   const rotation = useRef(new Animated.Value(0));
+  const colours = useColours();
 
   const [selectedDate, setSelectedDate] = React.useState<string>(initialDate);
   const [visibleMonth, setVisibleMonth] = useState<string>(initialMonth);
@@ -135,27 +136,30 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
     const newMonth = dateObj.dateString.slice(0, 7); // "YYYY-MM"
     setVisibleMonth(newMonth);
   };
-  const colours = useColours();
 
   const theme: Theme = useMemo(() => {
     return {
-      // calendarBackground: '#fff',
-      // textSectionTitleColor: '#000',
       selectedDayBackgroundColor: colours.primary,
       arrowColor: colours.primary,
-      // todayTextColor: 'red',
-      // dayTextColor: '#000',
-      // textDisabledColor: '#d9e1e8',
-      // dotColor: 'green',
-      // selectedDotColor: 'pink',
-      // arrowColor: 'black',
-      // monthTextColor: 'black',
+      todayButtonTextColor: colours.primary,
+      todayTextColor: colours.primary,
       indicatorColor: colours.primary,
     };
   }, []);
 
+  const todayIndex = (() => {
+    let index = 0;
+    for (let i = 0; i < transformedItems.length; i++) {
+      if (transformedItems[i].title === selectedDate) {
+        return index;
+      }
+      index += transformedItems[i].data.length;
+    }
+    return 0; // fallback to start
+  })();
+
   return (
-    <CalendarProvider date={selectedDate} showTodayButton>
+    <CalendarProvider date={selectedDate} onDateChanged={setSelectedDate}>
       <View>
         {weekView ? (
           <WeekCalendar
@@ -178,11 +182,8 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
           />
         )}
         <AgendaList
-          theme={{
-            selectedDotColor: 'pink',
-          }}
           ref={listRef}
-          sections={transformedItems}
+          sections={transformedItems.filter((item) => item.title === selectedDate)}
           renderItem={renderItem}
           sectionStyle={styles.section}
         />
@@ -216,7 +217,7 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#fff',
     borderBottomColor: '#eee',
-    borderBottomWidth: 1,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     gap: 10,
   },
 

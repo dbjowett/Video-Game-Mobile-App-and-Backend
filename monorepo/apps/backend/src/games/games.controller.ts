@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { Public } from 'src/utils';
+import { Public } from 'src/common/utils';
 import { SearchGamesDto } from './games.dto';
 import { GamesService } from './games.service';
 

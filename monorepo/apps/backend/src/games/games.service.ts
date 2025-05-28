@@ -113,7 +113,7 @@ export class GamesService {
       game_modes.slug,
       game_modes.name,
       similar_games.name,
-      similar_games.cover.url, 
+      similar_games.cover.url,
       total_rating;
 
       where id = ${id};
