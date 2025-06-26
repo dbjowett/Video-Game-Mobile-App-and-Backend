@@ -62,3 +62,10 @@ const websiteCategoryMap: Record<number, string> = {
 export const getObjectCategoryName = (categoryId: number): string | undefined => {
   return websiteCategoryMap[categoryId];
 };
+
+export const getHumanDate = (time?: number): string | null => {
+  if (!time) return null;
+  const newDate = new Date();
+  newDate.setTime(time * 1000);
+  return new Intl.DateTimeFormat('ko-KR').format(newDate);
+};

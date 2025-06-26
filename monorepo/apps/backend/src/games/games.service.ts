@@ -14,6 +14,8 @@ import {
   PopularityMultiQuery,
 } from './types';
 
+const allowedTypes = [0, 1, 2, 4, 8, 9]; // Game, DLC, Expansion, Bundle, Standalone Expansion, Remake
+
 // ** Must match `ListGame` interface in `mobile/api/types/game.ts` and frontend type
 const LIST_GAME_FIELDS_QUERY = `
   fields
@@ -22,6 +24,7 @@ const LIST_GAME_FIELDS_QUERY = `
     total_rating,
     screenshots.url,
     first_release_date,
+    release_dates.*,
     platforms.name
   `;
 
@@ -128,7 +131,11 @@ export class GamesService {
   }
 
   async searchGames(queryParams: SearchGamesDto) {
-    const igdbQuery = `${LIST_GAME_FIELDS_QUERY}; search "${queryParams.q}";`;
+    const igdbQuery = `
+      ${LIST_GAME_FIELDS_QUERY}; 
+      where game_type = (${allowedTypes.join(',')}); 
+      search "${queryParams.q}";
+    `;
     return this.igdbService.request<ListGame[]>('games', igdbQuery);
   }
 

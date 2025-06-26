@@ -12,6 +12,7 @@ import { useGetFavouriteGames } from '@/api/hooks/useGetFavouriteGames';
 import { ListGame, PopKey } from '@/api/types/game';
 import LandingHeader from '@/components/CategoryHeader';
 import { Text, View } from '@/components/Themed';
+import { getHumanDate } from '@/utils';
 import { Link, Stack } from 'expo-router';
 import { Heart } from 'lucide-react-native';
 import React from 'react';
@@ -26,13 +27,6 @@ const popTypeTitleMap: Record<PopKey, string> = {
   positiveReviews: '👍 Positive Reviews',
   negativeReviews: '👎 Negative Reviews',
   totalReviews: '📊 Total Reviews',
-};
-
-const getHumanDate = (time?: number): string | null => {
-  if (!time) return null;
-  const newDate = new Date();
-  newDate.setTime(time * 1000);
-  return new Intl.DateTimeFormat('en-CA').format(newDate);
 };
 
 export default function Page() {
