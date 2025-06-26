@@ -64,6 +64,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
   const {
     data: games,
     isLoading,
+    isPending,
     isError,
   } = useQuery({
     queryKey: ['game-releases', visibleMonth],
@@ -158,11 +159,31 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
     return 0; // fallback to start
   })();
 
+  const isLoadingData = isPending || isLoading;
+  const todayGames = transformedItems.filter((item) => item.title === selectedDate);
+
+  const NoGames = () => (
+    <View style={{ padding: 20, alignItems: 'center' }}>
+      <Text style={{ fontSize: 16, color: 'grey' }}>
+        {isError ? 'Error loading games' : 'No games found for this date'}
+      </Text>
+    </View>
+  );
+
+  const LoadingSkeleton = () => (
+    <View style={{ padding: 20, alignItems: 'center' }}>
+      <Text style={{ fontSize: 16, color: 'grey' }}>Loading games...</Text>
+    </View>
+  );
+
+  const noGamesFound = !isLoadingData && todayGames.length === 0;
+
   return (
     <CalendarProvider date={selectedDate} onDateChanged={setSelectedDate}>
       <View>
         {weekView ? (
           <WeekCalendar
+            displayLoadingIndicator={isLoadingData}
             theme={theme}
             onDayPress={(day) => setSelectedDate(day.dateString)}
             onMonthChange={onMonthChange}
@@ -171,6 +192,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
           />
         ) : (
           <ExpandableCalendar
+            displayLoadingIndicator={isLoadingData}
             theme={theme}
             onDayPress={(day) => setSelectedDate(day.dateString)}
             onMonthChange={onMonthChange}
@@ -181,12 +203,15 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
             markedDates={marked}
           />
         )}
+        {/* TODO: Add no games found list */}
         <AgendaList
           ref={listRef}
-          sections={transformedItems.filter((item) => item.title === selectedDate)}
+          sections={todayGames}
           renderItem={renderItem}
           sectionStyle={styles.section}
         />
+        {isLoadingData ? <LoadingSkeleton /> : null}
+        {noGamesFound ? <NoGames /> : null}
       </View>
     </CalendarProvider>
   );

@@ -1,8 +1,9 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
+import { NextFunction, Request, Response } from 'express';
 import { AppModule } from './app.module';
-import { LoggerMiddleware } from './middleware';
+import { LoggerMiddleware } from './common/middleware';
 
 const corsConfig = {
   origin: ['http://localhost:5173', 'http://localhost:8081'],
@@ -16,7 +17,9 @@ async function bootstrap() {
   app.enableCors(corsConfig);
   app.useGlobalPipes(new ValidationPipe());
   app.use(cookieParser());
-  app.use((req, res, next) => new LoggerMiddleware().use(req, res, next));
+  app.use((req: Request, res: Response, next: NextFunction) =>
+    new LoggerMiddleware().use(req, res, next),
+  );
   await app.listen(3000);
 }
 bootstrap();
