@@ -4,7 +4,7 @@ import { useColours } from '@/hooks/useColours';
 import { imageLoader } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
-import { ChevronDown } from 'lucide-react-native';
+import { Calendar, ChevronDown } from 'lucide-react-native';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Animated, Easing, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import {
@@ -49,16 +49,18 @@ const AgendaItem = ({ item }: { item: ListGame }) => (
   </TouchableOpacity>
 );
 
-const initialDate = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
+const date = new Date();
+// TODO: Deal with timezone offset. Added 2
+const initialDate = new Date(date.getFullYear(), date.getMonth(), 2).toISOString().split('T')[0]; // "YYYY-MM-DD"
 const initialMonth = new Date().toISOString().slice(0, 7); // "YYYY-MM"
 
 const ExpandableCalendarScreen = ({ weekView }: Props) => {
-  const listRef = useRef(null);
+  const listRef = useRef<React.LegacyRef<unknown>>(null);
   const calendarRef = useRef<{ toggleCalendarPosition: () => boolean }>(null);
   const rotation = useRef(new Animated.Value(0));
   const colours = useColours();
 
-  const [selectedDate, setSelectedDate] = React.useState<string>(initialDate);
+  const [selectedDate, setSelectedDate] = React.useState<string>(initialDate); // "YYYY-MM-DD"
   const [visibleMonth, setVisibleMonth] = useState<string>(initialMonth);
 
   const {
@@ -148,19 +150,9 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
     };
   }, []);
 
-  const todayIndex = (() => {
-    let index = 0;
-    for (let i = 0; i < transformedItems.length; i++) {
-      if (transformedItems[i].title === selectedDate) {
-        return index;
-      }
-      index += transformedItems[i].data.length;
-    }
-    return 0; // fallback to start
-  })();
-
   const isLoadingData = isPending || isLoading;
   const todayGames = transformedItems.filter((item) => item.title === selectedDate);
+  const noGamesFound = !isLoadingData && transformedItems.length === 0;
 
   const NoGames = () => (
     <View style={{ padding: 20, alignItems: 'center' }}>
@@ -171,16 +163,49 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
   );
 
   const LoadingSkeleton = () => (
-    <View style={{ padding: 20, alignItems: 'center' }}>
+    <View>
       <Text style={{ fontSize: 16, color: 'grey' }}>Loading games...</Text>
     </View>
   );
 
-  const noGamesFound = !isLoadingData && todayGames.length === 0;
+  const TodayButton = () => {
+    const handleTodayPress = () => {
+      // const today = new Date();
+      // const todayString = today.toISOString().split('T')[0]; // "YYYY-MM-DD"
+      setSelectedDate(initialDate);
+      // setVisibleMonth(todayString.slice(0, 7)); // Update month to current month
+      // this is scrolling to the nth item. Not the nth date.
+      // const todayIndex = transformedItems.findIndex((item) => item.title === todayString);
+      // if (listRef.current && todayIndex !== -1) {
+      //   console.log('Scrolling to today:', todayString, todayIndex);
+      //   // Scroll to top of the list
+      //   listRef.current?.scrollToLocation({
+      //     animated: true,
+      //     sectionIndex: todayIndex,
+      //     itemIndex: 0,
+      //   });
+      // }
+    };
+
+    return (
+      <TouchableOpacity onPress={handleTodayPress} style={styles.todayButton}>
+        <Calendar size={18} color={colours.primary} />
+        <Text style={{ color: colours.primary }}>Today</Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <CalendarProvider date={selectedDate} onDateChanged={setSelectedDate}>
-      <View>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: colours.background,
+          position: 'relative',
+        }}
+      >
+        <TodayButton />
+
         {weekView ? (
           <WeekCalendar
             displayLoadingIndicator={isLoadingData}
@@ -203,15 +228,19 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
             markedDates={marked}
           />
         )}
-        {/* TODO: Add no games found list */}
-        <AgendaList
-          ref={listRef}
-          sections={todayGames}
-          renderItem={renderItem}
-          sectionStyle={styles.section}
-        />
-        {isLoadingData ? <LoadingSkeleton /> : null}
-        {noGamesFound ? <NoGames /> : null}
+
+        <View style={styles.bottomContainer}>
+          {!noGamesFound && (
+            <AgendaList
+              ref={listRef}
+              sections={transformedItems}
+              renderItem={renderItem}
+              sectionStyle={styles.agendaItemList}
+            />
+          )}
+          {isLoadingData ? <LoadingSkeleton /> : null}
+          {noGamesFound ? <NoGames /> : null}
+        </View>
       </View>
     </CalendarProvider>
   );
@@ -229,12 +258,16 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginRight: 6,
+    marginRight: 10,
   },
-  section: {
-    backgroundColor: '#f1f1f1',
-    color: 'grey',
-    textTransform: 'capitalize',
+
+  bottomContainer: {
+    flex: 1,
+    justifyContent: 'flex-start',
+  },
+
+  agendaItemList: {
+    // textTransform: 'capitalize',
   },
   agendaItem: {
     flexDirection: 'row',
@@ -242,7 +275,8 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#fff',
     borderBottomColor: '#eee',
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: 1,
+
     gap: 10,
   },
 
@@ -255,5 +289,20 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     fontWeight: '500',
+  },
+
+  todayButton: {
+    zIndex: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
 });
