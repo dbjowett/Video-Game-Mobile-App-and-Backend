@@ -2,6 +2,11 @@
 
 A full-stack video game tracking app where users can keep track of games they've played, want to play, and discover new games based on popularity and recommendations.
 
+👉 [Watch the demo](https://youtube.com/shorts/w1wKx3EDtfI)
+
+
+[![Preview](https://img.youtube.com/vi/w1wKx3EDtfI/hqdefault.jpg)](https://youtube.com/shorts/w1wKx3EDtfI)
+
 ---
 
 ## 🧱 Tech Stack
