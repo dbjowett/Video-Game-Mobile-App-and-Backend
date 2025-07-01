@@ -1,13 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
+import { FaveGame } from '../types/game';
 import { api } from '../utils/api';
-
-// TODO: Add this to Types file
-export interface FaveGame {
-  createdAt: string;
-  gameId: string;
-  updatedAt: string;
-  userId: string;
-}
 
 const getFavourites = async () => await api.get('favourites').json<FaveGame[]>();
 

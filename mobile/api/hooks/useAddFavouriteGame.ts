@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Alert } from 'react-native';
+import { FaveGame } from '../types/game';
 import { api } from '../utils/api';
-import { FaveGame } from './useGetFavouriteGames';
 
 const addToFavourites = async (gameId: string) =>
   await api.post('favourites', { json: { gameId } }).json<FaveGame[]>();
