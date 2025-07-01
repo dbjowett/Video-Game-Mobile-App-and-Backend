@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Alert } from 'react-native';
 import { api } from '../utils/api';
+import { FaveGame } from './useGetFavouriteGames';
 
 const addToFavourites = async (gameId: string) =>
-  await api.post('favourites', { json: { gameId } }).json();
+  await api.post('favourites', { json: { gameId } }).json<FaveGame[]>();
 
 export const useAddFavouriteGame = (gameId: string) => {
   const queryClient = useQueryClient();
@@ -11,6 +12,12 @@ export const useAddFavouriteGame = (gameId: string) => {
     mutationFn: addToFavourites,
     mutationKey: ['addFavouriteGame', gameId],
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['favouriteGames'] }),
+    onMutate: async (gameId) => {
+      await queryClient.cancelQueries({ queryKey: ['favouriteGames'] });
+      const prevFaves = queryClient.getQueryData(['favouriteGames']) as FaveGame[];
+      queryClient.setQueryData(['favouriteGames'], (prev: FaveGame[]) => [...prev, { gameId }]);
+      return { prevFaves };
+    },
     onError: (error) => {
       Alert.alert(
         'Error',
@@ -19,5 +26,6 @@ export const useAddFavouriteGame = (gameId: string) => {
       );
       console.error('Error adding game to favourites:', error);
     },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['favouriteGames'] }),
   });
 };

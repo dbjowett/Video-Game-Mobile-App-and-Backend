@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../utils/api';
 
-interface FaveGame {
+// TODO: Add this to Types file
+export interface FaveGame {
   createdAt: string;
   gameId: string;
   updatedAt: string;
