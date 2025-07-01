@@ -1,5 +1,3 @@
-import { Cover } from '@shared/types';
-
 type PopKey =
   | 'visits'
   | 'wantToPlay'
@@ -83,4 +81,8 @@ export interface DetailedGame {
       url: string;
     };
   }>;
+}
+interface Cover {
+  id: number;
+  url: string;
 }

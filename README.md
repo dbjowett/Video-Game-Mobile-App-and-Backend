@@ -4,7 +4,6 @@ A full-stack video game tracking app where users can keep track of games they've
 
 👉 [Watch the demo](https://youtube.com/shorts/w1wKx3EDtfI)
 
-
 [![Preview](https://img.youtube.com/vi/w1wKx3EDtfI/hqdefault.jpg)](https://youtube.com/shorts/w1wKx3EDtfI)
 
 ---
@@ -35,10 +34,10 @@ A full-stack video game tracking app where users can keep track of games they've
 
 /
 mobile/                → React Native + Expo app
-monorepo/frontend/     → Vite + React app (Web)
-monorepo/backend/      → NestJS REST API
+frontend/     → Vite + React app (Web)
+backend/      → NestJS REST API
 
-````
+```
 
 ---
 
@@ -49,17 +48,13 @@ monorepo/backend/      → NestJS REST API
 ```bash
 git clone https://github.com/your-username/gametracker.git
 cd gametracker
-````
+```
 
 ### 2. Install dependencies
 
 ```bash
-# Frontend and Backend (Together w/ Turbo)
-cd monorepo/
-pnpm install
-
 # Frontend
-cd monorepo/apps/frontend
+cd /frontend
 pnpm install
 
 # Mobile
@@ -67,23 +62,20 @@ cd /mobile
 pnpm install
 
 # Backend
-cd monorepo/apps/backend
+cd /backend
 pnpm install
 ```
 
 ### 3. Run locally
 
 ```bash
-# Dev Database
-cd monorepo/
-docker compose up
 
 # Frontend and Backend (Together w/ Turbo)
 cd monorepo/
 turbo run dev
 
 # Frontend
-cd monorepo/apps/frontend
+cd /frontend
 pnpm run dev
 
 # Mobile (requires Expo CLI)
@@ -91,11 +83,11 @@ cd /mobile
 pnpm run start
 
 # Dev Database
-cd monorepo/
+cd /
 docker compose up
 
 # Backend (Start and Make migrations)
-cd monorepo/apps/backend
+cd /backend
 pnpm prisma migrate dev
 pnpm run start:dev
 ```
@@ -135,10 +127,10 @@ FE_URL='http://localhost:5173/'
 
 ## 📚 Future Improvements
 
-* Social features (add friends, see their games)
-* Notifications
-* Offline support (for mobile)
-* Creating lists - Top 10 Games ever, etc
+- Social features (add friends, see their games)
+- Notifications
+- Offline support (for mobile)
+- Creating lists - Top 10 Games ever, etc
 
 ---
 
@@ -151,5 +143,7 @@ MIT
 ## 👨‍💻 Author
 
 Built with ❤️ by Daniel Jowett
+
+```
 
 ```
