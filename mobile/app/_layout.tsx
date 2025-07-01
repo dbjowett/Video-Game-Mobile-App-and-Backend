@@ -8,6 +8,7 @@ import 'react-native-reanimated';
 
 import { SessionProvider } from '@/components/AuthContext';
 import { useColourScheme } from '@/components/useColourScheme';
+import { useColours } from '@/hooks/useColours';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 export { ErrorBoundary } from 'expo-router';
 
@@ -40,22 +41,14 @@ export default function RootLayout() {
 }
 
 const StackScreens = () => {
+  const colours = useColours();
   return (
     <Stack
-      screenOptions={{
-        headerShown: false,
-        // contentStyle: { backgroundColor: '#FDFFFF' },
-      }}
+      screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colours.background } }}
     >
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="games/[id]" />
-
-      <Stack.Screen
-        name="(modals)/search"
-        options={{
-          presentation: 'transparentModal',
-        }}
-      />
+      <Stack.Screen name="(modals)/search" options={{ presentation: 'transparentModal' }} />
     </Stack>
   );
 };

@@ -15,6 +15,7 @@ import { useRemoveFavouriteGame } from '@/api/hooks/useRemoveFavouriteGame';
 import { ListGame, PopKey } from '@/api/types/game';
 import LandingHeader from '@/components/CategoryHeader';
 import { Text, View } from '@/components/Themed';
+import { useColours } from '@/hooks/useColours';
 import { getHumanDate } from '@/utils';
 import { Link, Stack } from 'expo-router';
 import { Heart } from 'lucide-react-native';
@@ -54,6 +55,8 @@ export default function Page() {
     }
   };
 
+  const colours = useColours();
+
   const singleGame: ListRenderItem<ListGame> = ({ item }) => {
     const id = item.id.toString();
     const isFavourite = favouriteGames?.some((game) => game.gameId === id);
@@ -83,7 +86,9 @@ export default function Page() {
             {/* Content */}
             <View style={styles.lowerContainer}>
               <View>
-                <Text style={styles.gameName}>{item.name}</Text>
+                <Text numberOfLines={1} style={styles.gameName}>
+                  {item.name}
+                </Text>
               </View>
               <View style={styles.infoContainer}>
                 <Text style={styles.rating}>{Math.trunc(item?.total_rating)}%</Text>
@@ -145,12 +150,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   itemContainer: {
-    borderWidth: 1,
-    borderColor: 'black',
     borderRadius: 8,
     padding: 2,
-    // TODO: Remove
-    // backgroundColor: 'pink',
+
     width: 200,
     marginHorizontal: 8,
   },
@@ -172,7 +174,8 @@ const styles = StyleSheet.create({
   },
 
   lowerContainer: {
-    marginTop: 4,
+    paddingHorizontal: 2,
+    marginTop: 2,
   },
   gameName: {
     flex: 1,
