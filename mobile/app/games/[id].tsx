@@ -18,6 +18,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  Vibration,
   View,
 } from 'react-native';
 import ImageViewing from 'react-native-image-viewing';
@@ -46,8 +47,8 @@ const Page = () => {
   const { data: game, isLoading } = useGameDetails(id);
 
   // ** Mutations for adding/removing favourite games
-  const { mutateAsync: addGameAsync } = useAddFavouriteGame(id);
-  const { mutateAsync: removeGameAsync } = useRemoveFavouriteGame(id);
+  const { mutateAsync: addGameAsync } = useAddFavouriteGame();
+  const { mutateAsync: removeGameAsync } = useRemoveFavouriteGame();
 
   const isFaved = favouriteGames?.some((game) => game.gameId.toString() === id);
 
@@ -69,8 +70,10 @@ const Page = () => {
   const handleFavourite = async () => {
     if (!isFaved) {
       await addGameAsync(id);
+      Vibration.vibrate(50);
     } else {
       await removeGameAsync(id);
+      Vibration.vibrate(50);
     }
   };
 

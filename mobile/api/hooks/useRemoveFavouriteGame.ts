@@ -6,13 +6,13 @@ import { api } from '../utils/api';
 const removeFromFavourites = async (gameId: string) =>
   await api.delete('favourites', { json: { gameId } }).json();
 
-export const useRemoveFavouriteGame = (gameId: string) => {
+export const useRemoveFavouriteGame = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: removeFromFavourites,
-    mutationKey: ['removeFavouriteGame', gameId],
+    mutationKey: ['removeFavouriteGame'],
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['favouriteGames'] }),
-    onMutate: async () => {
+    onMutate: async (gameId) => {
       await queryClient.cancelQueries({ queryKey: ['favouriteGames'] });
       const prevFaves = queryClient.getQueryData(['favouriteGames']) as FaveGame[];
       queryClient.setQueryData(['favouriteGames'], (prev: FaveGame[]) =>

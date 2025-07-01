@@ -6,11 +6,11 @@ import { api } from '../utils/api';
 const addToFavourites = async (gameId: string) =>
   await api.post('favourites', { json: { gameId } }).json<FaveGame[]>();
 
-export const useAddFavouriteGame = (gameId: string) => {
+export const useAddFavouriteGame = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: addToFavourites,
-    mutationKey: ['addFavouriteGame', gameId],
+    mutationKey: ['addFavouriteGame'],
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['favouriteGames'] }),
     onMutate: async (gameId) => {
       await queryClient.cancelQueries({ queryKey: ['favouriteGames'] });

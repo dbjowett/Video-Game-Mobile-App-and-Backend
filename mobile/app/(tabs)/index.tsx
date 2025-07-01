@@ -5,10 +5,13 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  Vibration,
 } from 'react-native';
 
 import { usePopularGames } from '@/api';
+import { useAddFavouriteGame } from '@/api/hooks/useAddFavouriteGame';
 import { useGetFavouriteGames } from '@/api/hooks/useGetFavouriteGames';
+import { useRemoveFavouriteGame } from '@/api/hooks/useRemoveFavouriteGame';
 import { ListGame, PopKey } from '@/api/types/game';
 import LandingHeader from '@/components/CategoryHeader';
 import { Text, View } from '@/components/Themed';
@@ -32,9 +35,23 @@ const popTypeTitleMap: Record<PopKey, string> = {
 export default function Page() {
   const { data: popularGames, isError, isPending } = usePopularGames();
   const { data: favouriteGames } = useGetFavouriteGames();
+  // ** Mutations for adding/removing favourite games
+  const { mutateAsync: addGameAsync } = useAddFavouriteGame();
+  const { mutateAsync: removeGameAsync } = useRemoveFavouriteGame();
 
   const onCategoryChange = () => {
     console.log(onCategoryChange);
+  };
+
+  const handleFavourite = async (id: string) => {
+    const isFaved = favouriteGames?.some((game) => game.gameId === id);
+    if (!isFaved) {
+      await addGameAsync(id);
+      Vibration.vibrate(50);
+    } else {
+      await removeGameAsync(id);
+      Vibration.vibrate(50);
+    }
   };
 
   const singleGame: ListRenderItem<ListGame> = ({ item }) => {
@@ -44,12 +61,17 @@ export default function Page() {
     return (
       <Link href={`/games/${item.id}`} asChild>
         <TouchableOpacity style={styles.itemContainer}>
-          <Animated.View style={styles.listing} entering={FadeInRight} exiting={FadeOutLeft}>
+          <Animated.View style={styles.innerWrap} entering={FadeInRight} exiting={FadeOutLeft}>
+            {/* Image */}
             <Image
               source={{ uri: `https:${item.cover.url.replace('t_thumb', 't_cover_big_2x')}` }}
               style={styles.image}
             />
-            <TouchableOpacity style={styles.heartIcon}>
+            {/* Fave Icon */}
+            <TouchableOpacity
+              style={styles.heartIcon}
+              onPress={() => handleFavourite(item.id.toString())}
+            >
               <Heart
                 size={24}
                 color={'#fff'}
@@ -57,15 +79,17 @@ export default function Page() {
                 stroke={isFavourite ? 'red' : '#fff'}
               />
             </TouchableOpacity>
-            <View style={styles.textContainer}>
+
+            {/* Content */}
+            <View style={styles.lowerContainer}>
               <View>
                 <Text style={styles.gameName}>{item.name}</Text>
               </View>
-              <View style={styles.lowerContainer}>
+              <View style={styles.infoContainer}>
                 <Text style={styles.rating}>{Math.trunc(item?.total_rating)}%</Text>
+                <Text style={styles.releaseDate}>{getHumanDate(item?.first_release_date)}</Text>
               </View>
             </View>
-            <Text style={styles.releaseDate}>{getHumanDate(item?.first_release_date)}</Text>
           </Animated.View>
         </TouchableOpacity>
       </Link>
@@ -74,13 +98,13 @@ export default function Page() {
 
   const GameList = ({ title, games }: { title: PopKey; games: ListGame[] }) => (
     <View>
-      <Text style={styles.gameListTitle}>{popTypeTitleMap[title]}</Text>
+      <Text style={styles.categoryTitle}>{popTypeTitleMap[title]}</Text>
       <FlatList horizontal style={styles.listContainer} data={games} renderItem={singleGame} />
     </View>
   );
 
   return (
-    <View style={[styles.container, { paddingTop: 80 }]}>
+    <View style={styles.pageContainer}>
       <Stack.Screen
         options={{
           headerShown: true,
@@ -105,12 +129,13 @@ export default function Page() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  pageContainer: {
+    paddingTop: 80,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
   },
-  gameListTitle: {
+  categoryTitle: {
     fontSize: 22,
     fontWeight: '700',
     paddingHorizontal: 16,
@@ -120,15 +145,22 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   itemContainer: {
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 8,
+    padding: 2,
+    // TODO: Remove
+    // backgroundColor: 'pink',
     width: 200,
     marginHorizontal: 8,
   },
-  listing: {
+  innerWrap: {
     flex: 1,
     gap: 1,
     marginVertical: 0,
     position: 'relative',
   },
+
   image: {
     height: 300,
     borderRadius: 8,
@@ -138,7 +170,8 @@ const styles = StyleSheet.create({
     right: 12,
     top: 12,
   },
-  textContainer: {
+
+  lowerContainer: {
     marginTop: 4,
   },
   gameName: {
@@ -147,10 +180,11 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     flexWrap: 'wrap',
   },
-  lowerContainer: {
+  infoContainer: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   rating: {
     backgroundColor: '#f0f0f0',
