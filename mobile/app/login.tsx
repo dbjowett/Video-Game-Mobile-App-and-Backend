@@ -1,6 +1,7 @@
 import { Tokens, Values } from '@/api/types/auth';
 import { apiNoAuth } from '@/api/utils/api';
 import { useSession } from '@/components/AuthContext';
+import { GoogleIcon } from '@/components/GoogleIcon';
 import { useGoogleCallback } from '@/hooks/useGoogleCallback';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
@@ -69,13 +70,22 @@ const Page = () => {
     },
   });
 
+  const GameLayout = () => {
+    return (
+      <View>
+        <Gamepad2 style={styles.icon} size={80} />
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <Gamepad2 style={styles.icon} size={80} />
+      <GameLayout />
       <Text style={styles.header}>{isSignUp ? 'Sign Up' : 'Sign In'}</Text>
       {!showGoogleLogin ? (
         <>
           <TouchableOpacity style={styles.googleButton} onPress={() => setShowGoogleLogin(true)}>
+            <GoogleIcon />
             <Text style={styles.buttonText}>
               {isSignUp ? 'Sign up with Google' : 'Sign in with Google'}
             </Text>
@@ -161,14 +171,21 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   googleButton: {
-    backgroundColor: '#4285F4',
+    backgroundColor: '#131314',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 10,
+    borderWidth: 1,
+    borderColor: '#747775',
     padding: 12,
     borderRadius: 8,
     marginBottom: 20,
   },
   buttonText: {
-    color: '#fff',
+    color: '#e3e3e3',
     textAlign: 'center',
+    fontWeight: 600,
     fontSize: 16,
   },
   form: {
