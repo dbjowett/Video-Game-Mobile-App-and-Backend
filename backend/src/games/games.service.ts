@@ -36,7 +36,7 @@ export class GamesService {
   constructor(private readonly igdbService: IgdbService) {}
 
   async getListGames(gameIds: number[]): Promise<ListGame[]> {
-    const query = `${LIST_GAME_FIELDS_QUERY}; where id = (${gameIds.join(',')});`;
+    const query = `${LIST_GAME_FIELDS_QUERY}; limit 12; where id = (${gameIds.join(',')});`;
     return this.igdbService.request<ListGame[]>('games', query);
   }
 
@@ -88,12 +88,13 @@ export class GamesService {
     if (cachedData) return cachedData;
 
     const popularGames = await this.getPopularGames();
+
     const gameIds = popularGames.peakPlayers24h.map((g) => g.id);
+
     const gameDetails = await this.getListGames(gameIds);
 
     this.cache.set(cacheKey, gameDetails);
     setTimeout(() => this.cache.delete(cacheKey), 3600 * 1000);
-
     return gameDetails;
   }
 

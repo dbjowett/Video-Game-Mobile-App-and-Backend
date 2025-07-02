@@ -33,7 +33,7 @@ A full-stack video game tracking app where users can keep track of games they've
 ```
 
 /
-mobile/                → React Native + Expo app
+mobile/       → React Native + Expo app
 frontend/     → Vite + React app (Web)
 backend/      → NestJS REST API
 
@@ -69,10 +69,6 @@ pnpm install
 ### 3. Run locally
 
 ```bash
-
-# Frontend and Backend (Together w/ Turbo)
-cd monorepo/
-turbo run dev
 
 # Frontend
 cd /frontend
