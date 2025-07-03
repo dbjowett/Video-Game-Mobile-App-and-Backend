@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   ListRenderItem,
@@ -6,31 +7,31 @@ import {
   StyleSheet,
   TouchableOpacity,
   Vibration,
-} from 'react-native';
+} from "react-native";
 
-import { usePopularGames } from '@/api';
-import { useAddFavouriteGame } from '@/api/hooks/useAddFavouriteGame';
-import { useGetFavouriteGames } from '@/api/hooks/useGetFavouriteGames';
-import { useRemoveFavouriteGame } from '@/api/hooks/useRemoveFavouriteGame';
-import { ListGame, PopKey } from '@/api/types/game';
-import LandingHeader from '@/components/CategoryHeader';
-import { Text, View } from '@/components/Themed';
-import { useColours } from '@/hooks/useColours';
-import { getHumanDate } from '@/utils';
-import { Link, Stack } from 'expo-router';
-import { Heart } from 'lucide-react-native';
-import React from 'react';
-import Animated, { FadeInRight, FadeOutLeft } from 'react-native-reanimated';
+import { usePopularGames } from "@/api";
+import { useAddFavouriteGame } from "@/api/hooks/useAddFavouriteGame";
+import { useGetFavouriteGames } from "@/api/hooks/useGetFavouriteGames";
+import { useRemoveFavouriteGame } from "@/api/hooks/useRemoveFavouriteGame";
+import { ListGame, PopKey } from "@/api/types/game";
+import LandingHeader from "@/components/CategoryHeader";
+import { Text, View } from "@/components/Themed";
+import { useColours } from "@/hooks/useColours";
+import { getHumanDate } from "@/utils";
+import { Link, Stack } from "expo-router";
+import { Heart } from "lucide-react-native";
+import React from "react";
+import Animated, { FadeInRight, FadeOutLeft } from "react-native-reanimated";
 
 const popTypeTitleMap: Record<PopKey, string> = {
-  visits: '🎯 Most Visited',
-  wantToPlay: '📝 Want to Play',
-  playing: '🎮 Currently Playing',
-  played: '✅ Played',
-  peakPlayers24h: '📈 Peak Players (24h)',
-  positiveReviews: '👍 Positive Reviews',
-  negativeReviews: '👎 Negative Reviews',
-  totalReviews: '📊 Total Reviews',
+  visits: "🎯 Most Visited",
+  wantToPlay: "📝 Want to Play",
+  playing: "🎮 Currently Playing",
+  played: "✅ Played",
+  peakPlayers24h: "📈 Peak Players (24h)",
+  positiveReviews: "👍 Positive Reviews",
+  negativeReviews: "👎 Negative Reviews",
+  totalReviews: "📊 Total Reviews",
 };
 
 export default function Page() {
@@ -64,10 +65,16 @@ export default function Page() {
     return (
       <Link href={`/games/${item.id}`} asChild>
         <TouchableOpacity style={styles.itemContainer}>
-          <Animated.View style={styles.innerWrap} entering={FadeInRight} exiting={FadeOutLeft}>
+          <Animated.View
+            style={styles.innerWrap}
+            entering={FadeInRight}
+            exiting={FadeOutLeft}
+          >
             {/* Image */}
             <Image
-              source={{ uri: `https:${item.cover.url.replace('t_thumb', 't_cover_big_2x')}` }}
+              source={{
+                uri: `https:${item.cover.url.replace("t_thumb", "t_cover_big_2x")}`,
+              }}
               style={styles.image}
             />
             {/* Fave Icon */}
@@ -77,9 +84,9 @@ export default function Page() {
             >
               <Heart
                 size={24}
-                color={'#fff'}
-                fill={isFavourite ? 'red' : 'transparent'}
-                stroke={isFavourite ? 'red' : '#fff'}
+                color={"#fff"}
+                fill={isFavourite ? "red" : "transparent"}
+                stroke={isFavourite ? "red" : "#fff"}
               />
             </TouchableOpacity>
 
@@ -91,8 +98,12 @@ export default function Page() {
                 </Text>
               </View>
               <View style={styles.infoContainer}>
-                <Text style={styles.rating}>{Math.trunc(item?.total_rating)}%</Text>
-                <Text style={styles.releaseDate}>{getHumanDate(item?.first_release_date)}</Text>
+                <Text style={styles.rating}>
+                  {Math.trunc(item?.total_rating)}%
+                </Text>
+                <Text style={styles.releaseDate}>
+                  {getHumanDate(item?.first_release_date)}
+                </Text>
               </View>
             </View>
           </Animated.View>
@@ -104,7 +115,12 @@ export default function Page() {
   const GameList = ({ title, games }: { title: PopKey; games: ListGame[] }) => (
     <View>
       <Text style={styles.categoryTitle}>{popTypeTitleMap[title]}</Text>
-      <FlatList horizontal style={styles.listContainer} data={games} renderItem={singleGame} />
+      <FlatList
+        horizontal
+        style={styles.listContainer}
+        data={games}
+        renderItem={singleGame}
+      />
     </View>
   );
 
@@ -119,7 +135,9 @@ export default function Page() {
 
       {isError && <Text>Error...</Text>}
       {isPending ? (
-        <Text>Loading...</Text>
+        <View style={{ flex: 1, marginTop: 30 }}>
+          <ActivityIndicator />
+        </View>
       ) : (
         <ScrollView>
           {popularGames
@@ -136,13 +154,14 @@ export default function Page() {
 const styles = StyleSheet.create({
   pageContainer: {
     paddingTop: 80,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     gap: 10,
+    flex: 1,
   },
   categoryTitle: {
     fontSize: 22,
-    fontWeight: '700',
+    fontWeight: "700",
     paddingHorizontal: 16,
     paddingBottom: 8,
   },
@@ -160,7 +179,7 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 1,
     marginVertical: 0,
-    position: 'relative',
+    position: "relative",
   },
 
   image: {
@@ -168,7 +187,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   heartIcon: {
-    position: 'absolute',
+    position: "absolute",
     right: 12,
     top: 12,
   },
@@ -181,21 +200,21 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 8,
     fontWeight: 600,
-    flexWrap: 'wrap',
+    flexWrap: "wrap",
   },
   infoContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   rating: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
     marginTop: 2,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   releaseDate: {
     fontSize: 12,
