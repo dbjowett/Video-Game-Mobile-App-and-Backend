@@ -18,9 +18,6 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
