@@ -18,7 +18,12 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
 import { WebView } from "react-native-webview";
 
 const BANNER_HEIGHT = 300;
@@ -124,131 +129,131 @@ const Page = () => {
 
   return (
     <View style={[styles.container, showGoogleLogin ? { marginTop: 80 } : {}]}>
-      {showGoogleLogin ? (
-        <WebView
-          userAgent="http.agent"
-          source={{
-            uri: `${process.env.EXPO_PUBLIC_API_URL}/auth/google?platform=mobile`,
-          }}
-        />
-      ) : (
-        <>
-          <View style={styles.upperContainer}>
-            <GameLayout />
-          </View>
+      <KeyboardAwareScrollView
+        bounces={false}
+        enableOnAndroid={true}
+        keyboardShouldPersistTaps="handled"
+      >
+        {showGoogleLogin ? (
+          <WebView
+            userAgent="http.agent"
+            source={{
+              uri: `${process.env.EXPO_PUBLIC_API_URL}/auth/google?platform=mobile`,
+            }}
+          />
+        ) : (
+          <>
+            <View style={styles.upperContainer}>
+              <GameLayout />
+            </View>
 
-          <View style={styles.lowerContainer}>
-            <>
-              <Text style={styles.header}>
-                {isSignUp ? "Sign Up" : "Sign In"}
-              </Text>
-              <TouchableOpacity
-                style={styles.googleButton}
-                onPress={() => setShowGoogleLogin(true)}
-              >
-                <GoogleIcon />
-                <Text style={styles.buttonText}>Continue with Google</Text>
-              </TouchableOpacity>
-
-              <View style={styles.form}>
-                {/* Email Field */}
-                <form.Field
-                  name="email"
-                  validators={{
-                    onSubmit: ({ value }) =>
-                      !value
-                        ? "Please enter an email"
-                        : !value.includes("@")
-                          ? "Please enter a valid email"
-                          : undefined,
-                  }}
-                  children={(field) => (
-                    <>
-                      <Text>Email:</Text>
-                      <TextInput
-                        autoCapitalize="none"
-                        style={styles.input}
-                        placeholder="Email"
-                        value={field.state.value}
-                        onChangeText={field.handleChange}
-                      />
-                      {field.state.meta.errors && (
-                        <Text style={styles.error}>
-                          {field.state.meta.errors.join(", ")}
-                        </Text>
-                      )}
-                    </>
-                  )}
-                />
-
-                {/* Password Field */}
-                <form.Field
-                  name="password"
-                  validators={{
-                    onSubmit: ({ value }) =>
-                      value.length < 3
-                        ? "Password must be at least 3 characters in length"
-                        : undefined,
-                  }}
-                  children={(field) => (
-                    <>
-                      <Text>Password:</Text>
-                      <TextInput
-                        autoCapitalize="none"
-                        style={styles.input}
-                        placeholder="Password"
-                        value={field.state.value}
-                        onChangeText={field.handleChange}
-                        secureTextEntry
-                      />
-                      {field.state.meta.errors && (
-                        <Text style={styles.error}>
-                          {field.state.meta.errors.join(", ")}
-                        </Text>
-                      )}
-                    </>
-                  )}
-                />
-
+            <View style={styles.lowerContainer}>
+              <>
+                <Text style={styles.header}>
+                  {isSignUp ? "Sign Up" : "Sign In"}
+                </Text>
                 <TouchableOpacity
-                  style={styles.signUpBtn}
-                  onPress={form.handleSubmit}
+                  style={styles.googleButton}
+                  onPress={() => setShowGoogleLogin(true)}
                 >
-                  <Text style={styles.signUpBtnText}>
-                    {isSignUp ? "Sign Up" : "Sign In"}
-                  </Text>
+                  <GoogleIcon />
+                  <Text style={styles.buttonText}>Continue with Google</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => setIsSignUp((prev) => !prev)}>
-                  <Text style={styles.toggleText}>
-                    {isSignUp
-                      ? "Already have an account? Sign in"
-                      : "Don’t have an account? Sign up"}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </>
-          </View>
-        </>
-      )}
+                <View style={styles.form}>
+                  {/* Email Field */}
+                  <form.Field
+                    name="email"
+                    validators={{
+                      onSubmit: ({ value }) =>
+                        !value
+                          ? "Please enter an email"
+                          : !value.includes("@")
+                            ? "Please enter a valid email"
+                            : undefined,
+                    }}
+                    children={(field) => (
+                      <>
+                        <Text>Email:</Text>
+                        <TextInput
+                          autoCapitalize="none"
+                          style={styles.input}
+                          placeholder="Email"
+                          value={field.state.value}
+                          onChangeText={field.handleChange}
+                        />
+                        {field.state.meta.errors && (
+                          <Text style={styles.error}>
+                            {field.state.meta.errors.join(", ")}
+                          </Text>
+                        )}
+                      </>
+                    )}
+                  />
+
+                  {/* Password Field */}
+                  <form.Field
+                    name="password"
+                    validators={{
+                      onSubmit: ({ value }) =>
+                        value.length < 3
+                          ? "Password must be at least 3 characters in length"
+                          : undefined,
+                    }}
+                    children={(field) => (
+                      <>
+                        <Text>Password:</Text>
+                        <TextInput
+                          autoCapitalize="none"
+                          style={styles.input}
+                          placeholder="Password"
+                          value={field.state.value}
+                          onChangeText={field.handleChange}
+                          secureTextEntry
+                        />
+                        {field.state.meta.errors && (
+                          <Text style={styles.error}>
+                            {field.state.meta.errors.join(", ")}
+                          </Text>
+                        )}
+                      </>
+                    )}
+                  />
+
+                  <TouchableOpacity
+                    style={styles.signUpBtn}
+                    onPress={form.handleSubmit}
+                  >
+                    <Text style={styles.signUpBtnText}>
+                      {isSignUp ? "Sign Up" : "Sign In"}
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => setIsSignUp((prev) => !prev)}
+                  >
+                    <Text style={styles.toggleText}>
+                      {isSignUp
+                        ? "Already have an account? Sign in"
+                        : "Don’t have an account? Sign up"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            </View>
+          </>
+        )}
+      </KeyboardAwareScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    flexDirection: "column",
-  },
+  container: {},
 
-  upperContainer: {
-    position: "fixed",
-  },
+  upperContainer: {},
 
   lowerContainer: {
-    overflow: "hidden",
-    flex: 1,
     paddingHorizontal: 20,
   },
 
@@ -267,6 +272,7 @@ const styles = StyleSheet.create({
     height: BANNER_HEIGHT,
     top: -BANNER_HEIGHT / 2 + 40,
     width: 500,
+    left: -10,
     flexDirection: "row",
     flexWrap: "wrap",
     transform: [{ rotate: "10deg" }],
@@ -276,10 +282,6 @@ const styles = StyleSheet.create({
     padding: 5,
   },
 
-  icon: {
-    alignSelf: "center",
-    marginBottom: 40,
-  },
   header: {
     fontSize: 30,
     fontWeight: "bold",
