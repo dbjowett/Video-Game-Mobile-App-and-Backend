@@ -5,9 +5,14 @@
     "module": "NodeNext",
     "strict": true,
     "paths": {
-      "@/*": ["./*"],
-      "@vg/shared:": ["../shared/src"]
+      "@/*": ["./*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts", "../login.tsx"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
+    "../login.tsx"
+  ]
 }

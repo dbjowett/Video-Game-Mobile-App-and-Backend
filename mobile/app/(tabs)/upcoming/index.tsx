@@ -6,13 +6,22 @@ import { useQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { Calendar, ChevronDown } from 'lucide-react-native';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { Animated, Easing, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Animated,
+  Easing,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {
   AgendaList,
   CalendarProvider,
   ExpandableCalendar,
   WeekCalendar,
 } from 'react-native-calendars';
+import { CalendarNavigationTypes } from 'react-native-calendars/src/expandableCalendar/commons';
 import { Theme } from 'react-native-calendars/src/types';
 
 interface Props {
@@ -42,7 +51,10 @@ const AgendaItem = ({ item }: { item: ListGame }) => (
         />
       ) : null}
       <Text style={styles.agendaText}>{item.name}</Text>
-      <Text style={{ color: 'grey', fontSize: 12, maxWidth: 100 }} numberOfLines={1}>
+      <Text
+        style={{ color: 'grey', fontSize: 12, maxWidth: 100 }}
+        numberOfLines={1}
+      >
         {item.platforms?.map((p) => p.name).join(', ') || 'Unknown Platform'}
       </Text>
     </View>
@@ -50,8 +62,11 @@ const AgendaItem = ({ item }: { item: ListGame }) => (
 );
 
 const date = new Date();
-// TODO: Deal with timezone offset. Added 2
-const initialDate = new Date(date.getFullYear(), date.getMonth(), 2).toISOString().split('T')[0]; // "YYYY-MM-DD"
+
+const initialDate = new Date(date.getFullYear(), date.getMonth(), 2)
+  .toISOString()
+  .split('T')[0]; // "YYYY-MM-DD"
+const today = new Date().toISOString().split('T')[0];
 const initialMonth = new Date().toISOString().slice(0, 7); // "YYYY-MM"
 
 const ExpandableCalendarScreen = ({ weekView }: Props) => {
@@ -71,7 +86,6 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
   } = useQuery({
     queryKey: ['game-releases', visibleMonth],
     queryFn: () => fetchReleasesByMonth(visibleMonth),
-    // staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
   const transformedItems = useMemo(() => {
@@ -89,14 +103,19 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
       grouped[dateStr].push(game);
     });
 
-    return Object.entries(grouped).map(([date, data]) => ({ title: date, data }));
+    return Object.entries(grouped).map(([date, data]) => ({
+      title: date,
+      data,
+    }));
   }, [games]);
 
   const marked = useMemo(() => {
     if (!games) return {};
 
     return games.reduce((acc: any, game: any) => {
-      const dateStr = new Date(game.first_release_date * 1000).toISOString().split('T')[0];
+      const dateStr = new Date(game.first_release_date * 1000)
+        .toISOString()
+        .split('T')[0];
       acc[dateStr] = { marked: true };
       return acc;
     }, {});
@@ -123,7 +142,9 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
 
     return (
       <TouchableOpacity style={styles.header} onPress={toggleCalendarExpansion}>
-        <Text style={styles.headerTitle}>{date?.toString?.('MMMM yyyy') ?? ''}</Text>
+        <Text style={styles.headerTitle}>
+          {date?.toString?.('MMMM yyyy') ?? ''}
+        </Text>
         <Animated.View style={{ transform: [{ rotate: rotationInDegrees }] }}>
           <ChevronDown size={18} />
         </Animated.View>
@@ -148,10 +169,12 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
       todayTextColor: colours.primary,
       indicatorColor: colours.primary,
     };
-  }, []);
+  }, [colours]);
 
   const isLoadingData = isPending || isLoading;
-  const todayGames = transformedItems.filter((item) => item.title === selectedDate);
+  const todayGames = transformedItems.filter(
+    (item) => item.title === selectedDate,
+  );
   const noGamesFound = !isLoadingData && transformedItems.length === 0;
 
   const NoGames = () => (
@@ -163,6 +186,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
   );
 
   const LoadingSkeleton = () => (
+    // TODO: FIX
     <View>
       <Text style={{ fontSize: 16, color: 'grey' }}>Loading games...</Text>
     </View>
@@ -170,21 +194,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
 
   const TodayButton = () => {
     const handleTodayPress = () => {
-      // const today = new Date();
-      // const todayString = today.toISOString().split('T')[0]; // "YYYY-MM-DD"
-      setSelectedDate(initialDate);
-      // setVisibleMonth(todayString.slice(0, 7)); // Update month to current month
-      // this is scrolling to the nth item. Not the nth date.
-      // const todayIndex = transformedItems.findIndex((item) => item.title === todayString);
-      // if (listRef.current && todayIndex !== -1) {
-      //   console.log('Scrolling to today:', todayString, todayIndex);
-      //   // Scroll to top of the list
-      //   listRef.current?.scrollToLocation({
-      //     animated: true,
-      //     sectionIndex: todayIndex,
-      //     itemIndex: 0,
-      //   });
-      // }
+      setSelectedDate(today);
     };
 
     return (
@@ -196,7 +206,13 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
   };
 
   return (
-    <CalendarProvider date={selectedDate} onDateChanged={setSelectedDate}>
+    <CalendarProvider
+      date={selectedDate}
+      disableAutoDaySelection={[CalendarNavigationTypes.TODAY_PRESS]}
+      onDateChanged={(e) => {
+        setSelectedDate(e);
+      }}
+    >
       <View
         style={{
           flex: 1,
@@ -210,7 +226,9 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
           <WeekCalendar
             displayLoadingIndicator={isLoadingData}
             theme={theme}
-            onDayPress={(day) => setSelectedDate(day.dateString)}
+            onDayPress={(day) => {
+              setSelectedDate(day.dateString);
+            }}
             onMonthChange={onMonthChange}
             firstDay={1}
             markedDates={marked}
@@ -219,7 +237,9 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
           <ExpandableCalendar
             displayLoadingIndicator={isLoadingData}
             theme={theme}
-            onDayPress={(day) => setSelectedDate(day.dateString)}
+            onDayPress={(day) => {
+              setSelectedDate(day.dateString);
+            }}
             onMonthChange={onMonthChange}
             renderHeader={renderHeader}
             ref={calendarRef}
