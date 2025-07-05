@@ -4,9 +4,10 @@ import { useColours } from '@/hooks/useColours';
 import { imageLoader } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
-import { Calendar, ChevronDown } from 'lucide-react-native';
+import { ChevronDown } from 'lucide-react-native';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
+  ActivityIndicator,
   Animated,
   Easing,
   Image,
@@ -172,9 +173,6 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
   }, [colours]);
 
   const isLoadingData = isPending || isLoading;
-  const todayGames = transformedItems.filter(
-    (item) => item.title === selectedDate,
-  );
   const noGamesFound = !isLoadingData && transformedItems.length === 0;
 
   const NoGames = () => (
@@ -187,30 +185,32 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
 
   const LoadingSkeleton = () => (
     // TODO: FIX
-    <View>
-      <Text style={{ fontSize: 16, color: 'grey' }}>Loading games...</Text>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <ActivityIndicator color={colours.primary} />
     </View>
   );
 
-  const TodayButton = () => {
-    const handleTodayPress = () => {
-      setSelectedDate(today);
-    };
+  // const TodayButton = () => {
+  //   const handleTodayPress = () => {
+  //     setSelectedDate(today);
+  //   };
 
-    return (
-      <TouchableOpacity onPress={handleTodayPress} style={styles.todayButton}>
-        <Calendar size={18} color={colours.primary} />
-        <Text style={{ color: colours.primary }}>Today</Text>
-      </TouchableOpacity>
-    );
-  };
+  //   return (
+  //     <TouchableOpacity onPress={handleTodayPress} style={styles.todayButton}>
+  //       <Calendar size={18} color={colours.primary} />
+  //       <Text style={{ color: colours.primary }}>Today</Text>
+  //     </TouchableOpacity>
+  //   );
+  // };
 
   return (
     <CalendarProvider
       date={selectedDate}
-      disableAutoDaySelection={[CalendarNavigationTypes.TODAY_PRESS]}
-      onDateChanged={(e) => {
-        setSelectedDate(e);
+      disableAutoDaySelection={[CalendarNavigationTypes.WEEK_SCROLL]}
+      onDateChanged={(e, src) => {
+        if (src !== 'weekScroll') {
+          setSelectedDate(e);
+        }
       }}
     >
       <View
@@ -220,15 +220,13 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
           position: 'relative',
         }}
       >
-        <TodayButton />
+        {/* <TodayButton /> */}
 
         {weekView ? (
           <WeekCalendar
             displayLoadingIndicator={isLoadingData}
             theme={theme}
-            onDayPress={(day) => {
-              setSelectedDate(day.dateString);
-            }}
+            onDayPress={(day) => setSelectedDate(day.dateString)}
             onMonthChange={onMonthChange}
             firstDay={1}
             markedDates={marked}
@@ -237,9 +235,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
           <ExpandableCalendar
             displayLoadingIndicator={isLoadingData}
             theme={theme}
-            onDayPress={(day) => {
-              setSelectedDate(day.dateString);
-            }}
+            onDayPress={(day) => setSelectedDate(day.dateString)}
             onMonthChange={onMonthChange}
             renderHeader={renderHeader}
             ref={calendarRef}
@@ -248,7 +244,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
             markedDates={marked}
           />
         )}
-
+        {isLoadingData ? <LoadingSkeleton /> : null}
         <View style={styles.bottomContainer}>
           {!noGamesFound && (
             <AgendaList
@@ -258,7 +254,6 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
               sectionStyle={styles.agendaItemList}
             />
           )}
-          {isLoadingData ? <LoadingSkeleton /> : null}
           {noGamesFound ? <NoGames /> : null}
         </View>
       </View>
