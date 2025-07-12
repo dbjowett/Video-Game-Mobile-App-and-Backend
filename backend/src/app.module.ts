@@ -9,9 +9,15 @@ import { IgdbModule } from './igdb/igdb.module';
 import { ProfileModule } from './profile/profile.module';
 import { UsersModule } from './users/users.module';
 
+import { validationSchema } from './config/env.validation';
+
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+      validationSchema,
+    }),
     AuthModule,
     UsersModule,
     DatabaseModule,

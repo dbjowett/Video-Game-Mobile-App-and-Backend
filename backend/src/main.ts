@@ -5,13 +5,6 @@ import { NextFunction, Request, Response } from 'express';
 import { AppModule } from './app.module';
 import { LoggerMiddleware } from './common/middleware';
 
-const corsConfig = {
-  origin: ['http://localhost:5173', 'http://localhost:8081'],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-} as const;
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors(corsConfig);
@@ -20,6 +13,13 @@ async function bootstrap() {
   app.use((req: Request, res: Response, next: NextFunction) =>
     new LoggerMiddleware().use(req, res, next),
   );
-  await app.listen(3000);
+  await app.listen(parseInt(process.env.PORT) || 3000);
 }
 bootstrap();
+
+const corsConfig = {
+  origin: ['http://localhost:5173', 'http://localhost:8081'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+} as const;
