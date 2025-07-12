@@ -1,6 +1,6 @@
 name: Release Workflow
 run-name: ${{ github.actor }} GitHub Actions 🚀
-on: [push]
+on: [release]
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest

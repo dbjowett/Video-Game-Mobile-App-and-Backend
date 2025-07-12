@@ -24,4 +24,9 @@ export class ProfileController {
   ): Promise<Partial<UserType>> {
     return await this.profileService.updateUserProfile(user.id, body.user);
   }
+
+  @Get('/profile-upload-url')
+  async getProfileUploadUrl() {
+    return this.profileService.getProfileUploadUrl();
+  }
 }

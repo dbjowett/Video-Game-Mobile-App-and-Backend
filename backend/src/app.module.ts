@@ -9,7 +9,7 @@ import { IgdbModule } from './igdb/igdb.module';
 import { ProfileModule } from './profile/profile.module';
 import { UsersModule } from './users/users.module';
 
-import { validationSchema } from './config/env.validation';
+import { validationSchema } from './common/config/env.validation';
 
 @Module({
   imports: [
