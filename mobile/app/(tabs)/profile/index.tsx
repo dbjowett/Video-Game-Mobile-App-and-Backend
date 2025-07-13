@@ -1,7 +1,9 @@
 import { useUpdateUser } from '@/api/hooks/useUpdateUser';
 import { useUser } from '@/api/hooks/useUser';
 import { useSession } from '@/components/AuthContext';
-import { Text, View as ThemedView } from '@/components/Themed';
+import { Text, View } from '@/components/Themed';
+import { useTheme } from '@/theme/theme-context';
+
 import { useHeaderHeight } from '@react-navigation/elements';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from 'expo-router';
@@ -13,9 +15,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  View,
 } from 'react-native';
-
 const Page = () => {
   const headerHeight = useHeaderHeight();
   const { signOut } = useSession();
@@ -25,6 +25,7 @@ const Page = () => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const navigation = useNavigation();
+  const { colors } = useTheme();
 
   const { mutate } = useUpdateUser();
 
@@ -110,14 +111,23 @@ const Page = () => {
   };
 
   return (
-    <ThemedView style={[styles.container, { paddingTop: headerHeight }]}>
+    <View style={[styles.container, { paddingTop: headerHeight }]}>
       <View style={styles.profileContainer}>
-        {/* Profile Picture */}
-
         <ProfileImage />
-
-        <ThemedView style={styles.itemWrap}>
-          <Text style={styles.subtext}>Username</Text>
+        <View
+          style={StyleSheet.flatten([
+            styles.itemWrap,
+            { borderColor: colors.borderDark },
+          ])}
+        >
+          <Text
+            style={StyleSheet.flatten([
+              styles.subtext,
+              { color: colors.textSecondary },
+            ])}
+          >
+            Username
+          </Text>
 
           {isEditing ? (
             <View>
@@ -133,19 +143,31 @@ const Page = () => {
               <Text style={styles.mainText}>{user?.username}</Text>
             </View>
           )}
-        </ThemedView>
+        </View>
         {/* Email */}
-        <ThemedView style={styles.itemWrap}>
-          <Text style={styles.subtext}>Email</Text>
+        <View
+          style={StyleSheet.flatten([
+            styles.itemWrap,
+            { borderColor: colors.borderDark },
+          ])}
+        >
+          <Text
+            style={StyleSheet.flatten([
+              styles.subtext,
+              { color: colors.textSecondary },
+            ])}
+          >
+            Email
+          </Text>
           <Text style={styles.mainText}>{user?.email}</Text>
-        </ThemedView>
+        </View>
         {/* Logout */}
-        <TouchableOpacity style={styles.googleButton} onPress={signOut}>
+        <TouchableOpacity style={styles.signOut} onPress={signOut}>
           <Text style={styles.buttonText}>Sign Out</Text>
           <LogOut color="white" size={18} />
         </TouchableOpacity>
       </View>
-    </ThemedView>
+    </View>
   );
 };
 
@@ -168,10 +190,11 @@ const styles = StyleSheet.create({
   imageContainer: {
     position: 'relative',
     borderRadius: 50,
-    borderWidth: StyleSheet.hairlineWidth,
   },
   itemWrap: {
-    padding: 14,
+    height: 52,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 8,
     width: '80%',
     gap: 4,
@@ -244,7 +267,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  googleButton: {
+  signOut: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',

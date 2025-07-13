@@ -12,10 +12,11 @@ import {
   Easing,
   Image,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+
+import { Text } from '@/components/Themed';
 
 import {
   AgendaList,
@@ -50,6 +51,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
   const [selectedDate, setSelectedDate] = React.useState<string>(initialDate); // "YYYY-MM-DD"
   const [visibleMonth, setVisibleMonth] = useState<string>(initialMonth);
 
+  // TODO: Move this to a custom hook
   const {
     data: games,
     isLoading,
@@ -122,7 +124,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
         ) : null}
         <Text style={styles.agendaText}>{item.name}</Text>
         <Text
-          style={{ color: 'grey', fontSize: 12, maxWidth: 100 }}
+          style={{ color: colors.textSecondary, fontSize: 12, maxWidth: 100 }}
           numberOfLines={1}
         >
           {item.platforms?.map((p) => p.name).join(', ') || 'Unknown Platform'}
@@ -131,12 +133,9 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
     </TouchableOpacity>
   );
 
-  const renderItem = useCallback(
-    ({ item }: { item: ListGame }) => {
-      return <AgendaItem item={item} />;
-    },
-    [colors],
-  );
+  const renderItem = ({ item }: { item: ListGame }) => {
+    return <AgendaItem item={item} />;
+  };
 
   const toggleCalendarExpansion = useCallback(() => {
     const isOpen = calendarRef.current?.toggleCalendarPosition();
@@ -175,17 +174,18 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
     setVisibleMonth(newMonth);
   };
 
-  const theme: Theme = useMemo(() => {
-    return {
-      selectedDayBackgroundColor: colors.primary,
-      arrowColor: colors.primary,
-      todayButtonTextColor: colors.primary,
-      todayTextColor: colors.primary,
-      indicatorColor: colors.primary,
-      backgroundColor: colors.background,
-      calendarBackground: colors.background,
-    };
-  }, [colors]);
+  const theme: Theme = {
+    monthTextColor: colors.text,
+    backgroundColor: colors.background,
+    todayBackgroundColor: colors.background,
+    selectedDayBackgroundColor: colors.primary,
+    arrowColor: colors.primary,
+    todayButtonTextColor: colors.text,
+    agendaTodayColor: colors.primary,
+    todayTextColor: colors.text,
+    indicatorColor: colors.primary,
+    calendarBackground: colors.background,
+  };
 
   const isLoadingData = isPending || isLoading;
   const noGamesFound = !isLoadingData && transformedItems.length === 0;

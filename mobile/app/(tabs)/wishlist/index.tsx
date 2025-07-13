@@ -1,14 +1,22 @@
 import { useHeaderHeight } from '@react-navigation/elements';
 import React from 'react';
 
+import { useGetFavouriteGames } from '@/api/hooks/useGetFavouriteGames';
 import { Text, View } from '@/components/Themed';
 import { StyleSheet } from 'react-native';
 
 const Page = () => {
+  const { data: games, isLoading } = useGetFavouriteGames();
   const headerHeight = useHeaderHeight();
   return (
     <View style={[styles.container, { paddingTop: headerHeight }]}>
       <Text style={styles.title}>Wishlist</Text>
+
+      {isLoading ? (
+        <Text>Loading...</Text>
+      ) : (
+        games?.map((game) => <Text key={game.gameId}>{game.gameId}</Text>)
+      )}
     </View>
   );
 };
