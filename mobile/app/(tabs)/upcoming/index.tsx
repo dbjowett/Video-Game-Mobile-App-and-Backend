@@ -16,6 +16,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+
 import {
   AgendaList,
   CalendarProvider,
@@ -31,36 +32,6 @@ interface Props {
 
 const fetchReleasesByMonth = async (month: string) =>
   await api.get(`games/releases?month=${month}`).json<ListGame[]>();
-
-// Placeholder AgendaItem component
-const AgendaItem = ({ item }: { item: ListGame }) => (
-  <TouchableOpacity
-    onPress={() => {
-      router.navigate(`/games/${item.id}`);
-    }}
-  >
-    <View style={styles.agendaItem}>
-      {item.cover && item.cover.url ? (
-        <Image
-          source={{
-            uri: imageLoader({
-              src: item.cover.url,
-              quality: 1,
-            }),
-          }}
-          style={styles.agendaImage}
-        />
-      ) : null}
-      <Text style={styles.agendaText}>{item.name}</Text>
-      <Text
-        style={{ color: 'grey', fontSize: 12, maxWidth: 100 }}
-        numberOfLines={1}
-      >
-        {item.platforms?.map((p) => p.name).join(', ') || 'Unknown Platform'}
-      </Text>
-    </View>
-  </TouchableOpacity>
-);
 
 const date = new Date();
 
@@ -121,9 +92,51 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
       return acc;
     }, {});
   }, [games]);
-  const renderItem = useCallback(({ item }: { item: ListGame }) => {
-    return <AgendaItem item={item} />;
-  }, []);
+
+  // Placeholder AgendaItem component
+  const AgendaItem = ({ item }: { item: ListGame }) => (
+    <TouchableOpacity
+      onPress={() => {
+        router.navigate(`/games/${item.id}`);
+      }}
+    >
+      <View
+        style={StyleSheet.flatten([
+          styles.agendaItem,
+          {
+            backgroundColor: colors.background,
+            borderBottomColor: colors.border,
+          },
+        ])}
+      >
+        {item.cover && item.cover.url ? (
+          <Image
+            source={{
+              uri: imageLoader({
+                src: item.cover.url,
+                quality: 1,
+              }),
+            }}
+            style={styles.agendaImage}
+          />
+        ) : null}
+        <Text style={styles.agendaText}>{item.name}</Text>
+        <Text
+          style={{ color: 'grey', fontSize: 12, maxWidth: 100 }}
+          numberOfLines={1}
+        >
+          {item.platforms?.map((p) => p.name).join(', ') || 'Unknown Platform'}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const renderItem = useCallback(
+    ({ item }: { item: ListGame }) => {
+      return <AgendaItem item={item} />;
+    },
+    [colors],
+  );
 
   const toggleCalendarExpansion = useCallback(() => {
     const isOpen = calendarRef.current?.toggleCalendarPosition();
@@ -169,6 +182,8 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
       todayButtonTextColor: colors.primary,
       todayTextColor: colors.primary,
       indicatorColor: colors.primary,
+      backgroundColor: colors.background,
+      calendarBackground: colors.background,
     };
   }, [colors]);
 
@@ -177,7 +192,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
 
   const NoGames = () => (
     <View style={{ padding: 20, alignItems: 'center' }}>
-      <Text style={{ fontSize: 16, color: 'grey' }}>
+      <Text>
         {isError ? 'Error loading games' : 'No games found for this date'}
       </Text>
     </View>
@@ -288,10 +303,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#fff',
-    borderBottomColor: '#eee',
     borderBottomWidth: 1,
-
     gap: 10,
   },
 
@@ -306,18 +318,18 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 
-  todayButton: {
-    zIndex: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    position: 'absolute',
-    bottom: 10,
-    right: 10,
-    backgroundColor: '#fff',
-    padding: 10,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
+  // todayButton: {
+  //   zIndex: 10,
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   gap: 10,
+  //   position: 'absolute',
+  //   bottom: 10,
+  //   right: 10,
+  //   backgroundColor: '#fff',
+  //   padding: 10,
+  //   borderRadius: 20,
+  //   borderWidth: 1,
+  //   borderColor: '#ddd',
+  // },
 });

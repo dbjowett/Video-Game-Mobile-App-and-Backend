@@ -19,11 +19,11 @@ import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+
+import { Text } from './Themed';
 
 const ICON_SIZE = 26;
 const ICON_COLOUR = '#000';
@@ -90,11 +90,16 @@ const LandingHeader = ({ onCategoryChange }: Props) => {
       <View style={styles.container}>
         <View style={styles.actionRow}>
           <Link href={'/(modals)/search'} asChild>
-            <TouchableOpacity style={styles.searchBtn}>
-              <Ionicons name="search" size={24} />
+            <TouchableOpacity
+              style={StyleSheet.flatten([
+                styles.searchBtn,
+                { borderColor: colors.borderDark },
+              ])}
+            >
+              <Ionicons color={colors.text} name="search" size={24} />
               <View>
                 <Text style={{ fontWeight: 600 }}>Search</Text>
-                <Text style={{ color: colors.text }}>
+                <Text style={{ color: colors.textSecondary }}>
                   Find your new favourite
                 </Text>
               </View>
@@ -151,7 +156,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: '#c2c2c2',
     borderColor: '#c2c2c2',
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: 1,
 
     elevation: 2,
     shadowColor: '#000',
@@ -173,12 +178,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    borderColor: '#c2c2c2',
     borderWidth: StyleSheet.hairlineWidth,
     flex: 1,
     padding: 14,
     borderRadius: 30,
-    backgroundColor: '#fff',
 
     elevation: 2,
     shadowColor: '#000',
@@ -190,7 +193,6 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     fontSize: 14,
-    color: Colors.grey,
   },
   categoryTextActive: {
     fontSize: 14,

@@ -57,7 +57,6 @@ export default function Page() {
   };
 
   const { colors } = useTheme();
-
   const singleGame: ListRenderItem<ListGame> = ({ item }) => {
     const id = item.id.toString();
     const isFavourite = favouriteGames?.some((game) => game.gameId === id);
@@ -98,7 +97,12 @@ export default function Page() {
                 </Text>
               </View>
               <View style={styles.infoContainer}>
-                <Text style={styles.rating}>
+                <Text
+                  style={StyleSheet.flatten([
+                    styles.rating,
+                    { backgroundColor: colors.surface },
+                  ])}
+                >
                   {Math.trunc(item?.total_rating)}%
                 </Text>
                 <Text style={styles.releaseDate}>
