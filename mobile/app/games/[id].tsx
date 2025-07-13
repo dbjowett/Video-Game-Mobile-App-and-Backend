@@ -6,7 +6,7 @@ import { MoreText } from '@/components/MoreText';
 import { ScreenshotsSection } from '@/components/ScreenshotsSection';
 import { SimilarGamesSection } from '@/components/SImilarGamesSection';
 import { VideosSection } from '@/components/VideosSection';
-import { useColours } from '@/hooks/useColours';
+import { useTheme } from '@/theme/theme-context';
 import { imageLoader } from '@/utils';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { ChevronLeft, Heart, Share as ShareIcon } from 'lucide-react-native';
@@ -36,11 +36,12 @@ const { width } = Dimensions.get('window');
 
 const Page = () => {
   const [imageLoaded, setIsImageLoaded] = useState<boolean>(false);
-  const [isImageViewerVisible, setIsImageViewerVisible] = useState<boolean>(false);
+  const [isImageViewerVisible, setIsImageViewerVisible] =
+    useState<boolean>(false);
   const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
 
   const { id } = useLocalSearchParams<{ id: string }>();
-  const colours = useColours();
+  const { colors } = useTheme();
 
   // ** Fetch favourite games and game details
   const { data: favouriteGames } = useGetFavouriteGames();
@@ -53,7 +54,9 @@ const Page = () => {
   const isFaved = favouriteGames?.some((game) => game.gameId.toString() === id);
 
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
-  const scrollOffset = useScrollViewOffset(scrollRef.current ? scrollRef : null);
+  const scrollOffset = useScrollViewOffset(
+    scrollRef.current ? scrollRef : null,
+  );
   const navigation = useNavigation();
 
   const shareListing = async () => {
@@ -103,11 +106,15 @@ const Page = () => {
             translateY: interpolate(
               scrollOffset.value,
               [-IMG_HEIGHT, 0, IMG_HEIGHT],
-              [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75]
+              [-IMG_HEIGHT / 2, 0, IMG_HEIGHT * 0.75],
             ),
           },
           {
-            scale: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [2, 1, 1]),
+            scale: interpolate(
+              scrollOffset.value,
+              [-IMG_HEIGHT, 0, IMG_HEIGHT],
+              [2, 1, 1],
+            ),
           },
         ],
       };
@@ -117,28 +124,39 @@ const Page = () => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: () => (
-        <Animated.Text style={[styles.headerTitle, titleAnimatedStyle]} numberOfLines={1}>
+        <Animated.Text
+          style={[styles.headerTitle, titleAnimatedStyle]}
+          numberOfLines={1}
+        >
           {game?.name}
         </Animated.Text>
       ),
       headerTransparent: true,
-      headerBackground: () => <Animated.View style={[styles.header, headerAnimatedStyle]} />,
+      headerBackground: () => (
+        <Animated.View style={[styles.header, headerAnimatedStyle]} />
+      ),
       headerRight: () => (
         <View style={styles.bar}>
           <TouchableOpacity style={styles.roundButton} onPress={shareListing}>
             <ShareIcon size={22} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.roundButton} onPress={handleFavourite}>
+          <TouchableOpacity
+            style={styles.roundButton}
+            onPress={handleFavourite}
+          >
             <Heart
               size={22}
               fill={isFaved ? 'red' : 'transparent'}
-              stroke={isFaved ? 'red' : colours.primary}
+              stroke={isFaved ? 'red' : colors.primary}
             />
           </TouchableOpacity>
         </View>
       ),
       headerLeft: () => (
-        <TouchableOpacity style={styles.roundButton} onPress={() => router.back()}>
+        <TouchableOpacity
+          style={styles.roundButton}
+          onPress={() => router.back()}
+        >
           <ChevronLeft size={22} />
         </TouchableOpacity>
       ),
@@ -211,7 +229,7 @@ const Page = () => {
                 paddingLeft: 20,
                 flexDirection: 'row',
                 gap: 10,
-                backgroundColor: colours.primary,
+                backgroundColor: colors.primary,
               },
             ]}
           >

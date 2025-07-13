@@ -3,8 +3,10 @@ import { useUser } from '@/api/hooks/useUser';
 import { useSession } from '@/components/AuthContext';
 import { Text, View as ThemedView } from '@/components/Themed';
 import { useHeaderHeight } from '@react-navigation/elements';
-import { CircleUserRound, CircleX, LogOut, Pencil, Save } from 'lucide-react-native';
-import React, { useState } from 'react';
+import * as ImagePicker from 'expo-image-picker';
+import { useNavigation } from 'expo-router';
+import { CameraIcon, CircleUserRound, LogOut } from 'lucide-react-native';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -18,8 +20,11 @@ const Page = () => {
   const headerHeight = useHeaderHeight();
   const { signOut } = useSession();
   const { data: user, isLoading } = useUser();
-  const [isEditingName, setIsEditingName] = useState<boolean>(false);
   const [newUsername, setNewUsername] = useState(user?.username || '');
+  const [image, setImage] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  const navigation = useNavigation();
 
   const { mutate } = useUpdateUser();
 
@@ -34,39 +39,87 @@ const Page = () => {
     if (newUsername.trim() !== user?.username) {
       mutate({ username: newUsername });
     }
-    setIsEditingName(false);
   };
 
-  // Handle canceling the edit
-  const handleCancel = () => {
-    setNewUsername(user?.username || ''); // Reset to the original username
-    setIsEditingName(false);
+  const handleEditImg = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images', 'videos'],
+      allowsEditing: true,
+      aspect: [4, 4],
+      quality: 0,
+    });
+    console.log(result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <View style={{ marginTop: 56, flexDirection: 'row', gap: 10 }}>
+          <TouchableOpacity
+            onPress={() => {
+              if (image) setImage(null);
+              setIsEditing((prev) => !prev);
+            }}
+          >
+            <Text>Save</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              if (image) setImage(null);
+              setIsEditing((prev) => !prev);
+            }}
+          >
+            <Text> {isEditing ? 'Cancel' : 'Edit'}</Text>
+          </TouchableOpacity>
+        </View>
+      ),
+    });
+  }, [isEditing, image]);
+
+  const ProfileImage = () => {
+    return (
+      <View style={styles.imageContainer}>
+        {user?.profileImage || image ? (
+          <Image
+            source={{ uri: image || user?.profileImage }}
+            style={styles.profileImage}
+          />
+        ) : (
+          <View style={styles.profileImage}>
+            <CircleUserRound color="white" size={40} />
+          </View>
+        )}
+
+        {isEditing ? (
+          <TouchableOpacity
+            style={styles.editImageOverlayWrap}
+            onPress={handleEditImg}
+          >
+            <View style={styles.editImageOverlay} />
+
+            <CameraIcon color="white" size={28} />
+            <Text style={{ color: 'white' }}>Edit</Text>
+          </TouchableOpacity>
+        ) : null}
+      </View>
+    );
   };
 
   return (
     <ThemedView style={[styles.container, { paddingTop: headerHeight }]}>
       <View style={styles.profileContainer}>
         {/* Profile Picture */}
-        <View style={styles.imageContainer}>
-          {user?.profileImage ? (
-            <Image
-              source={{ uri: user?.profileImage }} // Use the user's profile image or a default one
-              style={styles.profileImage}
-            />
-          ) : (
-            <View style={styles.profileImage}>
-              <CircleUserRound color="white" size={40} />
-            </View>
-          )}
-          {/* <TouchableOpacity style={styles.editImgIconContainer} onPress={handleEditImg}>
-            <Pencil color="white" size={18} />
-          </TouchableOpacity> */}
-        </View>
+
+        <ProfileImage />
 
         <ThemedView style={styles.itemWrap}>
           <Text style={styles.subtext}>Username</Text>
 
-          {isEditingName ? (
+          {isEditing ? (
             <View>
               <TextInput
                 autoFocus
@@ -80,30 +133,12 @@ const Page = () => {
               <Text style={styles.mainText}>{user?.username}</Text>
             </View>
           )}
-
-          <View style={styles.editUserIconWrap}>
-            {!isEditingName ? (
-              <TouchableOpacity style={styles.editUserIcon} onPress={() => setIsEditingName(true)}>
-                <Pencil color="white" size={18} />
-              </TouchableOpacity>
-            ) : (
-              <>
-                <TouchableOpacity style={styles.editUserIcon} onPress={handleCancel}>
-                  <CircleX color="white" size={18} />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.editUserIcon} onPress={handleSave}>
-                  <Save color="white" size={18} />
-                </TouchableOpacity>
-              </>
-            )}
-          </View>
         </ThemedView>
         {/* Email */}
         <ThemedView style={styles.itemWrap}>
           <Text style={styles.subtext}>Email</Text>
           <Text style={styles.mainText}>{user?.email}</Text>
         </ThemedView>
-
         {/* Logout */}
         <TouchableOpacity style={styles.googleButton} onPress={signOut}>
           <Text style={styles.buttonText}>Sign Out</Text>
@@ -153,17 +188,31 @@ const styles = StyleSheet.create({
     right: 0,
     top: 4,
     opacity: 0.2,
-
+    borderWidth: 1,
     borderRadius: 50,
     padding: 4,
   },
   profileImage: {
-    justifyContent: 'center',
-    alignItems: 'center',
     width: 100,
     height: 100,
     borderRadius: 50,
     backgroundColor: '#BCC0C4',
+  },
+
+  editImageOverlay: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#000000ff',
+    opacity: 0.3,
+    position: 'absolute',
+  },
+  editImageOverlayWrap: {
+    width: 100,
+    height: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
   },
 
   editUserIconWrap: {

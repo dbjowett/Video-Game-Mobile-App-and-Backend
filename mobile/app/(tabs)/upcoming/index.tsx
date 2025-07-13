@@ -1,6 +1,6 @@
 import { ListGame } from '@/api/types/game';
 import { api } from '@/api/utils/api';
-import { useColours } from '@/hooks/useColours';
+import { useTheme } from '@/theme/theme-context';
 import { imageLoader } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
@@ -74,7 +74,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
   const listRef = useRef<React.LegacyRef<unknown>>(null);
   const calendarRef = useRef<{ toggleCalendarPosition: () => boolean }>(null);
   const rotation = useRef(new Animated.Value(0));
-  const colours = useColours();
+  const { colors } = useTheme();
 
   const [selectedDate, setSelectedDate] = React.useState<string>(initialDate); // "YYYY-MM-DD"
   const [visibleMonth, setVisibleMonth] = useState<string>(initialMonth);
@@ -164,13 +164,13 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
 
   const theme: Theme = useMemo(() => {
     return {
-      selectedDayBackgroundColor: colours.primary,
-      arrowColor: colours.primary,
-      todayButtonTextColor: colours.primary,
-      todayTextColor: colours.primary,
-      indicatorColor: colours.primary,
+      selectedDayBackgroundColor: colors.primary,
+      arrowColor: colors.primary,
+      todayButtonTextColor: colors.primary,
+      todayTextColor: colors.primary,
+      indicatorColor: colors.primary,
     };
-  }, [colours]);
+  }, [colors]);
 
   const isLoadingData = isPending || isLoading;
   const noGamesFound = !isLoadingData && transformedItems.length === 0;
@@ -186,7 +186,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
   const LoadingSkeleton = () => (
     // TODO: FIX
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <ActivityIndicator color={colours.primary} />
+      <ActivityIndicator color={colors.primary} />
     </View>
   );
 
@@ -197,8 +197,8 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
 
   //   return (
   //     <TouchableOpacity onPress={handleTodayPress} style={styles.todayButton}>
-  //       <Calendar size={18} color={colours.primary} />
-  //       <Text style={{ color: colours.primary }}>Today</Text>
+  //       <Calendar size={18} color={colors.primary} />
+  //       <Text style={{ color: colors.primary }}>Today</Text>
   //     </TouchableOpacity>
   //   );
   // };
@@ -216,7 +216,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
       <View
         style={{
           flex: 1,
-          backgroundColor: colours.background,
+          backgroundColor: colors.background,
           position: 'relative',
         }}
       >

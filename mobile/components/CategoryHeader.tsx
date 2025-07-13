@@ -1,5 +1,5 @@
 import { useUser } from '@/api/hooks/useUser';
-import { useColours } from '@/hooks/useColours';
+import { useTheme } from '@/theme/theme-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Link } from 'expo-router';
@@ -83,10 +83,10 @@ const LandingHeader = ({ onCategoryChange }: Props) => {
     onCategoryChange(categories[idx].name);
   };
 
-  const colours = useColours();
+  const { colors } = useTheme();
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colours.background }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <View style={styles.container}>
         <View style={styles.actionRow}>
           <Link href={'/(modals)/search'} asChild>
@@ -94,7 +94,9 @@ const LandingHeader = ({ onCategoryChange }: Props) => {
               <Ionicons name="search" size={24} />
               <View>
                 <Text style={{ fontWeight: 600 }}>Search</Text>
-                <Text style={{ color: colours.text }}>Find your new favourite</Text>
+                <Text style={{ color: colors.text }}>
+                  Find your new favourite
+                </Text>
               </View>
             </TouchableOpacity>
           </Link>
