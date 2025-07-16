@@ -1,21 +1,26 @@
 import { useHeaderHeight } from '@react-navigation/elements';
 import React from 'react';
 
-import { useGetFavouriteGames } from '@/api/hooks/useGetFavouriteGames';
+import { useGetFavGameDetails } from '@/api/hooks/useGetFavGameDetails';
+import { ListGame } from '@/api/types/game';
 import { Text, View } from '@/components/Themed';
-import { StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet } from 'react-native';
+
+const WishlistItem = ({ game }: { game: ListGame }) => (
+  <View style={styles.item}>
+    <Text style={styles.itemText}>{game.name}</Text>
+  </View>
+);
 
 const Page = () => {
-  const { data: games, isLoading } = useGetFavouriteGames();
+  const { data: games, isLoading } = useGetFavGameDetails();
   const headerHeight = useHeaderHeight();
   return (
     <View style={[styles.container, { paddingTop: headerHeight }]}>
-      <Text style={styles.title}>Wishlist</Text>
-
       {isLoading ? (
-        <Text>Loading...</Text>
+        <ActivityIndicator />
       ) : (
-        games?.map((game) => <Text key={game.gameId}>{game.gameId}</Text>)
+        games?.map((game) => <WishlistItem key={game.id} game={game} />)
       )}
     </View>
   );
@@ -29,8 +34,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+
+  item: {
+    padding: 20,
+    marginVertical: 8,
+    marginHorizontal: 16,
+    width: '90%',
+    backgroundColor: '#f1f1f1a6',
+    borderRadius: 10,
+  },
+  itemText: {
+    fontSize: 16,
+    color: '#333',
   },
 });

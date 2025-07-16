@@ -163,9 +163,12 @@ const Page = () => {
 
               <View style={styles.lowerContainer}>
                 <>
+                  {/* Header */}
                   <Text style={styles.header}>
                     {isSignUp ? 'Sign Up' : 'Sign In'}
                   </Text>
+
+                  {/* Google Sign in */}
                   <TouchableOpacity
                     style={styles.googleButton}
                     onPress={() => setShowGoogleLogin(true)}
@@ -174,6 +177,7 @@ const Page = () => {
                     <Text style={styles.buttonText}>Continue with Google</Text>
                   </TouchableOpacity>
 
+                  {/* Form */}
                   <View style={styles.form}>
                     {/* Email Field */}
                     <form.Field
@@ -328,7 +332,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 12,
-    marginBottom: 10,
     borderRadius: 8,
   },
   error: {
@@ -348,6 +351,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     borderWidth: 1,
+    marginTop: 20,
     borderColor: '#747775',
     alignItems: 'center',
     justifyContent: 'center',

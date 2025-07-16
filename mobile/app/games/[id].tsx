@@ -1,6 +1,6 @@
 import { useAddFavouriteGame } from '@/api/hooks/useAddFavouriteGame';
 import { useGameDetails } from '@/api/hooks/useGameDetails';
-import { useGetFavouriteGames } from '@/api/hooks/useGetFavouriteGames';
+import { useGetFavouriteGames } from '@/api/hooks/useGetFavGames';
 import { useRemoveFavouriteGame } from '@/api/hooks/useRemoveFavouriteGame';
 import { MoreText } from '@/components/MoreText';
 import { ScreenshotsSection } from '@/components/ScreenshotsSection';

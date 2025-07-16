@@ -28,6 +28,13 @@ export type PopGameResults = {
   totalReviews: ListGame[];
 };
 
+export interface FaveGame {
+  gameId: string;
+  userId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // ** Game Card
 export interface ListGame {
   id: number;

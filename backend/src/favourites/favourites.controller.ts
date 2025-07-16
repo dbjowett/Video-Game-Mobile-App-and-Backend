@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Post, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { UserPayload } from 'src/auth/types';
 import { User } from 'src/common/utils/user.decorator';
+import { ListGame } from 'src/games/types';
 import { FavouriteService } from './favourites.service';
 
 @UseGuards(JwtAuthGuard)
@@ -38,5 +39,13 @@ export class FavouritesController {
     if (!userId) throw new Error('User ID not found');
 
     return await this.favouriteService.getFavourites(userId);
+  }
+
+  @Get('details')
+  async getFavouriteDetails(@User() user: UserPayload): Promise<ListGame[]> {
+    const userId = user.id;
+    if (!userId) throw new Error('User ID not found');
+
+    return await this.favouriteService.getFavouriteDetails(userId);
   }
 }

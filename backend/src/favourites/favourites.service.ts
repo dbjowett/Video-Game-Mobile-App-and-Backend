@@ -1,9 +1,14 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
+import { GamesService } from 'src/games/games.service';
+import { FaveGame, ListGame } from 'src/games/types';
 
 @Injectable()
 export class FavouriteService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly gamesService: GamesService,
+  ) {}
 
   async addToFavourites(userId: string, gameId: string): Promise<unknown> {
     const existingFavourite =
@@ -35,11 +40,22 @@ export class FavouriteService {
     });
   }
 
-  async getFavourites(userId: string): Promise<unknown> {
+  async getFavourites(userId: string): Promise<FaveGame[]> {
     return this.databaseService.favouriteGame.findMany({
       where: {
         userId,
       },
     });
+  }
+
+  async getFavouriteDetails(userId: string): Promise<ListGame[]> {
+    const favourites = await this.getFavourites(userId);
+
+    if (favourites.length === 0) {
+      throw new Error('No games found');
+    }
+
+    const gameIds = favourites.map((game) => Number(game.gameId));
+    return this.gamesService.getListGames(gameIds);
   }
 }

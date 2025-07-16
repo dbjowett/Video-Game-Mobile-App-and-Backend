@@ -11,7 +11,7 @@ import {
 
 import { usePopularGames } from '@/api';
 import { useAddFavouriteGame } from '@/api/hooks/useAddFavouriteGame';
-import { useGetFavouriteGames } from '@/api/hooks/useGetFavouriteGames';
+import { useGetFavouriteGames } from '@/api/hooks/useGetFavGames';
 import { useRemoveFavouriteGame } from '@/api/hooks/useRemoveFavouriteGame';
 import { ListGame, PopKey } from '@/api/types/game';
 import LandingHeader from '@/components/CategoryHeader';
