@@ -8,17 +8,19 @@ import { imageLoader } from '@/utils';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
+import { useNavigation } from 'expo-router';
 import React, { useState } from 'react';
 import {
   Alert,
   Image,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
+  useColorScheme,
   View,
 } from 'react-native';
+
+import { Text } from '@/components/Themed';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { WebView } from 'react-native-webview';
@@ -31,10 +33,10 @@ const DEFAULT_VALUES = {
 };
 
 const Page = () => {
-  const [showGoogleLogin, setShowGoogleLogin] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [showGoogleLogin, setShowGoogleLogin] = useState<boolean>(false);
+  const [isSignUp, setIsSignUp] = useState<boolean>(false);
 
-  const router = useRouter();
+  const navigation = useNavigation();
   const { data } = useFetchHero();
   const { signIn } = useSession();
 
@@ -69,8 +71,9 @@ const Page = () => {
 
   useGoogleCallback(({ access_token, refresh_token }) => {
     signIn({ access_token, refresh_token });
-    router.push('/');
-    setShowGoogleLogin(false);
+
+    // TODO: Show a success message or redirect
+    navigation.reset({ index: 0, routes: [{ name: '(tabs)' }] });
   });
 
   const form = useForm({
@@ -87,6 +90,28 @@ const Page = () => {
     },
   });
 
+  const lightModeColors = [
+    'transparent',
+    'rgba(255, 255, 255, 0.5)',
+    'rgba(255, 255, 255, 0.7)',
+    'rgba(255, 255, 255, 0.95)',
+    'rgba(255, 255, 255, 1)',
+    'rgba(255, 255, 255, 1)',
+  ] as const;
+
+  const darkModeColors = [
+    'transparent',
+    'rgba(19, 19, 20, 0.5)',
+    'rgba(19, 19, 20, 0.7)',
+    'rgba(19, 19, 20, 0.95)',
+    'rgba(19, 19, 20, 1)',
+    'rgba(19, 19, 20, 1)',
+  ] as const;
+
+  // TODO: maybe this can be stored in useTheme() (and maybe theme dark vs light can be returned from there )
+  const gradientColorArr =
+    useColorScheme() === 'dark' ? darkModeColors : lightModeColors;
+
   const GameLayout = () => {
     return (
       <View
@@ -94,17 +119,7 @@ const Page = () => {
           height: BANNER_HEIGHT,
         }}
       >
-        <LinearGradient
-          colors={[
-            'transparent',
-            'rgba(255, 255, 255, 0.5)',
-            'rgba(255, 255, 255, 0.7)',
-            'rgba(255, 255, 255, 0.95)',
-            'rgba(255, 255, 255, 1)',
-            'rgba(255, 255, 255, 1)',
-          ]}
-          style={styles.gradient}
-        />
+        <LinearGradient colors={gradientColorArr} style={styles.gradient} />
         <View style={styles.grid}>
           {data?.map((item) => (
             <View key={item.id} style={styles.gridItem}>
@@ -173,7 +188,7 @@ const Page = () => {
                       }}
                       children={(field) => (
                         <>
-                          <Text>Email:</Text>
+                          <Text style={{ marginBottom: 6 }}>Email:</Text>
                           <TextInput
                             autoCapitalize="none"
                             style={styles.input}
@@ -201,7 +216,7 @@ const Page = () => {
                       }}
                       children={(field) => (
                         <>
-                          <Text>Password:</Text>
+                          <Text style={{ marginBottom: 6 }}>Password:</Text>
                           <TextInput
                             autoCapitalize="none"
                             style={styles.input}
@@ -332,6 +347,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#131314',
     padding: 12,
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#747775',
     alignItems: 'center',
     justifyContent: 'center',
   },

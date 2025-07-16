@@ -2,7 +2,9 @@ import { Tokens } from '@/api/types/auth';
 import { useEffect } from 'react';
 import { Linking } from 'react-native';
 
-export const useGoogleCallback = (cb: ({ access_token, refresh_token }: Tokens) => void) => {
+export const useGoogleCallback = (
+  cb: ({ access_token, refresh_token }: Tokens) => void,
+) => {
   useEffect(() => {
     const handleDeepLink = async (event: { url: string }) => {
       const url = event.url;

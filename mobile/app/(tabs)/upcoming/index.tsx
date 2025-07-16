@@ -13,10 +13,9 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
-  View,
 } from 'react-native';
 
-import { Text } from '@/components/Themed';
+import { Text, View } from '@/components/Themed';
 
 import {
   AgendaList,
@@ -97,11 +96,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
 
   // Placeholder AgendaItem component
   const AgendaItem = ({ item }: { item: ListGame }) => (
-    <TouchableOpacity
-      onPress={() => {
-        router.navigate(`/games/${item.id}`);
-      }}
-    >
+    <TouchableOpacity onPress={() => router.navigate(`/games/${item.id}`)}>
       <View
         style={StyleSheet.flatten([
           styles.agendaItem,
@@ -177,8 +172,9 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
   const theme: Theme = {
     monthTextColor: colors.text,
     backgroundColor: colors.background,
-    todayBackgroundColor: colors.background,
+    todayBackgroundColor: colors.surface,
     selectedDayBackgroundColor: colors.primary,
+
     arrowColor: colors.primary,
     todayButtonTextColor: colors.text,
     agendaTodayColor: colors.primary,
