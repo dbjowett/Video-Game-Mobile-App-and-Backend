@@ -1,18 +1,20 @@
 import { DarkTheme, DefaultTheme } from '@react-navigation/native';
 
-interface CustomTheme extends DefaultTheme {
-  colors: {
-    buttonBackground: string;
-    buttonText: string;
-    background: string;
-    text: string;
-    textSecondary: string;
-    surface: string;
-    border: string;
-    borderDark: string;
-    primary: string;
-    secondary?: string;
-  };
+export interface CustomThemeColors {
+  buttonBackground: string;
+  buttonText: string;
+  background: string;
+  text: string;
+  textSecondary: string;
+  surface: string;
+  border: string;
+  borderDark: string;
+  primary: string;
+  secondary?: string;
+}
+
+export interface CustomTheme extends DefaultTheme {
+  colors: CustomThemeColors;
 }
 
 export const lightTheme: CustomTheme = {
