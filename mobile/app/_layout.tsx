@@ -1,5 +1,6 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { ThemeProvider } from '@react-navigation/native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -9,7 +10,8 @@ import 'react-native-reanimated';
 import { SessionProvider } from '@/components/AuthContext';
 import { CustomThemeProvider, useTheme } from '@/theme/theme-context';
 import { useAppTheme } from '@/theme/useAppTheme';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 export { ErrorBoundary } from 'expo-router';
 
 export const unstable_settings = { initialRouteName: '(tabs)' };
@@ -32,7 +34,9 @@ export default function RootLayout() {
       <SessionProvider>
         <CustomThemeProvider value={customTheme}>
           <ThemeProvider value={navTheme}>
-            <StackScreens />
+            <GestureHandlerRootView>
+              <StackScreens />
+            </GestureHandlerRootView>
           </ThemeProvider>
         </CustomThemeProvider>
       </SessionProvider>

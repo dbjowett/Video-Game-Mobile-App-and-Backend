@@ -1,5 +1,4 @@
-import { useHeaderHeight } from '@react-navigation/elements';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import { useGetFavGameDetails } from '@/api/hooks/useGetFavGameDetails';
 import { ListGame } from '@/api/types/game';
@@ -7,19 +6,20 @@ import { Text } from '@/components/Themed';
 import { CustomThemeColors } from '@/theme/theme';
 import { useTheme } from '@/theme/theme-context';
 import { imageLoader } from '@/utils';
+import { useRouter } from 'expo-router';
 import { GripVertical } from 'lucide-react-native';
 import {
   ActivityIndicator,
   Image,
+  Pressable,
   StyleSheet,
-  TouchableOpacity,
   View,
 } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from 'react-native-reanimated';
+
+import ReorderableList, {
+  ReorderableListReorderEvent,
+  useReorderableDrag,
+} from 'react-native-reorderable-list';
 
 const DEFAULT_HEIGHT = 70;
 const EXPANDED_HEIGHT = 140;
@@ -27,35 +27,20 @@ const EXPANDED_HEIGHT = 140;
 const WishlistItem = ({
   game,
   colors,
-  expandedId,
-  setExpandedId,
 }: {
   game: ListGame;
   colors: CustomThemeColors;
-  expandedId: number | null;
-  setExpandedId: React.Dispatch<React.SetStateAction<number | null>>;
 }) => {
-  const height = useSharedValue(DEFAULT_HEIGHT);
-
-  useEffect(() => {
-    const newHeight = expandedId === game.id ? EXPANDED_HEIGHT : DEFAULT_HEIGHT;
-    height.value = withSpring(newHeight);
-  }, [expandedId]);
-
-  const animatedContainerStyles = useAnimatedStyle(() => ({
-    height: height.value,
-  }));
-
+  const router = useRouter();
+  const drag = useReorderableDrag();
   return (
-    <TouchableOpacity
-      onPress={() => {
-        setExpandedId(expandedId === game.id ? null : game.id);
-      }}
+    <Pressable
+      onLongPress={drag}
+      onPress={() => router.push(`/games/${game.id}`)}
     >
-      <Animated.View
+      <View
         style={[
           styles.itemContainer,
-          animatedContainerStyles,
           {
             backgroundColor: colors.surface,
             borderColor: colors.borderDark,
@@ -77,7 +62,9 @@ const WishlistItem = ({
               borderRadius: 6,
             }}
           />
-          <Text style={styles.itemText}>{game.name}</Text>
+          <Text style={styles.itemText} numberOfLines={1}>
+            {game.name}
+          </Text>
         </View>
 
         {/* Right Content */}
@@ -85,31 +72,44 @@ const WishlistItem = ({
           {/* Maybe add an options menu here? */}
           <GripVertical color={colors.textSecondary} />
         </View>
-      </Animated.View>
-    </TouchableOpacity>
+      </View>
+    </Pressable>
   );
 };
 const Page = () => {
   const { data: games, isLoading } = useGetFavGameDetails();
-  const [expandedId, setExpandedId] = useState<number | null>(null);
-  const headerHeight = useHeaderHeight();
   const { colors } = useTheme();
+
+  const renderItem = ({ item }: { item: ListGame }) => (
+    <WishlistItem game={item} colors={colors} />
+  );
+
+  const handleReorder = ({ from, to }: ReorderableListReorderEvent) => {
+    console.log('From:', from, 'To:', to);
+  };
+
   return (
-    <View style={[styles.pageContainer, { paddingTop: headerHeight }]}>
-      {/* <Animated.View style={[styles.box, animatedStyles]} /> */}
-      {/* <Button onPress={handlePressNew} title="Press" /> */}
+    <View style={styles.pageContainer}>
+      {!isLoading && !games?.length && <Text>No Games Found</Text>}
+
       {isLoading ? (
         <ActivityIndicator />
       ) : (
-        games?.map((game) => (
-          <WishlistItem
-            key={game.id}
-            game={game}
-            colors={colors}
-            expandedId={expandedId}
-            setExpandedId={setExpandedId}
-          />
-        ))
+        <ReorderableList
+          onReorder={handleReorder}
+          data={games || []}
+          renderItem={renderItem}
+          keyExtractor={(game) => game.id.toString()}
+        >
+          <>
+            {games?.map((game) => (
+              <WishlistItem key={game.id} game={game} colors={colors} />
+            ))}
+            {games?.map((game) => (
+              <WishlistItem key={game.id} game={game} colors={colors} />
+            ))}
+          </>
+        </ReorderableList>
       )}
     </View>
   );
@@ -125,8 +125,6 @@ const styles = StyleSheet.create({
   },
   pageContainer: {
     flex: 1,
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
 
   itemContainer: {
@@ -150,6 +148,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   itemText: {
+    maxWidth: '75%',
     fontSize: 16,
     fontWeight: 500,
   },

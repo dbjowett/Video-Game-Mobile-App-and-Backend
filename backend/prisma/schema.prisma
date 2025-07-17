@@ -8,24 +8,16 @@ datasource db {
 }
 
 model User {
-  id             String          @id @default(cuid())
-  email          String          @unique
-  username       String
-  googleId       String?         @unique
-  profileImage   String?
-  password       String?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  refreshToken   RefreshToken[]
-  favouriteGames FavouriteGame[]
-}
-
-model FavouriteGame {
-  gameId    String   @id
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String         @id @default(cuid())
+  email        String         @unique
+  username     String
+  googleId     String?        @unique
+  profileImage String?
+  password     String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  refreshToken RefreshToken[]
+  gameLists    UserGameList[]
 }
 
 model RefreshToken {
@@ -35,4 +27,23 @@ model RefreshToken {
   token     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model UserGameList {
+  id        String       @id @default(cuid())
+  userId    String
+  gameId    String
+  position  Int
+  listType  GameListType
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+
+  // 3 fields cant all match
+  @@unique([userId, gameId, listType])
+}
+
+enum GameListType {
+  FAVOURITES
 }
