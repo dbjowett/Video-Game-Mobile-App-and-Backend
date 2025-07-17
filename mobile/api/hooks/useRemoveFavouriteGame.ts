@@ -11,12 +11,19 @@ export const useRemoveFavouriteGame = () => {
   return useMutation({
     mutationFn: removeFromFavourites,
     mutationKey: ['removeFavouriteGame'],
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ['favouriteGames'] }),
+    onSettled: () =>
+      queryClient.invalidateQueries({
+        queryKey: ['favouriteGames', 'favouriteGameDetails'],
+      }),
     onMutate: async (gameId) => {
-      await queryClient.cancelQueries({ queryKey: ['favouriteGames'] });
-      const prevFaves = queryClient.getQueryData(['favouriteGames']) as FaveGame[];
+      await queryClient.cancelQueries({
+        queryKey: ['favouriteGames'],
+      });
+      const prevFaves = queryClient.getQueryData([
+        'favouriteGames',
+      ]) as FaveGame[];
       queryClient.setQueryData(['favouriteGames'], (prev: FaveGame[]) =>
-        prev.filter((fave) => fave.gameId !== gameId)
+        prev.filter((fave) => fave.gameId !== gameId),
       );
       return { prevFaves };
     },
@@ -24,7 +31,7 @@ export const useRemoveFavouriteGame = () => {
       Alert.alert(
         'Error',
         'An error occurred while delete the game from your favourites. Please try again later.',
-        [{ text: 'OK' }]
+        [{ text: 'OK' }],
       );
       console.error('Error adding game to favourites:', error);
     },

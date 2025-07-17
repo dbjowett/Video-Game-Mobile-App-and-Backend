@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
 
   contentWrap: {
     backgroundColor: 'white',
-    paddingBottom: 200,
+    paddingBottom: 60,
     flexGrow: 1,
   },
 

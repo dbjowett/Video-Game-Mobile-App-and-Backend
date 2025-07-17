@@ -60,21 +60,23 @@ const Page = () => {
     navigation.setOptions({
       headerRight: () => (
         <View style={{ marginTop: 56, flexDirection: 'row', gap: 10 }}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => {
               if (image) setImage(null);
               setIsEditing((prev) => !prev);
             }}
           >
             <Text>Save</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
             onPress={() => {
               if (image) setImage(null);
               setIsEditing((prev) => !prev);
             }}
           >
-            <Text> {isEditing ? 'Cancel' : 'Edit'}</Text>
+            {/* <Text style={{ color: colors.primary, fontWeight: 500 }}>
+              {isEditing ? 'Cancel' : 'Edit'}
+            </Text> */}
           </TouchableOpacity>
         </View>
       ),
