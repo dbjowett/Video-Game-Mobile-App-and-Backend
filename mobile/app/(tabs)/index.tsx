@@ -15,7 +15,7 @@ import { useGetFavouriteGames } from '@/api/hooks/useGetFavGames';
 import { useRemoveFavouriteGame } from '@/api/hooks/useRemoveFavouriteGame';
 import { ListGame, PopKey } from '@/api/types/game';
 import LandingHeader from '@/components/CategoryHeader';
-import { Text, View } from '@/components/Themed';
+import { AppText, View } from '@/components/Themed';
 import { useTheme } from '@/theme/theme-context';
 import { getHumanDate } from '@/utils';
 import { Link, Stack } from 'expo-router';
@@ -92,22 +92,22 @@ export default function Page() {
             {/* Content */}
             <View style={styles.lowerContainer}>
               <View>
-                <Text numberOfLines={1} style={styles.gameName}>
+                <AppText numberOfLines={1} style={styles.gameName}>
                   {item.name}
-                </Text>
+                </AppText>
               </View>
               <View style={styles.infoContainer}>
-                <Text
+                <AppText
                   style={StyleSheet.flatten([
                     styles.rating,
                     { backgroundColor: colors.surface },
                   ])}
                 >
                   {Math.trunc(item?.total_rating)}%
-                </Text>
-                <Text style={styles.releaseDate}>
+                </AppText>
+                <AppText style={styles.releaseDate}>
                   {getHumanDate(item?.first_release_date)}
-                </Text>
+                </AppText>
               </View>
             </View>
           </Animated.View>
@@ -118,7 +118,7 @@ export default function Page() {
 
   const GameList = ({ title, games }: { title: PopKey; games: ListGame[] }) => (
     <View>
-      <Text style={styles.categoryTitle}>{popTypeTitleMap[title]}</Text>
+      <AppText style={styles.categoryTitle}>{popTypeTitleMap[title]}</AppText>
       <FlatList
         horizontal
         style={styles.listContainer}
@@ -137,7 +137,7 @@ export default function Page() {
         }}
       />
 
-      {isError && <Text>Error...</Text>}
+      {isError && <AppText>Error...</AppText>}
       {isPending ? (
         <View style={{ flex: 1, marginTop: 30 }}>
           <ActivityIndicator />

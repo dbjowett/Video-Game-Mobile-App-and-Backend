@@ -17,7 +17,8 @@ model User {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   refreshToken RefreshToken[]
-  gameLists    UserGameList[]
+  gameLists    GameList[]
+  GameListLike GameListLike[]
 }
 
 model RefreshToken {
@@ -29,21 +30,43 @@ model RefreshToken {
   updatedAt DateTime @updatedAt
 }
 
-model UserGameList {
-  id        String       @id @default(cuid())
-  userId    String
-  gameId    String
-  position  Int
-  listType  GameListType
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+model GameList {
+  id       String  @id @default(cuid())
+  userId   String
+  name     String
+  isSystem Boolean @default(false) // default list = favourites, played, etc
+  isPublic Boolean @default(false) // will show in everyones feeds
 
-  user User @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  // 3 fields cant all match
-  @@unique([userId, gameId, listType])
+  user         User           @relation(fields: [userId], references: [id])
+  items        GameListItem[]
+  GameListLike GameListLike[]
+
+  @@unique([userId, name]) // No duplicate list names for a user
 }
 
-enum GameListType {
-  FAVOURITES
+model GameListItem {
+  id        String   @id @default(cuid())
+  listId    String
+  gameId    String
+  position  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  gameList GameList @relation(fields: [listId], references: [id], onDelete: Cascade)
+
+  @@unique([listId, gameId]) // A game can't be added twice to the same list
+}
+
+model GameListLike {
+  id         String @id @default(cuid())
+  userId     String
+  gameListId String
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gameList GameList @relation(fields: [gameListId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, gameListId]) // one like per user per list
 }

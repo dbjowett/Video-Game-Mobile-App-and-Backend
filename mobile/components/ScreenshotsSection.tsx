@@ -1,6 +1,7 @@
 import { imageLoader } from '@/utils';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Animated from 'react-native-reanimated';
+import { AppText } from './Themed';
 
 type Props = {
   screenshots: { url: string }[];
@@ -10,7 +11,7 @@ type Props = {
 export const ScreenshotsSection = ({ screenshots, onImagePress }: Props) => {
   return (
     <View style={{ marginTop: 20 }}>
-      <Text style={styles.subtitle}>Screenshots</Text>
+      <AppText style={styles.subtitle}>Screenshots</AppText>
       <ScrollView
         horizontal
         contentContainerStyle={styles.screenshotsContent}
@@ -18,7 +19,11 @@ export const ScreenshotsSection = ({ screenshots, onImagePress }: Props) => {
         showsHorizontalScrollIndicator={false}
       >
         {screenshots.map((screenshot, index) => (
-          <TouchableOpacity key={index} onPress={() => onImagePress(index)} activeOpacity={0.8}>
+          <TouchableOpacity
+            key={index}
+            onPress={() => onImagePress(index)}
+            activeOpacity={0.8}
+          >
             <Animated.Image
               source={{
                 uri: imageLoader({
@@ -45,7 +50,12 @@ export const ScreenshotsSection = ({ screenshots, onImagePress }: Props) => {
 };
 
 const styles = StyleSheet.create({
-  subtitle: { marginLeft: 20, fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
+  subtitle: {
+    marginLeft: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
   screenshotsContent: { flexDirection: 'row', gap: 10 },
   screenshots: {},
   screenshot: {

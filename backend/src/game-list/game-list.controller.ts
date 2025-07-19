@@ -3,12 +3,12 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { UserPayload } from 'src/auth/types';
 import { User } from 'src/common/utils/user.decorator';
 import { ListGame } from 'src/games/types';
-import { FavouriteService } from './favourites.service';
+import { GameListService } from './game-list.service';
 
 @UseGuards(JwtAuthGuard)
-@Controller('favourites')
-export class FavouritesController {
-  constructor(private readonly favouriteService: FavouriteService) {}
+@Controller('gamelist')
+export class GameListController {
+  constructor(private readonly gameListService: GameListService) {}
 
   @Post()
   async addToFavourites(
@@ -19,7 +19,7 @@ export class FavouritesController {
     if (!userId) throw new Error('User ID not found');
     if (!gameId) throw new Error('Game ID not found');
 
-    return await this.favouriteService.addToFavourites(userId, gameId);
+    return await this.gameListService.addToFavourites(userId, gameId);
   }
 
   @Delete()
@@ -30,7 +30,7 @@ export class FavouritesController {
     const userId = user.id;
     if (!userId) throw new Error('User ID not found');
 
-    return await this.favouriteService.removeFromFavourites(userId, gameId);
+    return await this.gameListService.removeFromFavourites(userId, gameId);
   }
 
   @Get()
@@ -38,7 +38,7 @@ export class FavouritesController {
     const userId = user.id;
     if (!userId) throw new Error('User ID not found');
 
-    return await this.favouriteService.getFavourites(userId);
+    return await this.gameListService.getFavourites(userId);
   }
 
   @Get('details')
@@ -46,6 +46,6 @@ export class FavouritesController {
     const userId = user.id;
     if (!userId) throw new Error('User ID not found');
 
-    return await this.favouriteService.getFavouriteDetails(userId);
+    return await this.gameListService.getFavouriteDetails(userId);
   }
 }

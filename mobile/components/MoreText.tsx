@@ -5,10 +5,10 @@ import {
   Animated,
   LayoutChangeEvent,
   StyleSheet,
-  Text,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import { AppText } from './Themed';
 
 export const MoreText = ({ text }: { text: string }) => {
   const startingHeight = 118;
@@ -38,7 +38,7 @@ export const MoreText = ({ text }: { text: string }) => {
     <View style={styles.container}>
       <Animated.View style={[styles.viewPort, { height: animatedHeight }]}>
         <View style={styles.textBox} onLayout={(e) => onTextLayout(e)}>
-          <Text style={styles.text}>{text}</Text>
+          <AppText style={styles.text}>{text}</AppText>
         </View>
       </Animated.View>
 
@@ -53,7 +53,9 @@ export const MoreText = ({ text }: { text: string }) => {
             style={styles.gradient}
           />
           <TouchableWithoutFeedback onPress={() => setExpanded(!expanded)}>
-            <Text style={styles.readBtn}>{expanded ? 'Read Less' : 'Read More'}</Text>
+            <AppText style={styles.readBtn}>
+              {expanded ? 'Read Less' : 'Read More'}
+            </AppText>
           </TouchableWithoutFeedback>
         </React.Fragment>
       )}

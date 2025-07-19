@@ -4,27 +4,42 @@ import { GamesService } from 'src/games/games.service';
 import { FaveGame, ListGame } from 'src/games/types';
 
 @Injectable()
-export class FavouriteService {
+export class GameListService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly gamesService: GamesService,
   ) {}
 
   async addToFavourites(userId: string, gameId: string): Promise<unknown> {
-    const existingFavourite =
-      await this.databaseService.favouriteGame.findFirst({
+    const existingFavourite = await this.databaseService.userGameList.findFirst(
+      {
         where: {
           userId,
           gameId,
         },
-      });
+      },
+    );
 
     if (existingFavourite) {
       throw new ConflictException('Game already favourited');
     }
 
-    return this.databaseService.favouriteGame.create({
+    const lastPosition = await this.databaseService.userGameList.aggregate({
+      where: {
+        userId,
+        listId,
+      },
+      _max: {
+        position: true,
+      },
+    });
+
+    const newPosition = (lastPosition._max.position ?? 0) + 1;
+
+    return this.databaseService.userGameList.create({
       data: {
+        listType: 'FAVOURITES',
+        position: newPosition,
         userId,
         gameId,
       },
@@ -32,7 +47,7 @@ export class FavouriteService {
   }
 
   async removeFromFavourites(userId: string, gameId: string): Promise<unknown> {
-    return this.databaseService.favouriteGame.deleteMany({
+    return this.databaseService.userGameList.deleteMany({
       where: {
         userId,
         gameId,
@@ -41,7 +56,7 @@ export class FavouriteService {
   }
 
   async getFavourites(userId: string): Promise<FaveGame[]> {
-    return this.databaseService.favouriteGame.findMany({
+    return this.databaseService.userGameList.findMany({
       where: {
         userId,
       },

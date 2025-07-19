@@ -20,7 +20,7 @@ import {
   View,
 } from 'react-native';
 
-import { Text } from '@/components/Themed';
+import { AppText } from '@/components/Themed';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { WebView } from 'react-native-webview';
@@ -164,9 +164,9 @@ const Page = () => {
               <View style={styles.lowerContainer}>
                 <>
                   {/* Header */}
-                  <Text style={styles.header}>
+                  <AppText style={styles.header}>
                     {isSignUp ? 'Sign Up' : 'Sign In'}
-                  </Text>
+                  </AppText>
 
                   {/* Google Sign in */}
                   <TouchableOpacity
@@ -174,7 +174,9 @@ const Page = () => {
                     onPress={() => setShowGoogleLogin(true)}
                   >
                     <GoogleIcon />
-                    <Text style={styles.buttonText}>Continue with Google</Text>
+                    <AppText style={styles.buttonText}>
+                      Continue with Google
+                    </AppText>
                   </TouchableOpacity>
 
                   {/* Form */}
@@ -192,7 +194,7 @@ const Page = () => {
                       }}
                       children={(field) => (
                         <>
-                          <Text style={{ marginBottom: 6 }}>Email:</Text>
+                          <AppText style={{ marginBottom: 6 }}>Email:</AppText>
                           <TextInput
                             autoCapitalize="none"
                             style={styles.input}
@@ -201,9 +203,9 @@ const Page = () => {
                             onChangeText={field.handleChange}
                           />
                           {field.state.meta.errors && (
-                            <Text style={styles.error}>
+                            <AppText style={styles.error}>
                               {field.state.meta.errors.join(', ')}
-                            </Text>
+                            </AppText>
                           )}
                         </>
                       )}
@@ -220,7 +222,9 @@ const Page = () => {
                       }}
                       children={(field) => (
                         <>
-                          <Text style={{ marginBottom: 6 }}>Password:</Text>
+                          <AppText style={{ marginBottom: 6 }}>
+                            Password:
+                          </AppText>
                           <TextInput
                             autoCapitalize="none"
                             style={styles.input}
@@ -230,9 +234,9 @@ const Page = () => {
                             secureTextEntry
                           />
                           {field.state.meta.errors && (
-                            <Text style={styles.error}>
+                            <AppText style={styles.error}>
                               {field.state.meta.errors.join(', ')}
-                            </Text>
+                            </AppText>
                           )}
                         </>
                       )}
@@ -242,19 +246,19 @@ const Page = () => {
                       style={styles.signUpBtn}
                       onPress={form.handleSubmit}
                     >
-                      <Text style={styles.signUpBtnText}>
+                      <AppText style={styles.signUpBtnText}>
                         {isSignUp ? 'Sign Up' : 'Sign In'}
-                      </Text>
+                      </AppText>
                     </TouchableOpacity>
 
                     <TouchableOpacity
                       onPress={() => setIsSignUp((prev) => !prev)}
                     >
-                      <Text style={styles.toggleText}>
+                      <AppText style={styles.toggleText}>
                         {isSignUp
                           ? 'Already have an account? Sign in'
                           : 'Don’t have an account? Sign up'}
-                      </Text>
+                      </AppText>
                     </TouchableOpacity>
                   </View>
                 </>

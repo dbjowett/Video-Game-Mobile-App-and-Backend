@@ -1,6 +1,13 @@
 import { PlayIcon } from 'lucide-react-native';
-import { Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Linking,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Animated from 'react-native-reanimated';
+import { AppText } from './Themed';
 
 type Props = {
   videos: { id: number; video_id: string; name: string }[];
@@ -13,7 +20,7 @@ const ICON_SIZE = 50; // Size of the play button icon bg
 export const VideosSection = ({ videos }: Props) => {
   return (
     <View style={{ marginTop: 20 }}>
-      <Text style={styles.subtitle}>Videos</Text>
+      <AppText style={styles.subtitle}>Videos</AppText>
       <ScrollView
         horizontal
         contentContainerStyle={styles.screenshotsContent}
@@ -32,7 +39,11 @@ export const VideosSection = ({ videos }: Props) => {
               }}
             >
               <TouchableOpacity
-                onPress={() => Linking.openURL(`https://www.youtube.com/watch?v=${video.video_id}`)}
+                onPress={() =>
+                  Linking.openURL(
+                    `https://www.youtube.com/watch?v=${video.video_id}`,
+                  )
+                }
               >
                 <Animated.Image
                   source={{
@@ -46,12 +57,16 @@ export const VideosSection = ({ videos }: Props) => {
                   }}
                 />
               </TouchableOpacity>
-              <Text
+              <AppText
                 numberOfLines={1}
-                style={{ marginLeft: index === 0 ? 20 : 0, width: 240, fontWeight: 'bold' }}
+                style={{
+                  marginLeft: index === 0 ? 20 : 0,
+                  width: 240,
+                  fontWeight: 'bold',
+                }}
               >
                 {video.name}
-              </Text>
+              </AppText>
               <View style={styles.playBtnBG}>
                 <PlayIcon
                   size={24}
@@ -59,7 +74,9 @@ export const VideosSection = ({ videos }: Props) => {
                   fill="#fff"
                   style={{}}
                   onPress={() =>
-                    Linking.openURL(`https://www.youtube.com/watch?v=${video.video_id}`)
+                    Linking.openURL(
+                      `https://www.youtube.com/watch?v=${video.video_id}`,
+                    )
                   }
                 />
               </View>
@@ -82,7 +99,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  subtitle: { marginLeft: 20, fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
+  subtitle: {
+    marginLeft: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
   screenshotsContent: { flexDirection: 'row', gap: 10 },
   screenshots: {},
 });

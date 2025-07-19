@@ -15,7 +15,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import { Text, View } from '@/components/Themed';
+import { AppText, View } from '@/components/Themed';
 
 import {
   AgendaList,
@@ -117,13 +117,13 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
             style={styles.agendaImage}
           />
         ) : null}
-        <Text style={styles.agendaText}>{item.name}</Text>
-        <Text
+        <AppText style={styles.agendaText}>{item.name}</AppText>
+        <AppText
           style={{ color: colors.textSecondary, fontSize: 12, maxWidth: 100 }}
           numberOfLines={1}
         >
           {item.platforms?.map((p) => p.name).join(', ') || 'Unknown Platform'}
-        </Text>
+        </AppText>
       </View>
     </TouchableOpacity>
   );
@@ -150,9 +150,9 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
 
     return (
       <TouchableOpacity style={styles.header} onPress={toggleCalendarExpansion}>
-        <Text style={styles.headerTitle}>
+        <AppText style={styles.headerTitle}>
           {date?.toString?.('MMMM yyyy') ?? ''}
-        </Text>
+        </AppText>
         <Animated.View style={{ transform: [{ rotate: rotationInDegrees }] }}>
           <ChevronDown size={18} />
         </Animated.View>
@@ -170,16 +170,16 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
   };
 
   const theme: Theme = {
-    monthTextColor: colors.text,
+    monthTextColor: colors.primary,
     backgroundColor: colors.background,
     todayBackgroundColor: colors.surface,
     selectedDayBackgroundColor: colors.primary,
 
     arrowColor: colors.primary,
-    todayButtonTextColor: colors.text,
+    todayButtonTextColor: colors.primary,
     agendaTodayColor: colors.primary,
-    todayTextColor: colors.text,
-    indicatorColor: colors.primary,
+    todayTextColor: colors.primary,
+    indicatorColor: colors.brandAccentPrimary,
     calendarBackground: colors.background,
   };
 
@@ -188,9 +188,9 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
 
   const NoGames = () => (
     <View style={{ padding: 20, alignItems: 'center' }}>
-      <Text>
+      <AppText>
         {isError ? 'Error loading games' : 'No games found for this date'}
-      </Text>
+      </AppText>
     </View>
   );
 
@@ -209,7 +209,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
   //   return (
   //     <TouchableOpacity onPress={handleTodayPress} style={styles.todayButton}>
   //       <Calendar size={18} color={colors.primary} />
-  //       <Text style={{ color: colors.primary }}>Today</Text>
+  //       <AppText style={{ color: colors.primary }}>Today</AppText>
   //     </TouchableOpacity>
   //   );
   // };
