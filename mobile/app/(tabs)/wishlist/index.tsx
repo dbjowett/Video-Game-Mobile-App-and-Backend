@@ -2,8 +2,8 @@ import React from 'react';
 
 import { useGetFavGameDetails } from '@/api/hooks/useGetFavGameDetails';
 import { ListGame } from '@/api/types/game';
-import { Text } from '@/components/Themed';
-import { CustomThemeColors } from '@/theme/theme';
+import { AppText } from '@/components/Themed';
+
 import { useTheme } from '@/theme/theme-context';
 import { imageLoader } from '@/utils';
 import { useRouter } from 'expo-router';
@@ -16,6 +16,7 @@ import {
   View,
 } from 'react-native';
 
+import { ThemeColors } from '@/theme/theme';
 import ReorderableList, {
   ReorderableListReorderEvent,
   useReorderableDrag,
@@ -29,7 +30,7 @@ const WishlistItem = ({
   colors,
 }: {
   game: ListGame;
-  colors: CustomThemeColors;
+  colors: ThemeColors;
 }) => {
   const router = useRouter();
   const drag = useReorderableDrag();
@@ -43,7 +44,7 @@ const WishlistItem = ({
           styles.itemContainer,
           {
             backgroundColor: colors.surface,
-            borderColor: colors.borderDark,
+            borderColor: colors.border,
           },
         ]}
       >
@@ -62,9 +63,9 @@ const WishlistItem = ({
               borderRadius: 6,
             }}
           />
-          <Text style={styles.itemText} numberOfLines={1}>
+          <AppText style={styles.itemText} numberOfLines={1}>
             {game.name}
-          </Text>
+          </AppText>
         </View>
 
         {/* Right Content */}
@@ -90,7 +91,7 @@ const Page = () => {
 
   return (
     <View style={styles.pageContainer}>
-      {!isLoading && !games?.length && <Text>No Games Found</Text>}
+      {!isLoading && !games?.length && <AppText>No Games Found</AppText>}
 
       {isLoading ? (
         <ActivityIndicator />

@@ -1,87 +1,22 @@
 import { useUser } from '@/api/hooks/useUser';
 import { useTheme } from '@/theme/theme-context';
-import { Ionicons } from '@expo/vector-icons';
-import * as Haptics from 'expo-haptics';
 import { Link } from 'expo-router';
-import {
-  CarFront,
-  Crosshair,
-  Dices,
-  Gamepad,
-  Gamepad2,
-  Hammer,
-  Swords,
-  Volleyball,
-} from 'lucide-react-native';
-import React, { useRef, useState } from 'react';
+
 import {
   Image,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
 
-import { Text } from './Themed';
+import { radius } from '@/theme/radius';
+import { spacing } from '@/theme/spacing';
+import { Search } from 'lucide-react-native';
+import { AppText } from './Themed';
 
-const ICON_SIZE = 26;
-const ICON_COLOUR = '#000';
-
-const categories = [
-  {
-    name: 'All',
-    icon: <Gamepad2 size={ICON_SIZE} color={ICON_COLOUR} />,
-  },
-  {
-    name: 'RPG',
-    icon: <Swords size={ICON_SIZE} color={ICON_COLOUR} />,
-  },
-  {
-    name: 'Shooter',
-    icon: <Crosshair size={ICON_SIZE} color={ICON_COLOUR} />,
-  },
-  {
-    name: 'Indie',
-    icon: <Hammer size={ICON_SIZE} color={ICON_COLOUR} />,
-  },
-  {
-    name: 'Sports',
-    icon: <Volleyball size={ICON_SIZE} color={ICON_COLOUR} />,
-  },
-  {
-    name: 'Strategy',
-    icon: <Dices size={ICON_SIZE} color={ICON_COLOUR} />,
-  },
-  {
-    name: 'Racing',
-    icon: <CarFront size={ICON_SIZE} color={ICON_COLOUR} />,
-  },
-  {
-    name: 'Platform',
-    icon: <Gamepad size={ICON_SIZE} color={ICON_COLOUR} />,
-  },
-] as const;
-
-interface Props {
-  onCategoryChange: (category: string) => void;
-}
-
-const LandingHeader = ({ onCategoryChange }: Props) => {
+const LandingHeader = () => {
   const { data: user } = useUser();
-  const itemsRef = useRef<Array<View>>([]);
-  const [activeIdx, setActiveIdx] = useState<number>(0);
-  const scrollRef = useRef<ScrollView>(null);
-  const selectCategory = (idx: number) => {
-    const selectedItem = itemsRef.current[idx];
-    setActiveIdx(idx);
-    selectedItem.measure((x) => {
-      if (!scrollRef.current) return;
-      scrollRef.current.scrollTo({ x: x - 16, y: 0, animated: true });
-    });
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    onCategoryChange(categories[idx].name);
-  };
 
   const { colors } = useTheme();
 
@@ -93,54 +28,25 @@ const LandingHeader = ({ onCategoryChange }: Props) => {
             <TouchableOpacity
               style={StyleSheet.flatten([
                 styles.searchBtn,
-                { borderColor: colors.borderDark },
+                { borderColor: colors.border },
               ])}
             >
-              <Ionicons color={colors.text} name="search" size={24} />
+              <Search size={20} color={colors.textPrimary} />
               <View>
-                <Text style={{ fontWeight: 600 }}>Search</Text>
-                <Text style={{ color: colors.textSecondary }}>
+                <AppText style={{ fontWeight: 600 }}>Search</AppText>
+                <AppText style={{ color: colors.textSecondary }}>
                   Find your new favourite
-                </Text>
+                </AppText>
               </View>
             </TouchableOpacity>
           </Link>
           <TouchableOpacity>
-            {/* <ListFilter color={ICON_COLOUR} /> */}
             <Image
               source={{ uri: user?.profileImage }} // Use the user's profile image or a default one
               style={styles.profileImage}
             />
           </TouchableOpacity>
         </View>
-        {/* ** CATEGORIES **   */}
-        {/* <ScrollView
-          ref={scrollRef}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            alignItems: 'center',
-            gap: 30,
-            paddingHorizontal: 16,
-          }}
-        >
-          {categories.map((cat, idx) => (
-            <TouchableOpacity
-              key={cat.name}
-              ref={(el) => {
-                if (!el) return;
-                itemsRef.current[idx] = el;
-              }}
-              style={activeIdx === idx ? styles.categoriesBtnActive : styles.categoriesBtn}
-              onPress={() => selectCategory(idx)}
-            >
-              {cat.icon}
-              <Text style={activeIdx === idx ? styles.categoryTextActive : styles.categoryText}>
-                {cat.name}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView> */}
       </View>
     </SafeAreaView>
   );
@@ -151,66 +57,37 @@ const styles = StyleSheet.create({
     height: 68,
   },
   profileImage: {
-    width: 42,
-    height: 42,
+    width: 46,
+    height: 46,
     borderRadius: 50,
     backgroundColor: '#c2c2c2',
     borderColor: '#c2c2c2',
     borderWidth: 1,
 
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.12,
-    shadowOffset: {
-      width: 1,
-      height: 1,
-    },
+    // elevation: 2,
+    // shadowColor: '#000',
+    // shadowOpacity: 0.12,
+    // shadowOffset: {
+    //   width: 1,
+    //   height: 1,
+    // },
   },
   actionRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    gap: 10,
+    paddingHorizontal: spacing.lg,
+    gap: spacing.sm,
   },
 
   searchBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    borderWidth: StyleSheet.hairlineWidth,
+    gap: spacing.sm,
+    borderWidth: 1,
     flex: 1,
     padding: 14,
-    borderRadius: 30,
-
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOpacity: 0.12,
-    shadowOffset: {
-      width: 1,
-      height: 1,
-    },
-  },
-  categoryText: {
-    fontSize: 14,
-  },
-  categoryTextActive: {
-    fontSize: 14,
-    color: '#000',
-  },
-  categoriesBtn: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingBottom: 8,
-  },
-  categoriesBtnActive: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderBottomColor: '#000',
-    borderBottomWidth: 2,
-    paddingBottom: 8,
+    borderRadius: radius.round,
   },
 });
 

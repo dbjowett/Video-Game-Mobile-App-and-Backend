@@ -1,58 +1,95 @@
-import { DarkTheme, DefaultTheme } from '@react-navigation/native';
+import { tailwindColors } from './tailwindColors';
 
-export interface CustomThemeColors {
-  buttonBackground: string;
-  buttonText: string;
-  background: string;
-  text: string;
-  textSecondary: string;
-  surface: string;
-  border: string;
-  borderDark: string;
-  primary: string;
-  secondary?: string;
-}
+const baseColors = {
+  errorRed: tailwindColors.red['600'],
+  successGreen: tailwindColors.green['600'],
+  warningOrange: tailwindColors.amber['500'],
+  infoBlue: tailwindColors.sky['500'],
+} as const;
 
-export interface CustomTheme extends DefaultTheme {
-  colors: CustomThemeColors;
-}
+export const lightColors = {
+  ...baseColors,
 
-export const lightTheme: CustomTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: '#fff',
-    surface: '#F2F2F7',
+  primary: tailwindColors.blue['600'],
+  primaryLight: tailwindColors.blue['400'],
+  primaryDark: tailwindColors.blue['800'],
 
-    primary: '#007bff',
+  secondary: tailwindColors.orange['500'],
+  secondaryLight: tailwindColors.orange['300'],
+  secondaryDark: tailwindColors.orange['700'],
 
-    buttonBackground: '#007bff',
-    buttonText: '#ffffff',
+  background: tailwindColors.neutral['50'],
+  surface: tailwindColors.neutral['100'],
+  card: tailwindColors.neutral['100'],
+  textPrimary: tailwindColors.neutral['900'],
+  textSecondary: tailwindColors.neutral['700'],
+  textDisabled: tailwindColors.neutral['400'],
+  textPlaceholder: tailwindColors.neutral['500'],
+  border: tailwindColors.neutral['200'],
+  divider: tailwindColors.neutral['300'],
 
-    text: '#1C1C1E',
-    textSecondary: '#6e6e73',
+  buttonPrimaryBackground: tailwindColors.blue['600'],
+  buttonPrimaryText: tailwindColors.neutral['50'],
+  buttonSecondaryBackground: tailwindColors.neutral['200'],
+  buttonSecondaryText: tailwindColors.neutral['800'],
+  buttonOutlineBorder: tailwindColors.blue['400'],
 
-    border: '#D1D5DB',
-    borderDark: '#9CA3AF',
-  },
+  buttonDisabledBackground: tailwindColors.neutral['200'],
+  buttonDisabledText: tailwindColors.neutral['500'],
+
+  textOnPrimary: tailwindColors.neutral['50'],
+  textOnSecondary: tailwindColors.neutral['50'],
+  textOnError: tailwindColors.neutral['50'],
+  textOnSuccess: tailwindColors.neutral['50'],
+  textOnWarning: tailwindColors.neutral['900'],
+  textOnInfo: tailwindColors.neutral['50'],
+
+  shadowColor: tailwindColors.neutral['900'],
+} as const;
+
+export const darkColors = {
+  ...baseColors,
+
+  primary: tailwindColors.blue['400'],
+  primaryLight: tailwindColors.blue['300'],
+  primaryDark: tailwindColors.blue['600'],
+
+  secondary: tailwindColors.orange['300'],
+  secondaryLight: tailwindColors.orange['200'],
+  secondaryDark: tailwindColors.orange['500'],
+
+  background: tailwindColors.neutral['950'],
+  surface: tailwindColors.neutral['900'],
+  card: tailwindColors.neutral['900'],
+  textPrimary: tailwindColors.neutral['50'],
+  textSecondary: tailwindColors.neutral['300'],
+  textDisabled: tailwindColors.neutral['600'],
+  textPlaceholder: tailwindColors.neutral['500'],
+  border: tailwindColors.neutral['800'],
+  divider: tailwindColors.neutral['700'],
+
+  buttonPrimaryBackground: tailwindColors.blue['400'],
+  buttonPrimaryText: tailwindColors.neutral['950'],
+  buttonSecondaryBackground: tailwindColors.neutral['700'],
+  buttonSecondaryText: tailwindColors.neutral['50'],
+  buttonOutlineBorder: tailwindColors.blue['300'],
+
+  buttonDisabledBackground: tailwindColors.neutral['800'],
+  buttonDisabledText: tailwindColors.neutral['600'],
+
+  textOnPrimary: tailwindColors.neutral['950'],
+  textOnSecondary: tailwindColors.neutral['950'],
+  textOnError: tailwindColors.neutral['50'],
+  textOnSuccess: tailwindColors.neutral['50'],
+  textOnWarning: tailwindColors.neutral['950'],
+  textOnInfo: tailwindColors.neutral['50'],
+
+  shadowColor: tailwindColors.neutral['50'],
+} as const;
+
+export type ThemeColors = typeof lightColors;
+
+export const colorSchemes = {
+  light: lightColors,
+  dark: darkColors,
 };
-
-export const darkTheme: CustomTheme = {
-  ...DarkTheme,
-  colors: {
-    ...DarkTheme.colors,
-    background: '#121212',
-    surface: '#1E1E1E',
-
-    primary: '#1f6feb',
-
-    buttonBackground: '#1f6feb',
-    buttonText: '#ffffff',
-    text: '#FFFFFF',
-    textSecondary: '#B3B3B3',
-    border: '#3F3F46',
-    borderDark: '	#52525B',
-  },
-};
-
-export type AppTheme = typeof lightTheme;

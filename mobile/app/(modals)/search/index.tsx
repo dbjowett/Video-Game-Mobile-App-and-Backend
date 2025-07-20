@@ -1,6 +1,6 @@
 import { useGameSearch } from '@/api/hooks/useGameSearch';
 import { ListGame } from '@/api/types/game';
-import { View } from '@/components/Themed';
+import { AppText, View } from '@/components/Themed';
 import { getHumanDate, imageLoader } from '@/utils';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { router } from 'expo-router';
@@ -11,7 +11,6 @@ import {
   FlatList,
   Image,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
 } from 'react-native';
@@ -37,7 +36,9 @@ const GameItem = ({ item }: { item: ListGame }) => (
       router.push(`/games/${item.id}`);
     }}
   >
-    <View style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
+    <View
+      style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: '#ccc' }}
+    >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
         <Image
           source={{
@@ -49,11 +50,15 @@ const GameItem = ({ item }: { item: ListGame }) => (
           style={{ width: 50, height: 50, borderRadius: 25 }}
         />
         <View style={{ flex: 1, gap: 5 }}>
-          <Text style={styles.gameTitle}>{item.name}</Text>
+          <AppText style={styles.gameTitle}>{item.name}</AppText>
           {item.first_release_date && (
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+            <View
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}
+            >
               <CalendarCheck size={14} color="black" />
-              <Text style={styles.gamedescription}>{getHumanDate(item.first_release_date)}</Text>
+              <AppText style={styles.gamedescription}>
+                {getHumanDate(item.first_release_date)}
+              </AppText>
             </View>
           )}
         </View>
@@ -68,7 +73,11 @@ const Page = () => {
 
   const headerHeight = useHeaderHeight();
 
-  const { data: searchedGames, isLoading, isFetching } = useGameSearch(debouncedInput);
+  const {
+    data: searchedGames,
+    isLoading,
+    isFetching,
+  } = useGameSearch(debouncedInput);
 
   const noResults =
     !isLoading &&
@@ -94,7 +103,7 @@ const Page = () => {
 
       {noResults && (
         <View style={styles.loadingWrapper}>
-          <Text>No results found</Text>
+          <AppText>No results found</AppText>
         </View>
       )}
 

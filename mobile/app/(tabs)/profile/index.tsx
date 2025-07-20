@@ -1,13 +1,14 @@
 import { useUpdateUser } from '@/api/hooks/useUpdateUser';
 import { useUser } from '@/api/hooks/useUser';
+import AppButton from '@/components/AppButton';
 import { useSession } from '@/components/AuthContext';
-import { Text, View } from '@/components/Themed';
+import { AppText, View } from '@/components/Themed';
 import { useTheme } from '@/theme/theme-context';
 
 import { useHeaderHeight } from '@react-navigation/elements';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from 'expo-router';
-import { CameraIcon, CircleUserRound, LogOut } from 'lucide-react-native';
+import { CameraIcon, CircleUserRound } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -66,7 +67,7 @@ const Page = () => {
               setIsEditing((prev) => !prev);
             }}
           >
-            <Text>Save</Text>
+            <AppText>Save</AppText>
           </TouchableOpacity> */}
           <TouchableOpacity
             onPress={() => {
@@ -74,9 +75,9 @@ const Page = () => {
               setIsEditing((prev) => !prev);
             }}
           >
-            {/* <Text style={{ color: colors.primary, fontWeight: 500 }}>
+            {/* <AppText style={{ color: colors.primary, fontWeight: 500 }}>
               {isEditing ? 'Cancel' : 'Edit'}
-            </Text> */}
+            </AppText> */}
           </TouchableOpacity>
         </View>
       ),
@@ -105,7 +106,7 @@ const Page = () => {
             <View style={styles.editImageOverlay} />
 
             <CameraIcon color="white" size={28} />
-            <Text style={{ color: 'white' }}>Edit</Text>
+            <AppText>Edit</AppText>
           </TouchableOpacity>
         ) : null}
       </View>
@@ -119,17 +120,17 @@ const Page = () => {
         <View
           style={StyleSheet.flatten([
             styles.itemWrap,
-            { borderColor: colors.borderDark },
+            { borderColor: colors.border },
           ])}
         >
-          <Text
+          <AppText
             style={StyleSheet.flatten([
               styles.subtext,
               { color: colors.textSecondary },
             ])}
           >
             Username
-          </Text>
+          </AppText>
 
           {isEditing ? (
             <View>
@@ -142,7 +143,7 @@ const Page = () => {
             </View>
           ) : (
             <View>
-              <Text style={styles.mainText}>{user?.username}</Text>
+              <AppText style={styles.mainText}>{user?.username}</AppText>
             </View>
           )}
         </View>
@@ -150,24 +151,26 @@ const Page = () => {
         <View
           style={StyleSheet.flatten([
             styles.itemWrap,
-            { borderColor: colors.borderDark },
+            { borderColor: colors.border },
           ])}
         >
-          <Text
+          <AppText
             style={StyleSheet.flatten([
               styles.subtext,
               { color: colors.textSecondary },
             ])}
           >
             Email
-          </Text>
-          <Text style={styles.mainText}>{user?.email}</Text>
+          </AppText>
+          <AppText style={styles.mainText}>{user?.email}</AppText>
         </View>
-        {/* Logout */}
-        <TouchableOpacity style={styles.signOut} onPress={signOut}>
-          <Text style={styles.buttonText}>Sign Out</Text>
-          <LogOut color="white" size={18} />
-        </TouchableOpacity>
+
+        <AppButton
+          style={{ width: '80%' }}
+          title="Sign Out"
+          onPress={signOut}
+          rightIcon="LogOut"
+        />
       </View>
     </View>
   );

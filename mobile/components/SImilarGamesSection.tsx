@@ -1,8 +1,9 @@
 import { SimilarGame } from '@/api/types/game';
 import { imageLoader } from '@/utils';
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Animated from 'react-native-reanimated';
+import { AppText } from './Themed';
 
 type Props = {
   similarGames: SimilarGame[];
@@ -14,7 +15,7 @@ export const SimilarGamesSection = ({ similarGames }: Props) => {
   };
   return (
     <View style={{ marginTop: 20 }}>
-      <Text style={styles.subtitle}>Similar Games</Text>
+      <AppText style={styles.subtitle}>Similar Games</AppText>
       <ScrollView
         horizontal
         contentContainerStyle={styles.screenshotsContent}
@@ -55,7 +56,12 @@ export const SimilarGamesSection = ({ similarGames }: Props) => {
 };
 
 const styles = StyleSheet.create({
-  subtitle: { marginLeft: 20, fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
+  subtitle: {
+    marginLeft: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
   screenshotsContent: { flexDirection: 'row', gap: 10 },
   screenshots: {},
   screenshot: {

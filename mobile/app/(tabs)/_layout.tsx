@@ -2,9 +2,9 @@ import { Redirect, Tabs } from 'expo-router';
 import React from 'react';
 
 import { useSession } from '@/components/AuthContext';
+import { AppText } from '@/components/Themed';
 import { useTheme } from '@/theme/theme-context';
 import { CalendarClock, Heart, Search, User } from 'lucide-react-native';
-import { Text } from 'react-native';
 
 interface IconProps {
   color: string;
@@ -16,7 +16,7 @@ export default function TabLayout() {
   const { colors } = useTheme();
 
   if (isLoading) {
-    return <Text>Loading...</Text>;
+    return <AppText>Loading...</AppText>;
   }
 
   if (!isLoggedIn) {

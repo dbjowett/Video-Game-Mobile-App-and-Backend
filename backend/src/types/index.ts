@@ -7,3 +7,7 @@ export interface User {
   email: string;
   id: string;
 }
+
+export type BatchPayload = {
+  count: number;
+};

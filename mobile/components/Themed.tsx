@@ -14,12 +14,15 @@ type ThemeProps = {
 export type TextProps = ThemeProps & DefaultText['props'];
 export type ViewProps = ThemeProps & DefaultView['props'];
 
-export function Text(props: TextProps) {
+export function AppText(props: TextProps) {
   const { style, lightColour, darkColour, ...otherProps } = props;
   const { colors } = useTheme();
 
   return (
-    <DefaultText style={[{ color: colors.text }, style]} {...otherProps} />
+    <DefaultText
+      style={[{ color: colors.textPrimary }, style]}
+      {...otherProps}
+    />
   );
 }
 

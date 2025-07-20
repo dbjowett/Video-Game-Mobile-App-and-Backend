@@ -1,16 +1,20 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { ThemeProvider } from '@react-navigation/native';
+import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useEffect } from 'react';
-import 'react-native-reanimated';
+import { StatusBar } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import 'react-native-reanimated'; // Ensure this is imported for Reanimated
 
 import { SessionProvider } from '@/components/AuthContext';
-import { CustomThemeProvider, useTheme } from '@/theme/theme-context';
+import {
+  ThemeProvider as CustomAppThemeProvider,
+  useTheme,
+} from '@/theme/theme-context';
 import { useAppTheme } from '@/theme/useAppTheme';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -20,32 +24,45 @@ const queryClient = new QueryClient();
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { customTheme, navTheme } = useAppTheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     ...FontAwesome.font,
   });
+
   useEffect(() => {
     if (loaded) SplashScreen.hideAsync();
   }, [loaded]);
 
+  if (!loaded) {
+    return null;
+  }
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <SessionProvider>
-        <CustomThemeProvider value={customTheme}>
-          <ThemeProvider value={navTheme}>
-            <GestureHandlerRootView>
-              <StackScreens />
-            </GestureHandlerRootView>
-          </ThemeProvider>
-        </CustomThemeProvider>
-      </SessionProvider>
-    </QueryClientProvider>
+    <CustomAppThemeProvider>
+      <RootLayoutContent />
+    </CustomAppThemeProvider>
   );
 }
 
+const RootLayoutContent = () => {
+  const { statusBarStyle } = useTheme();
+  const { navTheme } = useAppTheme();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <SessionProvider>
+        <NavigationThemeProvider value={navTheme}>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <StatusBar barStyle={statusBarStyle} />
+            <StackScreens />
+          </GestureHandlerRootView>
+        </NavigationThemeProvider>
+      </SessionProvider>
+    </QueryClientProvider>
+  );
+};
+
 const StackScreens = () => {
-  const theme = useTheme();
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" />
