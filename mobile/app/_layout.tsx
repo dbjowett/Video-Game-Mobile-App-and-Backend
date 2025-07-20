@@ -16,6 +16,7 @@ import {
   useTheme,
 } from '@/theme/theme-context';
 import { useAppTheme } from '@/theme/useAppTheme';
+import { useToastConfig } from '@/theme/useToastConfig';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -48,6 +49,7 @@ export default function RootLayout() {
 const RootLayoutContent = () => {
   const { statusBarStyle } = useTheme();
   const { navTheme } = useAppTheme();
+  const toastConfig = useToastConfig();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -56,7 +58,7 @@ const RootLayoutContent = () => {
           <GestureHandlerRootView style={{ flex: 1 }}>
             <StatusBar barStyle={statusBarStyle} />
             <StackScreens />
-            <Toast topOffset={60} />
+            <Toast config={toastConfig} />
           </GestureHandlerRootView>
         </NavigationThemeProvider>
       </SessionProvider>
