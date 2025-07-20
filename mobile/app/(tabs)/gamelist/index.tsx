@@ -30,7 +30,7 @@ const GameListItem = ({
   return (
     <Pressable
       onLongPress={drag}
-      // onPress={() => router.push(`/games/${game.id}`)}
+      onPress={() => router.push(`/game-list/${list.id}`)}
     >
       <View
         style={[

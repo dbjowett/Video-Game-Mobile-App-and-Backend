@@ -58,7 +58,7 @@ const RootLayoutContent = () => {
           <GestureHandlerRootView style={{ flex: 1 }}>
             <StatusBar barStyle={statusBarStyle} />
             <StackScreens />
-            <Toast config={toastConfig} />
+            <Toast topOffset={60} config={toastConfig} />
           </GestureHandlerRootView>
         </NavigationThemeProvider>
       </SessionProvider>

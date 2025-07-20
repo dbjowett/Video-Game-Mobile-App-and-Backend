@@ -1,5 +1,13 @@
-import { Body, Controller, Delete, Get, Post, UseGuards } from '@nestjs/common';
-import { GameList } from '@prisma/client';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { GameList, GameListItem } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { UserPayload } from 'src/auth/types';
 import { User } from 'src/common/utils/user.decorator';
@@ -18,6 +26,14 @@ export class GameListController {
   @Get()
   async getGameLists(@User() user: UserPayload): Promise<GameList[]> {
     return await this.gameListService.getGameLists(user);
+  }
+
+  @Get('games/:id')
+  async getGameListsGames(
+    @User() user: UserPayload,
+    @Param('id') id: string,
+  ): Promise<GameListItem[]> {
+    return await this.gameListService.getGameListGames(user, id);
   }
 
   @Post('new-game-list')
@@ -43,29 +59,6 @@ export class GameListController {
   ) {
     return await this.gameListService.removeGameFromList(user, body);
   }
-
-  // @Post()
-  // async addToFavourites(
-  //   @User() user: UserPayload,
-  //   @Body('gameId') gameId: string,
-  // ): Promise<unknown> {
-  //   const userId = user.id;
-  //   if (!userId) throw new Error('User ID not found');
-  //   if (!gameId) throw new Error('Game ID not found');
-
-  //   return await this.gameListService.addToFavourites(userId, gameId);
-  // }
-
-  // @Delete()
-  // async removeFromFavourites(
-  //   @User() user: UserPayload,
-  //   @Body('gameId') gameId: string,
-  // ): Promise<unknown> {
-  //   const userId = user.id;
-  //   if (!userId) throw new Error('User ID not found');
-
-  //   return await this.gameListService.removeFromFavourites(userId, gameId);
-  // }
 
   // @Get()
   // async getFavourites(@User() user: UserPayload): Promise<unknown> {

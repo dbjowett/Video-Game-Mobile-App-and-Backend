@@ -8,3 +8,12 @@ export type GameList = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type GameListItem = {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  listId: string;
+  gameId: number;
+  position: number;
+};

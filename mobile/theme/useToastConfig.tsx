@@ -10,7 +10,7 @@ export const useToastConfig = () => {
       <BaseToast
         {...props}
         style={{
-          borderLeftColor: colors.primary,
+          borderLeftColor: colors.successGreen,
           backgroundColor: colors.surface,
         }}
         contentContainerStyle={{ paddingHorizontal: spacing.md }}

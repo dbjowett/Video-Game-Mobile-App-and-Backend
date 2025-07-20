@@ -23,6 +23,7 @@ export class GameListService {
 
   async getGameLists(user: UserPayload): Promise<GameList[]> {
     let gameLists: GameList[] = [];
+    console.log('Here', gameLists);
     try {
       gameLists = await this.databaseService.gameList.findMany({
         where: {
@@ -32,8 +33,26 @@ export class GameListService {
     } catch (error) {
       throw new NotFoundException('Cannot find any lists for this user');
     }
+    console.log('Here 2', gameLists);
 
     return gameLists;
+  }
+
+  async getGameListGames(
+    user: UserPayload,
+    id: string,
+  ): Promise<GameListItem[]> {
+    let games: GameListItem[] = [];
+    try {
+      games = await this.databaseService.gameListItem.findMany({
+        where: {
+          listId: id,
+        },
+      });
+    } catch (error) {
+      throw new NotFoundException('No games found with ID: ', id);
+    }
+    return games;
   }
 
   async createNewGameList(user: UserPayload, body: CreateGameListDto) {
