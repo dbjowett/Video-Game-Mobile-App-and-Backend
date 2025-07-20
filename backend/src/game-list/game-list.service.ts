@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { GameList, GameListItem } from '@prisma/client';
 import { UserPayload } from 'src/auth/types';
 import { DatabaseService } from 'src/database/database.service';
@@ -16,6 +20,21 @@ export class GameListService {
     private readonly databaseService: DatabaseService,
     private readonly gamesService: GamesService,
   ) {}
+
+  async getGameLists(user: UserPayload): Promise<GameList[]> {
+    let gameLists: GameList[] = [];
+    try {
+      gameLists = await this.databaseService.gameList.findMany({
+        where: {
+          userId: user.id,
+        },
+      });
+    } catch (error) {
+      throw new NotFoundException('Cannot find any lists for this user');
+    }
+
+    return gameLists;
+  }
 
   async createNewGameList(user: UserPayload, body: CreateGameListDto) {
     const { gameIds, title, description, isPublic } = body;
@@ -58,6 +77,18 @@ export class GameListService {
   }
 
   async addGameToGameList(user: UserPayload, body: AddGameToListDto) {
+    const doesExist = await this.databaseService.gameListItem.findUnique({
+      where: {
+        listId_gameId: {
+          listId: body.gameListId,
+          gameId: body.gameId,
+        },
+      },
+    });
+
+    if (doesExist)
+      throw new ConflictException('This game already exists in the list');
+
     const maxPosition = await this.databaseService.gameListItem.aggregate({
       _max: {
         position: true,
@@ -95,7 +126,7 @@ export class GameListService {
     });
 
     if (!gameListItem) {
-      throw new Error('Game not found in list');
+      throw new NotFoundException('Game not found in list');
     }
 
     try {

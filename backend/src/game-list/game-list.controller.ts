@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, UseGuards } from '@nestjs/common';
 import { GameList } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { UserPayload } from 'src/auth/types';
@@ -14,6 +14,11 @@ import { GameListService } from './game-list.service';
 @Controller('gamelist')
 export class GameListController {
   constructor(private readonly gameListService: GameListService) {}
+
+  @Get()
+  async getGameLists(@User() user: UserPayload) {
+    return await this.gameListService.getGameLists(user);
+  }
 
   @Post('new-game-list')
   async createNewGameList(

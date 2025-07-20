@@ -36,7 +36,7 @@ model GameList {
   title       String
   description String? // Optional description for the list
   isSystem    Boolean @default(false) // default list = favourites, played, etc
-  isPublic    Boolean @default(false) // will show in everyones feeds
+  isPublic    Boolean @default(false) // will show in everyones feeds (in future )
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
