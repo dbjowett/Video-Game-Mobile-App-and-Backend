@@ -1,7 +1,9 @@
+import { DetailedGame } from '@/api/types/game';
+import { radius } from '@/theme/radius';
 import { spacing } from '@/theme/spacing';
 import { useTheme } from '@/theme/theme-context';
 import BottomSheet from '@gorhom/bottom-sheet';
-import React, { forwardRef, useCallback, useState } from 'react';
+import React, { forwardRef, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -11,7 +13,6 @@ import {
 } from 'react-native';
 import AppButton from './AppButton';
 import CreateNewForm from './CreateNew';
-import { BlueText } from './StyledText';
 import { AppText } from './Themed';
 
 const screenWidth = Dimensions.get('window').width;
@@ -24,8 +25,8 @@ const mockLists = [
   'Top Games this year',
   'Sports games',
   'Backlog',
-  // 'Top shooters',
-  // 'Best RPGs',
+  'Top shooters',
+  'Best RPGs',
   // 'Indie gems',
   // 'Games I regret buying',
   // 'Childhood favorites',
@@ -52,123 +53,137 @@ const mockLists = [
   // 'Open world adventures',
 ];
 
-const AddToListSheet = forwardRef<BottomSheet, Props>((_props, ref) => {
-  const [selected, setSelected] = useState<string>('Top Games this year');
-  const [isCreatingNew, setIsCreatingNew] = useState<boolean>(false);
-  const { colors } = useTheme();
+interface CreateNewFormProps {
+  game: DetailedGame;
+}
 
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log('Sheet index:', index);
-  }, []);
+const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
+  ({ game }, ref) => {
+    const [selected, setSelected] = useState<string>('Top Games this year');
+    const [isCreatingNew, setIsCreatingNew] = useState<boolean>(false);
+    const { colors } = useTheme();
 
-  const handleCancel = () => {
-    if (ref && typeof ref !== 'function' && ref.current) {
-      ref.current.close();
-    }
-  };
+    const handleCancel = () => {
+      if (ref && typeof ref !== 'function' && ref.current) {
+        ref.current.close();
+      }
+    };
 
-  const renderItem = ({ item }: { item: string }) => {
-    const isSelected = item === selected;
+    const renderItem = ({ item }: { item: string }) => {
+      const isSelected = item === selected;
+
+      return (
+        <TouchableOpacity
+          onPress={() => setSelected(item)}
+          style={[
+            styles.card,
+            {
+              backgroundColor: colors.background,
+              borderColor: colors.border,
+            },
+            isSelected && {
+              borderWidth: 1,
+              borderColor: colors.primary,
+            },
+          ]}
+        >
+          <AppText
+            style={[
+              styles.cardText,
+              {
+                color: isSelected ? colors.primary : colors.textPrimary,
+              },
+            ]}
+          >
+            {item}
+          </AppText>
+        </TouchableOpacity>
+      );
+    };
 
     return (
-      <TouchableOpacity
-        onPress={() => setSelected(item)}
-        style={[
-          styles.card,
-          {
-            backgroundColor: colors.background,
-            borderColor: colors.border,
-            borderWidth: StyleSheet.hairlineWidth,
-          },
-          isSelected && {
-            borderWidth: 1,
-            borderColor: '#000',
-          },
-        ]}
+      <BottomSheet
+        enablePanDownToClose={true}
+        enableDynamicSizing={false}
+        backgroundStyle={{ backgroundColor: colors.surface }}
+        ref={ref}
+        index={-1}
+        snapPoints={['50%']}
       >
-        <AppText style={styles.cardText}>{item}</AppText>
-      </TouchableOpacity>
-    );
-  };
+        <View style={styles.sheetContainer}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={handleCancel}>
+              <AppText style={styles.headerButton}>Cancel</AppText>
+            </TouchableOpacity>
 
-  return (
-    <BottomSheet
-      enablePanDownToClose={true}
-      enableDynamicSizing={false}
-      backgroundStyle={{ backgroundColor: colors.surface }}
-      ref={ref}
-      index={-1}
-      snapPoints={['50%', '90%']}
-      onChange={handleSheetChanges}
-    >
-      <View style={styles.sheetContainer}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={handleCancel}>
-            <AppText style={styles.headerButton}>Cancel</AppText>
-          </TouchableOpacity>
+            <View style={{ flex: 1, alignItems: 'center', gap: spacing.xs }}>
+              <AppText style={styles.headerTitle}>Add To List</AppText>
+              <AppText style={{ fontSize: 14, color: colors.textSecondary }}>
+                {game.name}
+              </AppText>
+            </View>
 
-          <AppText style={styles.headerTitle}>Add To List</AppText>
+            <TouchableOpacity>
+              <AppText style={styles.headerButton}>Save</AppText>
+            </TouchableOpacity>
+          </View>
 
-          <TouchableOpacity>
-            <BlueText style={styles.headerButton}>Save</BlueText>
-          </TouchableOpacity>
+          {isCreatingNew ? (
+            <View style={{ flex: 1, gap: spacing.md }}>
+              <AppButton
+                title="Add to Existing"
+                onPress={() => setIsCreatingNew(false)}
+                variant="default"
+                size="md"
+                fontSize="md"
+                borderRadius="md"
+                leftIcon="ListEnd"
+              />
+              <CreateNewForm />
+            </View>
+          ) : (
+            <View style={{ flex: 1, gap: spacing.md }}>
+              <AppButton
+                title="Create New"
+                onPress={() => setIsCreatingNew(true)}
+                variant="default"
+                size="md"
+                fontSize="md"
+                borderRadius="md"
+                leftIcon="ListPlus"
+              />
+              <FlatList
+                keyboardShouldPersistTaps="handled"
+                style={{ flex: 1 }}
+                data={mockLists}
+                renderItem={renderItem}
+                keyExtractor={(item, index) => `${item}-${index}`}
+                numColumns={2}
+                columnWrapperStyle={styles.row}
+                contentContainerStyle={{ paddingBottom: spacing.md }}
+              />
+            </View>
+          )}
         </View>
-
-        {isCreatingNew ? (
-          <View style={{ flex: 1, gap: spacing.md }}>
-            <AppButton
-              title="Add to Existing"
-              onPress={() => setIsCreatingNew(false)}
-              variant="default"
-              size="md"
-              fontSize="md"
-              borderRadius="md"
-              leftIcon="ListEnd"
-            />
-            <CreateNewForm />
-          </View>
-        ) : (
-          <View style={{ flex: 1, gap: spacing.md }}>
-            <AppButton
-              title="Create New"
-              onPress={() => setIsCreatingNew(true)}
-              variant="default"
-              size="md"
-              fontSize="md"
-              borderRadius="md"
-              leftIcon="ListPlus"
-            />
-            <FlatList
-              keyboardShouldPersistTaps="handled"
-              style={{ flex: 1 }}
-              data={mockLists}
-              renderItem={renderItem}
-              keyExtractor={(item, index) => `${item}-${index}`}
-              numColumns={3}
-              columnWrapperStyle={styles.row}
-              contentContainerStyle={{ paddingBottom: 30 }}
-            />
-          </View>
-        )}
-      </View>
-    </BottomSheet>
-  );
-});
+      </BottomSheet>
+    );
+  },
+);
 
 export default AddToListSheet;
 
-const cardWidth = (screenWidth - 60) / 3;
+const cardWidth = (screenWidth - 60) / 2;
 
 const styles = StyleSheet.create({
   sheetContainer: {
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.lg,
     flex: 1,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: spacing.md,
   },
   headerTitle: {
     fontSize: 22,
@@ -178,28 +193,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
-  subtext: {
-    textAlign: 'center',
-    marginBottom: 16,
-    color: '#333',
-  },
   row: {
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: spacing.md,
   },
 
   card: {
     width: cardWidth,
-    height: 80,
-
-    borderRadius: 12,
-
+    borderWidth: StyleSheet.hairlineWidth,
+    height: 72,
+    borderRadius: radius.lg,
     alignItems: 'center',
     justifyContent: 'center',
   },
   cardText: {
-    textAlign: 'center',
     fontWeight: 500,
-    fontSize: 14,
   },
 });

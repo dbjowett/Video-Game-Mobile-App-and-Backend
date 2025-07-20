@@ -1,5 +1,6 @@
 import { useUpdateUser } from '@/api/hooks/useUpdateUser';
 import { useUser } from '@/api/hooks/useUser';
+import AppButton from '@/components/AppButton';
 import { useSession } from '@/components/AuthContext';
 import { AppText, View } from '@/components/Themed';
 import { useTheme } from '@/theme/theme-context';
@@ -7,7 +8,7 @@ import { useTheme } from '@/theme/theme-context';
 import { useHeaderHeight } from '@react-navigation/elements';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from 'expo-router';
-import { CameraIcon, CircleUserRound, LogOut } from 'lucide-react-native';
+import { CameraIcon, CircleUserRound } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -163,11 +164,13 @@ const Page = () => {
           </AppText>
           <AppText style={styles.mainText}>{user?.email}</AppText>
         </View>
-        {/* Logout */}
-        <TouchableOpacity style={styles.signOut} onPress={signOut}>
-          <AppText style={styles.buttonText}>Sign Out</AppText>
-          <LogOut color="white" size={18} />
-        </TouchableOpacity>
+
+        <AppButton
+          style={{ width: '80%' }}
+          title="Sign Out"
+          onPress={signOut}
+          rightIcon="LogOut"
+        />
       </View>
     </View>
   );

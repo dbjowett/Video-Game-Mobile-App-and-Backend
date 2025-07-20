@@ -14,9 +14,9 @@ export const lightColors = {
   primaryLight: tailwindColors.blue['400'],
   primaryDark: tailwindColors.blue['800'],
 
-  secondary: tailwindColors.fuchsia['500'],
-  secondaryLight: tailwindColors.fuchsia['300'],
-  secondaryDark: tailwindColors.fuchsia['700'],
+  secondary: tailwindColors.orange['500'],
+  secondaryLight: tailwindColors.orange['300'],
+  secondaryDark: tailwindColors.orange['700'],
 
   background: tailwindColors.neutral['50'],
   surface: tailwindColors.neutral['100'],
@@ -54,9 +54,9 @@ export const darkColors = {
   primaryLight: tailwindColors.blue['300'],
   primaryDark: tailwindColors.blue['600'],
 
-  secondary: tailwindColors.fuchsia['300'],
-  secondaryLight: tailwindColors.fuchsia['200'],
-  secondaryDark: tailwindColors.fuchsia['500'],
+  secondary: tailwindColors.orange['300'],
+  secondaryLight: tailwindColors.orange['200'],
+  secondaryDark: tailwindColors.orange['500'],
 
   background: tailwindColors.neutral['950'],
   surface: tailwindColors.neutral['900'],

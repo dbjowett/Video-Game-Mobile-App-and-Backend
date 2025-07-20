@@ -1,7 +1,8 @@
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import { Check } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { TextInput, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { AppText } from './Themed';
 
 const CreateNewForm = () => {
@@ -33,7 +34,7 @@ const CreateNewForm = () => {
             backgroundColor: colors.background,
           }}
         >
-          <TextInput
+          <BottomSheetTextInput
             value={data.title}
             onChangeText={(e) => handleChange('title', e)}
             placeholder="List title"
@@ -52,7 +53,7 @@ const CreateNewForm = () => {
             backgroundColor: colors.background,
           }}
         >
-          <TextInput
+          <BottomSheetTextInput
             value={data.description}
             onChangeText={(e) => handleChange('description', e)}
             placeholder="Description (optional)"

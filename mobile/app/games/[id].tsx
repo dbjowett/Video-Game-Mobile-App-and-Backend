@@ -132,7 +132,11 @@ const Page = () => {
     navigation.setOptions({
       headerTitle: () => (
         <Animated.Text
-          style={[styles.headerTitle, titleAnimatedStyle]}
+          style={[
+            styles.headerTitle,
+            titleAnimatedStyle,
+            { color: colors.textPrimary },
+          ]}
           numberOfLines={1}
         >
           {game?.name}
@@ -140,19 +144,28 @@ const Page = () => {
       ),
       headerTransparent: true,
       headerBackground: () => (
-        <Animated.View style={[styles.header, headerAnimatedStyle]} />
+        <Animated.View
+          style={[
+            styles.header,
+            headerAnimatedStyle,
+            { backgroundColor: colors.background },
+          ]}
+        />
       ),
       headerRight: () => (
-        <TouchableOpacity style={styles.roundButton} onPress={shareListing}>
-          <ShareIcon size={22} />
+        <TouchableOpacity
+          style={[styles.roundButton, { backgroundColor: colors.background }]}
+          onPress={shareListing}
+        >
+          <ShareIcon size={22} color={colors.textPrimary} />
         </TouchableOpacity>
       ),
       headerLeft: () => (
         <TouchableOpacity
-          style={styles.roundButton}
+          style={[styles.roundButton, { backgroundColor: colors.background }]}
           onPress={() => router.back()}
         >
-          <ChevronLeft size={22} />
+          <ChevronLeft size={22} color={colors.textPrimary} />
         </TouchableOpacity>
       ),
     });
@@ -189,8 +202,13 @@ const Page = () => {
           }}
           style={[styles.image, imageAnimatedStyle]}
         />
-        <View style={styles.contentContainer}>
-          <AppText style={styles.title}>{game.name} </AppText>
+        <View
+          style={[
+            styles.contentContainer,
+            { backgroundColor: colors.background },
+          ]}
+        >
+          <AppText style={styles.title}>{game.name}</AppText>
           <View style={styles.summary}>
             <MoreText text={game.summary} />
           </View>
@@ -208,8 +226,13 @@ const Page = () => {
         <SimilarGamesSection similarGames={game.similar_games} />
       </Animated.ScrollView>
       <Animated.View
-        style={defaultStyles.footer}
-        entering={SlideInDown.delay(200)}
+        style={[
+          defaultStyles.footer,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
+        entering={SlideInDown.delay(200).damping(20)}
       >
         <View
           style={{
@@ -239,7 +262,7 @@ const Page = () => {
         onRequestClose={() => setIsImageViewerVisible(false)}
       />
 
-      <AddToListSheet ref={addToListRef} />
+      <AddToListSheet ref={addToListRef} game={game} />
     </View>
   );
 };
@@ -259,13 +282,12 @@ const styles = StyleSheet.create({
   },
 
   contentWrap: {
-    backgroundColor: 'white',
     paddingBottom: 120,
     flexGrow: 1,
   },
 
   contentContainer: {
-    backgroundColor: 'white',
+    // backgroundColor: 'white',
     zIndex: 2,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -294,7 +316,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 50,
-    backgroundColor: 'white',
     opacity: 0.7,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: Colors.grey,
