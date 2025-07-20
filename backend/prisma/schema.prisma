@@ -31,11 +31,12 @@ model RefreshToken {
 }
 
 model GameList {
-  id       String  @id @default(cuid())
-  userId   String
-  name     String
-  isSystem Boolean @default(false) // default list = favourites, played, etc
-  isPublic Boolean @default(false) // will show in everyones feeds
+  id          String  @id @default(cuid())
+  userId      String
+  title       String
+  description String? // Optional description for the list
+  isSystem    Boolean @default(false) // default list = favourites, played, etc
+  isPublic    Boolean @default(false) // will show in everyones feeds
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -44,7 +45,8 @@ model GameList {
   items        GameListItem[]
   GameListLike GameListLike[]
 
-  @@unique([userId, name]) // No duplicate list names for a user
+  @@unique([userId, title]) // No duplicate list names for a user
+  @@index([userId])
 }
 
 model GameListItem {

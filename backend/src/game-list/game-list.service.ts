@@ -1,7 +1,10 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { GameList, GameListItem } from '@prisma/client';
+import { UserPayload } from 'src/auth/types';
 import { DatabaseService } from 'src/database/database.service';
 import { GamesService } from 'src/games/games.service';
-import { FaveGame, ListGame } from 'src/games/types';
+import { BatchPayload } from 'src/types';
+import { AddGameToListDto, CreateGameListDto } from './dto';
 
 @Injectable()
 export class GameListService {
@@ -10,67 +13,104 @@ export class GameListService {
     private readonly gamesService: GamesService,
   ) {}
 
-  async addToFavourites(userId: string, gameId: string): Promise<unknown> {
-    const existingFavourite = await this.databaseService.userGameList.findFirst(
-      {
-        where: {
-          userId,
-          gameId,
-        },
-      },
-    );
+  async createNewGameList(user: UserPayload, body: CreateGameListDto) {
+    const { gameIds, title, description, isPublic } = body;
 
-    if (existingFavourite) {
-      throw new ConflictException('Game already favourited');
+    if (!user.id) throw new Error('User ID not found');
+    let gameListItems: BatchPayload;
+    let gameList: GameList;
+
+    try {
+      gameList = await this.databaseService.gameList.create({
+        data: {
+          userId: user.id,
+          title,
+          description,
+          isPublic: Boolean(isPublic),
+        },
+      });
+
+      gameListItems = await this.databaseService.gameListItem.createMany({
+        data: gameIds.map((gameId) => ({
+          gameId,
+          listId: gameList.id,
+          position: 0,
+        })),
+        skipDuplicates: true,
+      });
+    } catch (error) {
+      throw new Error('Failed to create game list: ' + error.message);
+    }
+    if (gameListItems.count === 0) {
+      throw new Error(
+        'No game IDs provided or all game IDs already exist in the list',
+      );
     }
 
-    const lastPosition = await this.databaseService.userGameList.aggregate({
-      where: {
-        userId,
-        listId,
-      },
+    return {
+      ...gameList,
+      gameIds,
+    };
+  }
+
+  async addGameToGameList(user: UserPayload, body: AddGameToListDto) {
+    const maxPosition = await this.databaseService.gameListItem.aggregate({
       _max: {
         position: true,
       },
-    });
-
-    const newPosition = (lastPosition._max.position ?? 0) + 1;
-
-    return this.databaseService.userGameList.create({
-      data: {
-        listType: 'FAVOURITES',
-        position: newPosition,
-        userId,
-        gameId,
-      },
-    });
-  }
-
-  async removeFromFavourites(userId: string, gameId: string): Promise<unknown> {
-    return this.databaseService.userGameList.deleteMany({
       where: {
-        userId,
-        gameId,
+        listId: body.gameListId,
       },
     });
-  }
+    const nextPosition = (maxPosition._max.position ?? -1) + 1;
+    let gameListItem: GameListItem;
 
-  async getFavourites(userId: string): Promise<FaveGame[]> {
-    return this.databaseService.userGameList.findMany({
-      where: {
-        userId,
-      },
-    });
-  }
-
-  async getFavouriteDetails(userId: string): Promise<ListGame[]> {
-    const favourites = await this.getFavourites(userId);
-
-    if (favourites.length === 0) {
-      throw new Error('No games found');
+    try {
+      gameListItem = await this.databaseService.gameListItem.create({
+        data: {
+          gameId: body.gameId,
+          listId: body.gameListId,
+          position: nextPosition,
+        },
+      });
+    } catch (error) {
+      throw new Error('Failed to add game to list: ' + error.message);
     }
 
-    const gameIds = favourites.map((game) => Number(game.gameId));
-    return this.gamesService.getListGames(gameIds);
+    return gameListItem;
   }
+
+  // async addToFavourites(userId: string, gameId: string): Promise<unknown> {
+  //   if (existingFavourite) {
+  //     throw new ConflictException('Game already favourited');
+  //   }
+  // }
+
+  // async removeFromFavourites(userId: string, gameId: string): Promise<unknown> {
+  //   return this.databaseService.userGameList.deleteMany({
+  //     where: {
+  //       userId,
+  //       gameId,
+  //     },
+  //   });
+  // }
+
+  // async getFavourites(userId: string): Promise<FaveGame[]> {
+  //   return this.databaseService.userGameList.findMany({
+  //     where: {
+  //       userId,
+  //     },
+  //   });
+  // }
+
+  // async getFavouriteDetails(userId: string): Promise<ListGame[]> {
+  //   const favourites = await this.getFavourites(userId);
+
+  //   if (favourites.length === 0) {
+  //     throw new Error('No games found');
+  //   }
+
+  //   const gameIds = favourites.map((game) => Number(game.gameId));
+  //   return this.gamesService.getListGames(gameIds);
+  // }
 }
