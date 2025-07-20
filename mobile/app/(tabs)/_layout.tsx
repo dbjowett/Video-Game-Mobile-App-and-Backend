@@ -4,7 +4,7 @@ import React from 'react';
 import { useSession } from '@/components/AuthContext';
 import { AppText } from '@/components/Themed';
 import { useTheme } from '@/theme/theme-context';
-import { CalendarClock, Heart, Search, User } from 'lucide-react-native';
+import { CalendarClock, List, Search, User } from 'lucide-react-native';
 
 interface IconProps {
   color: string;
@@ -53,13 +53,12 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="wishlist"
+        name="gamelist"
         options={{
-          // headerShown: false,
-          title: 'Wishlist',
-          tabBarLabel: 'Wishlist',
+          title: 'Game Lists',
+          tabBarLabel: 'Lists',
           tabBarIcon: ({ color, size }: IconProps) => (
-            <Heart size={size} color={color} />
+            <List size={size} color={color} />
           ),
         }}
       />

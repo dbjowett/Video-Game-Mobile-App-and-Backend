@@ -6,7 +6,7 @@ const Layout = () => {
       <Stack.Screen
         name="index"
         options={{
-          headerTitle: 'Wishlist',
+          headerTitle: 'Game Lists',
           headerLargeTitle: true,
           // headerBlurEffect: 'light',
           // headerTransparent: true,

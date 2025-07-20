@@ -87,7 +87,7 @@ export interface SimilarGame {
     url: string;
   };
 }
-// TODO: Add this to Types file
+
 export interface FaveGame {
   createdAt: string;
   gameId: string;

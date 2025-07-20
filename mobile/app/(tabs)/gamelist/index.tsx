@@ -1,21 +1,14 @@
 import React from 'react';
 
-import { useGetFavGameDetails } from '@/api/hooks/useGetFavGameDetails';
-import { ListGame } from '@/api/types/game';
 import { AppText } from '@/components/Themed';
 
 import { useTheme } from '@/theme/theme-context';
-import { imageLoader } from '@/utils';
 import { useRouter } from 'expo-router';
 import { GripVertical } from 'lucide-react-native';
-import {
-  ActivityIndicator,
-  Image,
-  Pressable,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 
+import { useGetLists } from '@/api/hooks/useGetLists';
+import { GameList } from '@/api/types/game-list';
 import { ThemeColors } from '@/theme/theme';
 import ReorderableList, {
   ReorderableListReorderEvent,
@@ -25,11 +18,11 @@ import ReorderableList, {
 const DEFAULT_HEIGHT = 70;
 const EXPANDED_HEIGHT = 140;
 
-const WishlistItem = ({
-  game,
+const GameListItem = ({
+  list,
   colors,
 }: {
-  game: ListGame;
+  list: GameList;
   colors: ThemeColors;
 }) => {
   const router = useRouter();
@@ -37,7 +30,7 @@ const WishlistItem = ({
   return (
     <Pressable
       onLongPress={drag}
-      onPress={() => router.push(`/games/${game.id}`)}
+      // onPress={() => router.push(`/games/${game.id}`)}
     >
       <View
         style={[
@@ -50,7 +43,7 @@ const WishlistItem = ({
       >
         {/* Left Content */}
         <View style={styles.leftContainer}>
-          <Image
+          {/* <Image
             source={{
               uri: imageLoader({
                 src: game.cover?.url,
@@ -62,10 +55,8 @@ const WishlistItem = ({
               minWidth: 50,
               borderRadius: 6,
             }}
-          />
-          <AppText style={styles.itemText} numberOfLines={1}>
-            {game.name}
-          </AppText>
+          /> */}
+          <AppText style={styles.itemText}>{list.title}</AppText>
         </View>
 
         {/* Right Content */}
@@ -78,11 +69,11 @@ const WishlistItem = ({
   );
 };
 const Page = () => {
-  const { data: games, isLoading } = useGetFavGameDetails();
+  const { data: lists, isLoading } = useGetLists();
   const { colors } = useTheme();
 
-  const renderItem = ({ item }: { item: ListGame }) => (
-    <WishlistItem game={item} colors={colors} />
+  const renderItem = ({ item }: { item: GameList }) => (
+    <GameListItem list={item} colors={colors} />
   );
 
   const handleReorder = ({ from, to }: ReorderableListReorderEvent) => {
@@ -91,23 +82,23 @@ const Page = () => {
 
   return (
     <View style={styles.pageContainer}>
-      {!isLoading && !games?.length && <AppText>No Games Found</AppText>}
+      {!isLoading && !lists?.length && <AppText>No Games Found</AppText>}
 
       {isLoading ? (
         <ActivityIndicator />
       ) : (
         <ReorderableList
           onReorder={handleReorder}
-          data={games || []}
+          data={lists || []}
           renderItem={renderItem}
-          keyExtractor={(game) => game.id.toString()}
+          keyExtractor={(list) => list.id.toString()}
         >
           <>
-            {games?.map((game) => (
-              <WishlistItem key={game.id} game={game} colors={colors} />
+            {lists?.map((list) => (
+              <GameListItem key={list.id} list={list} colors={colors} />
             ))}
-            {games?.map((game) => (
-              <WishlistItem key={game.id} game={game} colors={colors} />
+            {lists?.map((list) => (
+              <GameListItem key={list.id} list={list} colors={colors} />
             ))}
           </>
         </ReorderableList>
@@ -126,6 +117,7 @@ const styles = StyleSheet.create({
   },
   pageContainer: {
     flex: 1,
+    marginTop: 160,
   },
 
   itemContainer: {
@@ -139,6 +131,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   leftContainer: {
+    height: 50,
+    width: 50,
     flexDirection: 'row',
     gap: 10,
     alignItems: 'center',
