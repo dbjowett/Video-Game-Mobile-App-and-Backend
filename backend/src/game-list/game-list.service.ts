@@ -38,6 +38,7 @@ export class GameListService {
 
   async createNewGameList(user: UserPayload, body: CreateGameListDto) {
     const { gameIds, title, description, isPublic } = body;
+    console.log({ gameIds, title, description, isPublic });
 
     if (!user.id) throw new Error('User ID not found');
     let gameListItems: BatchPayload;
@@ -52,6 +53,7 @@ export class GameListService {
           isPublic: Boolean(isPublic),
         },
       });
+      console.log('Game list', gameList);
 
       gameListItems = await this.databaseService.gameListItem.createMany({
         data: gameIds.map((gameId) => ({
@@ -61,6 +63,7 @@ export class GameListService {
         })),
         skipDuplicates: true,
       });
+      console.log('Game list items', gameListItems);
     } catch (error) {
       throw new Error('Failed to create game list: ' + error.message);
     }

@@ -8,7 +8,7 @@ import { LoggerMiddleware } from './common/middleware';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors(corsConfig);
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.use(cookieParser());
   app.use((req: Request, res: Response, next: NextFunction) =>
     new LoggerMiddleware().use(req, res, next),

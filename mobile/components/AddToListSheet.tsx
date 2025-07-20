@@ -1,10 +1,16 @@
+import { useAddGameToList } from '@/api/hooks/useAddGameToList';
+import { useCreateGameList } from '@/api/hooks/useCreateGameList';
+
+import { useGetLists } from '@/api/hooks/useGetLists';
 import { DetailedGame } from '@/api/types/game';
+import { GameList } from '@/api/types/game-list';
 import { radius } from '@/theme/radius';
 import { spacing } from '@/theme/spacing';
 import { useTheme } from '@/theme/theme-context';
 import BottomSheet from '@gorhom/bottom-sheet';
 import React, { forwardRef, useState } from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   FlatList,
   StyleSheet,
@@ -17,64 +23,37 @@ import { AppText } from './Themed';
 
 const screenWidth = Dimensions.get('window').width;
 
-interface Props {}
-
-// TODO: GET FROM API
-const mockLists = [
-  '12 Zelda games',
-  'Top Games this year',
-  'Sports games',
-  'Backlog',
-  'Top shooters',
-  'Best RPGs',
-  // 'Indie gems',
-  // 'Games I regret buying',
-  // 'Childhood favorites',
-  // 'Best pixel art games',
-  // 'Wishlist 2025',
-  // 'Games with great soundtracks',
-  // 'Completed in 2024',
-  // 'Most anticipated',
-  // 'Hardest games ever',
-  // 'Top co-op games',
-  // 'Short and sweet',
-  // 'Great storytelling',
-  // 'Comfort games',
-  // 'Multiplayer only',
-  // 'Retro classics',
-  // 'Games to replay',
-  // 'Mobile must-plays',
-  // 'Underrated titles',
-  // 'AAA disappointments',
-  // 'Steam Deck picks',
-  // 'Free-to-play only',
-  // 'Hidden horror gems',
-  // 'Games to stream',
-  // 'Open world adventures',
-];
-
 interface CreateNewFormProps {
   game: DetailedGame;
 }
 
 const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
   ({ game }, ref) => {
-    const [selected, setSelected] = useState<string>('Top Games this year');
+    const [selected, setSelected] = useState<string | null>(null);
     const [isCreatingNew, setIsCreatingNew] = useState<boolean>(false);
-    const { colors } = useTheme();
+    const [data, setData] = useState({
+      title: '',
+      description: '',
+      isPublic: false,
+    });
 
-    const handleCancel = () => {
+    const { colors } = useTheme();
+    const { data: gameLists, isLoading } = useGetLists();
+    const createGameListMutation = useCreateGameList();
+    const addGameMutation = useAddGameToList();
+
+    const handleClose = () => {
       if (ref && typeof ref !== 'function' && ref.current) {
         ref.current.close();
       }
     };
 
-    const renderItem = ({ item }: { item: string }) => {
-      const isSelected = item === selected;
+    const renderItem = ({ item }: { item: GameList }) => {
+      const isSelected = item.id === selected;
 
       return (
         <TouchableOpacity
-          onPress={() => setSelected(item)}
+          onPress={() => setSelected(item.id)}
           style={[
             styles.card,
             {
@@ -95,11 +74,35 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
               },
             ]}
           >
-            {item}
+            {item.title}
           </AppText>
         </TouchableOpacity>
       );
     };
+
+    const handleCreateNewList = async () => {
+      // TODO: Update to use Tanstack Form
+      createGameListMutation.mutate({
+        title: data.title,
+        description: data.description,
+        isPublic: data.isPublic,
+        gameIds: [game.id],
+      });
+      handleClose();
+    };
+
+    const addToList = () => {
+      if (!selected) return;
+      // TODO: Update to use Tanstack Form
+      addGameMutation.mutate({
+        gameListId: selected,
+        gameId: Number(game.id),
+      });
+      handleClose();
+    };
+
+    const handleSaveClick = () =>
+      isCreatingNew ? handleCreateNewList() : addToList();
 
     return (
       <BottomSheet
@@ -112,7 +115,7 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
       >
         <View style={styles.sheetContainer}>
           <View style={styles.header}>
-            <TouchableOpacity onPress={handleCancel}>
+            <TouchableOpacity onPress={handleClose}>
               <AppText style={styles.headerButton}>Cancel</AppText>
             </TouchableOpacity>
 
@@ -123,7 +126,7 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
               </AppText>
             </View>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleSaveClick}>
               <AppText style={styles.headerButton}>Save</AppText>
             </TouchableOpacity>
           </View>
@@ -139,7 +142,7 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
                 borderRadius="md"
                 leftIcon="ListEnd"
               />
-              <CreateNewForm />
+              <CreateNewForm data={data} setData={setData} />
             </View>
           ) : (
             <View style={{ flex: 1, gap: spacing.md }}>
@@ -152,16 +155,21 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
                 borderRadius="md"
                 leftIcon="ListPlus"
               />
-              <FlatList
-                keyboardShouldPersistTaps="handled"
-                style={{ flex: 1 }}
-                data={mockLists}
-                renderItem={renderItem}
-                keyExtractor={(item, index) => `${item}-${index}`}
-                numColumns={2}
-                columnWrapperStyle={styles.row}
-                contentContainerStyle={{ paddingBottom: spacing.md }}
-              />
+              {isLoading ? (
+                <ActivityIndicator />
+              ) : (
+                /* TODO: Add little "You have no lists, please create a new one" design */
+                <FlatList
+                  keyboardShouldPersistTaps="handled"
+                  style={{ flex: 1 }}
+                  data={gameLists}
+                  renderItem={renderItem}
+                  keyExtractor={(item, index) => `${item}-${index}`}
+                  numColumns={2}
+                  columnWrapperStyle={styles.row}
+                  contentContainerStyle={{ paddingBottom: spacing.md }}
+                />
+              )}
             </View>
           )}
         </View>

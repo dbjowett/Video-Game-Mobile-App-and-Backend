@@ -1,6 +1,9 @@
+import { Type } from 'class-transformer';
 import {
+  ArrayNotEmpty,
   IsArray,
-  IsBooleanString,
+  IsBoolean,
+  IsInt,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -14,10 +17,13 @@ export class CreateGameListDto {
   description?: string;
 
   @IsArray({ message: 'Game IDs must be an array' })
-  @IsString({ each: true, message: 'Game IDs must be a string' })
-  gameIds: string[];
+  @ArrayNotEmpty({ message: 'At least one game ID must be provided' })
+  @Type(() => Number)
+  @IsInt({ each: true, message: 'Each game ID must be an integer' })
+  gameIds: number[];
 
-  @IsBooleanString({ message: 'isPublic must be a boolean' })
+  @Type(() => Boolean)
+  @IsBoolean({ message: 'isPublic must be a boolean' })
   isPublic: boolean;
 }
 
@@ -25,8 +31,9 @@ export class AddGameToListDto {
   @IsString({ message: 'Game List ID must be a string' })
   gameListId: string;
 
-  @IsString({ message: 'Game List ID must be a string' })
-  gameId: string;
+  @IsInt({ message: 'Game ID must be a number' })
+  @Type(() => Number)
+  gameId: number;
 }
 
 export class RemoveGameFromListDto extends AddGameToListDto {}

@@ -1,18 +1,24 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useTheme } from '@react-navigation/native';
 import { Check } from 'lucide-react-native';
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { AppText } from './Themed';
 
-const CreateNewForm = () => {
-  const { colors } = useTheme();
+interface FormData {
+  title: string;
+  description: string;
+  isPublic: boolean;
+}
 
-  const [data, setData] = useState({
-    title: '',
-    description: '',
-    isPublic: false,
-  });
+const CreateNewForm = ({
+  setData,
+  data,
+}: {
+  setData: Dispatch<SetStateAction<FormData>>;
+  data: FormData;
+}) => {
+  const { colors } = useTheme();
 
   const handleChange = (name: string, value: string | boolean) => {
     setData((prevData) => ({

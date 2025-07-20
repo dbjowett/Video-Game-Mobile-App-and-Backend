@@ -7,7 +7,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import React, { useEffect } from 'react';
 import { StatusBar } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import 'react-native-reanimated'; // Ensure this is imported for Reanimated
+import 'react-native-reanimated';
+import Toast from 'react-native-toast-message';
 
 import { SessionProvider } from '@/components/AuthContext';
 import {
@@ -55,6 +56,7 @@ const RootLayoutContent = () => {
           <GestureHandlerRootView style={{ flex: 1 }}>
             <StatusBar barStyle={statusBarStyle} />
             <StackScreens />
+            <Toast topOffset={60} />
           </GestureHandlerRootView>
         </NavigationThemeProvider>
       </SessionProvider>

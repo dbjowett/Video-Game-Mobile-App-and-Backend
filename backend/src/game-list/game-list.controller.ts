@@ -16,7 +16,7 @@ export class GameListController {
   constructor(private readonly gameListService: GameListService) {}
 
   @Get()
-  async getGameLists(@User() user: UserPayload) {
+  async getGameLists(@User() user: UserPayload): Promise<GameList[]> {
     return await this.gameListService.getGameLists(user);
   }
 

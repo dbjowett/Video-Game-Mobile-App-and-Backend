@@ -52,7 +52,7 @@ model GameList {
 model GameListItem {
   id        String   @id @default(cuid())
   listId    String
-  gameId    String
+  gameId    Int
   position  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
