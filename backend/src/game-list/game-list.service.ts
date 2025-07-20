@@ -4,7 +4,11 @@ import { UserPayload } from 'src/auth/types';
 import { DatabaseService } from 'src/database/database.service';
 import { GamesService } from 'src/games/games.service';
 import { BatchPayload } from 'src/types';
-import { AddGameToListDto, CreateGameListDto } from './dto';
+import {
+  AddGameToListDto,
+  CreateGameListDto,
+  RemoveGameFromListDto,
+} from './dto';
 
 @Injectable()
 export class GameListService {
@@ -78,6 +82,50 @@ export class GameListService {
     }
 
     return gameListItem;
+  }
+
+  async removeGameFromList(user: UserPayload, body: RemoveGameFromListDto) {
+    const gameListItem = await this.databaseService.gameListItem.findUnique({
+      where: {
+        listId_gameId: {
+          listId: body.gameListId,
+          gameId: body.gameId,
+        },
+      },
+    });
+
+    if (!gameListItem) {
+      throw new Error('Game not found in list');
+    }
+
+    try {
+      await this.databaseService.gameListItem.delete({
+        where: {
+          listId_gameId: {
+            listId: body.gameListId,
+            gameId: body.gameId,
+          },
+        },
+      });
+
+      await this.databaseService.gameListItem.updateMany({
+        where: {
+          listId: body.gameListId,
+          position: {
+            gt: gameListItem.position,
+          },
+        },
+        data: {
+          position: {
+            decrement: 1,
+          },
+        },
+      });
+
+      return gameListItem;
+    } catch (error) {
+      throw new Error('Failed to remove game from list: ' + error.message);
+    }
   }
 
   // async addToFavourites(userId: string, gameId: string): Promise<unknown> {

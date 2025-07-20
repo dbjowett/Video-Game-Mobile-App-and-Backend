@@ -28,3 +28,5 @@ export class AddGameToListDto {
   @IsString({ message: 'Game List ID must be a string' })
   gameId: string;
 }
+
+export class RemoveGameFromListDto extends AddGameToListDto {}

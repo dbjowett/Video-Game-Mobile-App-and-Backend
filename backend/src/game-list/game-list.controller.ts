@@ -1,9 +1,13 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Post, UseGuards } from '@nestjs/common';
 import { GameList } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { UserPayload } from 'src/auth/types';
 import { User } from 'src/common/utils/user.decorator';
-import { AddGameToListDto, CreateGameListDto } from './dto';
+import {
+  AddGameToListDto,
+  CreateGameListDto,
+  RemoveGameFromListDto,
+} from './dto';
 import { GameListService } from './game-list.service';
 
 @UseGuards(JwtAuthGuard)
@@ -25,6 +29,14 @@ export class GameListController {
     @Body() body: AddGameToListDto,
   ) {
     return await this.gameListService.addGameToGameList(user, body);
+  }
+
+  @Delete('remove-from-list')
+  async removeGameFromList(
+    @User() user: UserPayload,
+    @Body() body: RemoveGameFromListDto,
+  ) {
+    return await this.gameListService.removeGameFromList(user, body);
   }
 
   // @Post()
