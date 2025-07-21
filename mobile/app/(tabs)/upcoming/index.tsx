@@ -45,7 +45,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
   const listRef = useRef<React.LegacyRef<unknown>>(null);
   const calendarRef = useRef<{ toggleCalendarPosition: () => boolean }>(null);
   const rotation = useRef(new Animated.Value(0));
-  const { colors } = useTheme();
+  const { colors, isDarkMode } = useTheme();
 
   const [selectedDate, setSelectedDate] = React.useState<string>(initialDate); // "YYYY-MM-DD"
   const [visibleMonth, setVisibleMonth] = useState<string>(initialMonth);
@@ -142,23 +142,29 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
     }).start();
   }, []);
 
-  const renderHeader = useCallback((date?: any) => {
-    const rotationInDegrees = rotation.current.interpolate({
-      inputRange: [0, 1],
-      outputRange: ['0deg', '-180deg'],
-    });
+  const renderHeader = useCallback(
+    (date?: any) => {
+      const rotationInDegrees = rotation.current.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '-180deg'],
+      });
 
-    return (
-      <TouchableOpacity style={styles.header} onPress={toggleCalendarExpansion}>
-        <AppText style={styles.headerTitle}>
-          {date?.toString?.('MMMM yyyy') ?? ''}
-        </AppText>
-        <Animated.View style={{ transform: [{ rotate: rotationInDegrees }] }}>
-          <ChevronDown size={18} />
-        </Animated.View>
-      </TouchableOpacity>
-    );
-  }, []);
+      return (
+        <TouchableOpacity
+          style={styles.header}
+          onPress={toggleCalendarExpansion}
+        >
+          <AppText style={styles.headerTitle}>
+            {date?.toString?.('MMMM yyyy') ?? ''}
+          </AppText>
+          <Animated.View style={{ transform: [{ rotate: rotationInDegrees }] }}>
+            <ChevronDown size={18} />
+          </Animated.View>
+        </TouchableOpacity>
+      );
+    },
+    [isDarkMode],
+  );
 
   const onCalendarToggled = useCallback((isOpen: boolean) => {
     rotation.current.setValue(isOpen ? 1 : 0);
@@ -179,7 +185,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
     todayButtonTextColor: colors.primary,
     agendaTodayColor: colors.primary,
     todayTextColor: colors.primary,
-    indicatorColor: colors.brandAccentPrimary,
+    indicatorColor: colors.primary,
     calendarBackground: colors.background,
   };
 

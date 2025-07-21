@@ -6,12 +6,6 @@ import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { AppText } from './Themed';
 
-interface FormData {
-  title: string;
-  description: string;
-  isPublic: boolean;
-}
-
 const CreateNewForm = ({ form }: { form: unknown }) => {
   const { colors } = useTheme();
 

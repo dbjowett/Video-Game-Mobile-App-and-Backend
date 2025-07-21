@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.26.0",
-    "@expo/vector-icons": "^14.0.2",
+    "@expo/vector-icons": "^14.0.4",
     "@gorhom/bottom-sheet": "^5.1.6",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/elements": "^2.3.8",
