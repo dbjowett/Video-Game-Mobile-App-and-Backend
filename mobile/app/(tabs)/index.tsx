@@ -41,10 +41,6 @@ export default function Page() {
   const { mutateAsync: addGameAsync } = useAddFavouriteGame();
   const { mutateAsync: removeGameAsync } = useRemoveFavouriteGame();
 
-  const onCategoryChange = () => {
-    console.log(onCategoryChange);
-  };
-
   const handleFavourite = async (id: string) => {
     const isFaved = favouriteGames?.some((game) => game.gameId === id);
     if (!isFaved) {
@@ -133,7 +129,7 @@ export default function Page() {
       <Stack.Screen
         options={{
           headerShown: true,
-          header: () => <LandingHeader onCategoryChange={onCategoryChange} />,
+          header: () => <LandingHeader />,
         }}
       />
 

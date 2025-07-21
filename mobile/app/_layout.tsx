@@ -16,6 +16,7 @@ import {
   useTheme,
 } from '@/theme/theme-context';
 import { useAppTheme } from '@/theme/useAppTheme';
+
 import { useToastConfig } from '@/theme/useToastConfig';
 
 export { ErrorBoundary } from 'expo-router';

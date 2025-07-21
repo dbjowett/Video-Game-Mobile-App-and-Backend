@@ -1,7 +1,8 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import { useTheme } from '@react-navigation/native';
+
+import { useTheme } from '@/theme/theme-context';
 import { Check } from 'lucide-react-native';
-import React, { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { AppText } from './Themed';
 
@@ -11,21 +12,8 @@ interface FormData {
   isPublic: boolean;
 }
 
-const CreateNewForm = ({
-  setData,
-  data,
-}: {
-  setData: Dispatch<SetStateAction<FormData>>;
-  data: FormData;
-}) => {
+const CreateNewForm = ({ form }: { form: unknown }) => {
   const { colors } = useTheme();
-
-  const handleChange = (name: string, value: string | boolean) => {
-    setData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
 
   return (
     <View style={{ marginBottom: 60 }}>
@@ -40,11 +28,16 @@ const CreateNewForm = ({
             backgroundColor: colors.background,
           }}
         >
-          <BottomSheetTextInput
-            value={data.title}
-            onChangeText={(e) => handleChange('title', e)}
-            placeholder="List title"
-            style={{ height: 40 }}
+          <form.Field
+            name="title"
+            children={(field) => (
+              <BottomSheetTextInput
+                value={field.state.value}
+                onChangeText={field.handleChange}
+                placeholder="List title"
+                style={{ height: 40, color: colors.textPrimary }}
+              />
+            )}
           />
         </View>
       </View>
@@ -59,39 +52,51 @@ const CreateNewForm = ({
             backgroundColor: colors.background,
           }}
         >
-          <BottomSheetTextInput
-            value={data.description}
-            onChangeText={(e) => handleChange('description', e)}
-            placeholder="Description (optional)"
-            style={{ height: 40 }}
+          <form.Field
+            name="description"
+            children={(field) => (
+              <BottomSheetTextInput
+                value={field.state.value}
+                onChangeText={field.handleChange}
+                placeholder="Description (optional)"
+                style={{ height: 40, color: colors.textPrimary }}
+              />
+            )}
           />
         </View>
       </View>
-      <TouchableOpacity
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          marginBottom: 16,
-        }}
-        onPress={() => handleChange('isPublic', !data.isPublic)}
-      >
-        <View
-          style={{
-            width: 24,
-            height: 24,
-            borderRadius: 12,
-            borderWidth: 1,
-            borderColor: colors.border,
-            backgroundColor: data.isPublic ? colors.primary : colors.background,
-            marginRight: 8,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          {data.isPublic && <Check size={14} strokeWidth={4} color="#fff" />}
-        </View>
-        <AppText>Public</AppText>
-      </TouchableOpacity>
+      <form.Field
+        name="isPublic"
+        children={({ handleChange, state }) => (
+          <TouchableOpacity
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginBottom: 16,
+            }}
+            onPress={() => handleChange(!state.value)}
+          >
+            <View
+              style={{
+                width: 24,
+                height: 24,
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: colors.border,
+                backgroundColor: state.value
+                  ? colors.primary
+                  : colors.background,
+                marginRight: 8,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {state.value && <Check size={14} strokeWidth={4} color="#fff" />}
+            </View>
+            <AppText>Public</AppText>
+          </TouchableOpacity>
+        )}
+      />
     </View>
   );
 };

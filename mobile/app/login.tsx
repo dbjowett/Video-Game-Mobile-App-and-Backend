@@ -3,12 +3,12 @@ import { Tokens, Values } from '@/api/types/auth';
 import { apiNoAuth } from '@/api/utils/api';
 import { useSession } from '@/components/AuthContext';
 import { GoogleIcon } from '@/components/GoogleIcon';
-import { useGoogleCallback } from '@/hooks/useGoogleCallback';
 import { imageLoader } from '@/utils';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useNavigation } from 'expo-router';
+import { useRouter } from 'expo-router';
+import * as WebBrowser from 'expo-web-browser';
 import React, { useState } from 'react';
 import {
   Alert,
@@ -23,8 +23,6 @@ import {
 import { AppText } from '@/components/Themed';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-import { WebView } from 'react-native-webview';
-
 const BANNER_HEIGHT = 300;
 
 const DEFAULT_VALUES = {
@@ -33,10 +31,8 @@ const DEFAULT_VALUES = {
 };
 
 const Page = () => {
-  const [showGoogleLogin, setShowGoogleLogin] = useState<boolean>(false);
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
-
-  const navigation = useNavigation();
+  const router = useRouter();
   const { data } = useFetchHero();
   const { signIn } = useSession();
 
@@ -57,7 +53,7 @@ const Page = () => {
         return await apiNoAuth
           .post('auth/signin', { json: data })
           .json<Tokens>();
-      } catch (error) {
+      } catch {
         throw new Error('Error logging in');
       }
     },
@@ -69,24 +65,20 @@ const Page = () => {
     },
   });
 
-  useGoogleCallback(({ access_token, refresh_token }) => {
-    signIn({ access_token, refresh_token });
-
-    // TODO: Show a success message or redirect
-    navigation.reset({ index: 0, routes: [{ name: '(tabs)' }] });
-  });
-
   const form = useForm({
     defaultValues: DEFAULT_VALUES,
+    // TODO: Implement validation
     validators: {
       onSubmit: (vals) => {
         console.log('Vals:', vals);
       },
     },
     onSubmit: async ({ value }) => {
-      isSignUp
-        ? signUpMutation.mutateAsync(value)
-        : signInMutation.mutateAsync(value);
+      if (isSignUp) {
+        signUpMutation.mutateAsync(value);
+      } else {
+        signInMutation.mutateAsync(value);
+      }
     },
   });
 
@@ -139,135 +131,150 @@ const Page = () => {
     );
   };
 
-  return (
-    <>
-      {showGoogleLogin ? (
-        <WebView
-          style={{ marginTop: 80 }}
-          userAgent="http.agent"
-          source={{
-            uri: `${process.env.EXPO_PUBLIC_API_URL}/auth/google?platform=mobile`,
-          }}
-        />
-      ) : (
-        <View style={styles.container}>
-          <KeyboardAwareScrollView
-            bounces={false}
-            enableOnAndroid={true}
-            keyboardShouldPersistTaps="handled"
-          >
-            <>
-              <View style={styles.upperContainer}>
-                <GameLayout />
-              </View>
+  const handleGoogleLogin = async () => {
+    const redirectUri = 'vg-app://login';
+    const authUrl = `${process.env.EXPO_PUBLIC_API_URL}/auth/google?platform=mobile`;
 
-              <View style={styles.lowerContainer}>
-                <>
-                  {/* Header */}
-                  <AppText style={styles.header}>
+    try {
+      const result = await WebBrowser.openAuthSessionAsync(
+        authUrl,
+        redirectUri,
+      );
+
+      if (result.type === 'success' && result.url) {
+        console.log('OAuth flow completed with URL:', result.url);
+
+        if (result.url.includes('vg-app://login')) {
+          const params = new URL(result.url).searchParams;
+          const access_token = params.get('token');
+          const refresh_token = params.get('refresh');
+
+          if (access_token && refresh_token) {
+            signIn({ access_token, refresh_token });
+            router.replace('/(tabs)');
+          }
+        }
+      } else if (result.type === 'dismiss') {
+        console.log('User dismissed the login');
+      }
+    } catch (error) {
+      console.error('Error during Google login:', error);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <KeyboardAwareScrollView
+        bounces={false}
+        enableOnAndroid={true}
+        keyboardShouldPersistTaps="handled"
+      >
+        <>
+          <View style={styles.upperContainer}>
+            <GameLayout />
+          </View>
+
+          <View style={styles.lowerContainer}>
+            <>
+              {/* Header */}
+              <AppText style={styles.header}>
+                {isSignUp ? 'Sign Up' : 'Sign In'}
+              </AppText>
+
+              {/* Google Sign in */}
+              <TouchableOpacity
+                style={styles.googleButton}
+                onPress={handleGoogleLogin}
+              >
+                <GoogleIcon />
+                <AppText style={styles.buttonText}>
+                  Continue with Google
+                </AppText>
+              </TouchableOpacity>
+
+              {/* Form */}
+              <View style={styles.form}>
+                {/* Email Field */}
+                <form.Field
+                  name="email"
+                  validators={{
+                    onSubmit: ({ value }) =>
+                      !value
+                        ? 'Please enter an email'
+                        : !value.includes('@')
+                          ? 'Please enter a valid email'
+                          : undefined,
+                  }}
+                  children={(field) => (
+                    <>
+                      <AppText style={{ marginBottom: 6 }}>Email:</AppText>
+                      <TextInput
+                        autoCapitalize="none"
+                        style={styles.input}
+                        placeholder="Email"
+                        value={field.state.value}
+                        onChangeText={field.handleChange}
+                      />
+                      {field.state.meta.errors && (
+                        <AppText style={styles.error}>
+                          {field.state.meta.errors.join(', ')}
+                        </AppText>
+                      )}
+                    </>
+                  )}
+                />
+
+                {/* Password Field */}
+                <form.Field
+                  name="password"
+                  validators={{
+                    onSubmit: ({ value }) =>
+                      value.length < 3
+                        ? 'Password must be at least 3 characters in length'
+                        : undefined,
+                  }}
+                  children={(field) => (
+                    <>
+                      <AppText style={{ marginBottom: 6 }}>Password:</AppText>
+                      <TextInput
+                        autoCapitalize="none"
+                        style={styles.input}
+                        placeholder="Password"
+                        value={field.state.value}
+                        onChangeText={field.handleChange}
+                        secureTextEntry
+                      />
+                      {field.state.meta.errors && (
+                        <AppText style={styles.error}>
+                          {field.state.meta.errors.join(', ')}
+                        </AppText>
+                      )}
+                    </>
+                  )}
+                />
+
+                <TouchableOpacity
+                  style={styles.signUpBtn}
+                  onPress={form.handleSubmit}
+                >
+                  <AppText style={styles.signUpBtnText}>
                     {isSignUp ? 'Sign Up' : 'Sign In'}
                   </AppText>
+                </TouchableOpacity>
 
-                  {/* Google Sign in */}
-                  <TouchableOpacity
-                    style={styles.googleButton}
-                    onPress={() => setShowGoogleLogin(true)}
-                  >
-                    <GoogleIcon />
-                    <AppText style={styles.buttonText}>
-                      Continue with Google
-                    </AppText>
-                  </TouchableOpacity>
-
-                  {/* Form */}
-                  <View style={styles.form}>
-                    {/* Email Field */}
-                    <form.Field
-                      name="email"
-                      validators={{
-                        onSubmit: ({ value }) =>
-                          !value
-                            ? 'Please enter an email'
-                            : !value.includes('@')
-                              ? 'Please enter a valid email'
-                              : undefined,
-                      }}
-                      children={(field) => (
-                        <>
-                          <AppText style={{ marginBottom: 6 }}>Email:</AppText>
-                          <TextInput
-                            autoCapitalize="none"
-                            style={styles.input}
-                            placeholder="Email"
-                            value={field.state.value}
-                            onChangeText={field.handleChange}
-                          />
-                          {field.state.meta.errors && (
-                            <AppText style={styles.error}>
-                              {field.state.meta.errors.join(', ')}
-                            </AppText>
-                          )}
-                        </>
-                      )}
-                    />
-
-                    {/* Password Field */}
-                    <form.Field
-                      name="password"
-                      validators={{
-                        onSubmit: ({ value }) =>
-                          value.length < 3
-                            ? 'Password must be at least 3 characters in length'
-                            : undefined,
-                      }}
-                      children={(field) => (
-                        <>
-                          <AppText style={{ marginBottom: 6 }}>
-                            Password:
-                          </AppText>
-                          <TextInput
-                            autoCapitalize="none"
-                            style={styles.input}
-                            placeholder="Password"
-                            value={field.state.value}
-                            onChangeText={field.handleChange}
-                            secureTextEntry
-                          />
-                          {field.state.meta.errors && (
-                            <AppText style={styles.error}>
-                              {field.state.meta.errors.join(', ')}
-                            </AppText>
-                          )}
-                        </>
-                      )}
-                    />
-
-                    <TouchableOpacity
-                      style={styles.signUpBtn}
-                      onPress={form.handleSubmit}
-                    >
-                      <AppText style={styles.signUpBtnText}>
-                        {isSignUp ? 'Sign Up' : 'Sign In'}
-                      </AppText>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      onPress={() => setIsSignUp((prev) => !prev)}
-                    >
-                      <AppText style={styles.toggleText}>
-                        {isSignUp
-                          ? 'Already have an account? Sign in'
-                          : 'Don’t have an account? Sign up'}
-                      </AppText>
-                    </TouchableOpacity>
-                  </View>
-                </>
+                <TouchableOpacity onPress={() => setIsSignUp((prev) => !prev)}>
+                  <AppText style={styles.toggleText}>
+                    {isSignUp
+                      ? 'Already have an account? Sign in'
+                      : 'Don’t have an account? Sign up'}
+                  </AppText>
+                </TouchableOpacity>
               </View>
             </>
-          </KeyboardAwareScrollView>
-        </View>
-      )}
-    </>
+          </View>
+        </>
+      </KeyboardAwareScrollView>
+    </View>
   );
 };
 
