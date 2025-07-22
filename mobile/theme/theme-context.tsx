@@ -13,12 +13,15 @@ import {
   StatusBarStyle,
   useColorScheme as useSystemColorScheme,
 } from 'react-native';
+
+import useShadows, { ShadowScale } from './hooks/useShadows';
 import { darkColors, lightColors, ThemeColors } from './theme';
 
 interface ThemeContextType {
   themeMode: ColorSchemeName; // 'light', 'dark', or null
   colors: ThemeColors;
   setTheme: (mode: ColorSchemeName) => void;
+  shadows: ShadowScale;
   isDarkMode: boolean;
   statusBarStyle: StatusBarStyle;
 }
@@ -36,6 +39,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [themeMode, setThemeMode] = useState<ColorSchemeName | 'system'>(
     systemColorScheme || 'light',
   );
+  const currentThemeMode =
+    themeMode === 'system' ? systemColorScheme : themeMode;
+
+  const shadows = useShadows(currentThemeMode);
 
   useEffect(() => {
     const loadThemePreference = async () => {
@@ -85,8 +92,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   );
 
   const contextValue: ThemeContextType = {
-    themeMode: themeMode === 'system' ? systemColorScheme : themeMode,
+    themeMode: currentThemeMode,
     colors: currentColors,
+    shadows,
     setTheme,
     isDarkMode,
     statusBarStyle,

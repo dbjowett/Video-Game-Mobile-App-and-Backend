@@ -1,7 +1,7 @@
 // src/theme/useAppTheme.ts
 import { DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { useMemo } from 'react';
-import { useTheme } from './theme-context';
+import { useTheme } from '../theme-context';
 
 export const useAppTheme = () => {
   const { colors, isDarkMode } = useTheme();

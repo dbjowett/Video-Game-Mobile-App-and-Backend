@@ -287,7 +287,7 @@ export const tailwindColors = {
     '900': '#881337',
     '950': '#4c051a',
   },
-} as const; // `as const` ensures strict typing for these nested objects
+} as const;
 
 export type TailwindColorName = keyof typeof tailwindColors;
 export type TailwindShade = keyof (typeof tailwindColors)['slate'];

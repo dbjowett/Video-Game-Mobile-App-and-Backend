@@ -10,8 +10,8 @@ import {
   View,
 } from 'react-native';
 
-import { radius } from '@/theme/radius';
-import { spacing } from '@/theme/spacing';
+import { radius } from '@/theme/constants/radius';
+import { spacing } from '@/theme/constants/spacing';
 import { Search } from 'lucide-react-native';
 import { AppText } from './Themed';
 

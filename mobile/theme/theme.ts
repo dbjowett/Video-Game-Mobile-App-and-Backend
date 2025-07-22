@@ -1,4 +1,4 @@
-import { tailwindColors } from './tailwindColors';
+import { tailwindColors } from './constants/tailwindColors';
 
 const baseColors = {
   errorRed: tailwindColors.red['600'],
@@ -7,7 +7,7 @@ const baseColors = {
   infoBlue: tailwindColors.sky['500'],
 } as const;
 
-export const lightColors = {
+export const lightColors: ThemeColors = {
   ...baseColors,
 
   primary: tailwindColors.blue['600'],
@@ -47,7 +47,7 @@ export const lightColors = {
   shadowColor: tailwindColors.neutral['900'],
 } as const;
 
-export const darkColors = {
+export const darkColors: ThemeColors = {
   ...baseColors,
 
   primary: tailwindColors.blue['400'],
@@ -87,7 +87,44 @@ export const darkColors = {
   shadowColor: tailwindColors.neutral['50'],
 } as const;
 
-export type ThemeColors = typeof lightColors;
+export interface ThemeColors {
+  // Base
+  errorRed: string;
+  successGreen: string;
+  warningOrange: string;
+  infoBlue: string;
+
+  // Dark & Light
+  primary: string;
+  primaryLight: string;
+  primaryDark: string;
+  secondary: string;
+  secondaryLight: string;
+  secondaryDark: string;
+  background: string;
+  surface: string;
+  card: string;
+  textPrimary: string;
+  textSecondary: string;
+  textDisabled: string;
+  textPlaceholder: string;
+  border: string;
+  divider: string;
+  buttonPrimaryBackground: string;
+  buttonPrimaryText: string;
+  buttonSecondaryBackground: string;
+  buttonSecondaryText: string;
+  buttonOutlineBorder: string;
+  buttonDisabledBackground: string;
+  buttonDisabledText: string;
+  textOnPrimary: string;
+  textOnSecondary: string;
+  textOnError: string;
+  textOnSuccess: string;
+  textOnWarning: string;
+  textOnInfo: string;
+  shadowColor: string;
+}
 
 export const colorSchemes = {
   light: lightColors,
