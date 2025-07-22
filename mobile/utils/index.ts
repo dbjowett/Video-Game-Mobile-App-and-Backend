@@ -12,18 +12,18 @@ const sizes = [
   { quality: 10, name: '1080p', size: '1920 x 1080' }, // Fit, Center gravity
 ];
 
-interface LoaderProps {
-  src: string; // ** //images.igdb.com/igdb/image/upload/t_thumb/co7497.jpg
+export interface LoaderProps {
+  imgSrc: string; // ** //images.igdb.com/igdb/image/upload/t_thumb/co7497.jpg
   quality?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 10; // ** Quality is a number between 1 and 10
   maxSize?: boolean; // ** Max size makes chosen image double size
 }
 
-export const imageLoader = ({ src, quality, maxSize }: LoaderProps) => {
-  if (!src) return;
+export const imageLoader = ({ imgSrc, quality, maxSize }: LoaderProps) => {
+  if (!imgSrc) return;
   const finalSize = quality ? quality : 6;
   const qualityObj = sizes.find((size) => size.quality === finalSize);
   const name = qualityObj?.name.concat(maxSize ? '_2x' : '');
-  return `https:` + src.replace(/(t_)\w+/, `t_${name}`);
+  return `https:` + imgSrc.replace(/(t_)\w+/, `t_${name}`);
 };
 
 export const heroImageLoader = (src: string) => {
@@ -59,7 +59,9 @@ const websiteCategoryMap: Record<number, string> = {
   20: 'SoundCloud',
 };
 
-export const getObjectCategoryName = (categoryId: number): string | undefined => {
+export const getObjectCategoryName = (
+  categoryId: number,
+): string | undefined => {
   return websiteCategoryMap[categoryId];
 };
 

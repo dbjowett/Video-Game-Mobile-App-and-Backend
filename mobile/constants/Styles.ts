@@ -36,6 +36,5 @@ export const defaultStyles = StyleSheet.create({
     right: 0,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderTopWidth: StyleSheet.hairlineWidth,
   },
 });

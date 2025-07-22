@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { GameList, GameListItem } from '@prisma/client';
+import { GameList, GameListItem, Prisma } from '@prisma/client';
 import { UserPayload } from 'src/auth/types';
 import { DatabaseService } from 'src/database/database.service';
 import { GamesService } from 'src/games/games.service';
@@ -14,6 +14,19 @@ import {
   RemoveGameFromListDto,
 } from './dto';
 
+export type GameListWithCovers = Prisma.GameListGetPayload<{
+  include: {
+    items: {
+      take: 4;
+      orderBy: { position: 'asc' };
+      select: {
+        gameId: true;
+        gameCoverUrl: true;
+      };
+    };
+  };
+}>;
+
 @Injectable()
 export class GameListService {
   constructor(
@@ -21,19 +34,29 @@ export class GameListService {
     private readonly gamesService: GamesService,
   ) {}
 
-  async getGameLists(user: UserPayload): Promise<GameList[]> {
-    let gameLists: GameList[] = [];
-    console.log('Here', gameLists);
+  async getGameCover(gameId: number): Promise<string> {
+    const game = await this.gamesService.getGameCover(gameId.toString());
+    return game.cover.url;
+  }
+
+  async getGameLists(user: UserPayload): Promise<GameListWithCovers[]> {
+    let gameLists: GameListWithCovers[] = [];
     try {
       gameLists = await this.databaseService.gameList.findMany({
         where: {
           userId: user.id,
         },
+        include: {
+          items: {
+            orderBy: { position: 'asc' },
+            take: 4,
+            select: { gameId: true, gameCoverUrl: true },
+          },
+        },
       });
     } catch (error) {
       throw new NotFoundException('Cannot find any lists for this user');
     }
-    console.log('Here 2', gameLists);
 
     return gameLists;
   }
@@ -57,11 +80,19 @@ export class GameListService {
 
   async createNewGameList(user: UserPayload, body: CreateGameListDto) {
     const { gameIds, title, description, isPublic } = body;
-    console.log({ gameIds, title, description, isPublic });
 
     if (!user.id) throw new Error('User ID not found');
     let gameListItems: BatchPayload;
     let gameList: GameList;
+
+    const entries = await Promise.all(
+      gameIds.map(async (gameId: number) => {
+        const gameCoverUrl = await this.getGameCover(gameId);
+        return [gameId, gameCoverUrl] as const;
+      }),
+    );
+
+    const imgMap = new Map<number, string>(entries);
 
     try {
       gameList = await this.databaseService.gameList.create({
@@ -72,17 +103,22 @@ export class GameListService {
           isPublic: Boolean(isPublic),
         },
       });
-      console.log('Game list', gameList);
+
+      const gameListItemsToCreate = await Promise.all(
+        gameIds.map(async (gameId) => {
+          return {
+            gameId,
+            listId: gameList.id,
+            position: 0,
+            gameCoverUrl: imgMap.get(gameId),
+          };
+        }),
+      );
 
       gameListItems = await this.databaseService.gameListItem.createMany({
-        data: gameIds.map((gameId) => ({
-          gameId,
-          listId: gameList.id,
-          position: 0,
-        })),
+        data: gameListItemsToCreate,
         skipDuplicates: true,
       });
-      console.log('Game list items', gameListItems);
     } catch (error) {
       throw new Error('Failed to create game list: ' + error.message);
     }
@@ -121,6 +157,7 @@ export class GameListService {
     });
     const nextPosition = (maxPosition._max.position ?? -1) + 1;
     let gameListItem: GameListItem;
+    const gameImg = await this.getGameCover(body.gameId);
 
     try {
       gameListItem = await this.databaseService.gameListItem.create({
@@ -128,6 +165,7 @@ export class GameListService {
           gameId: body.gameId,
           listId: body.gameListId,
           position: nextPosition,
+          gameCoverUrl: gameImg,
         },
       });
     } catch (error) {

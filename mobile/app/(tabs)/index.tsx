@@ -6,20 +6,15 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  Vibration,
 } from 'react-native';
 
 import { usePopularGames } from '@/api';
-import { useAddFavouriteGame } from '@/api/hooks/useAddFavouriteGame';
-import { useGetFavouriteGames } from '@/api/hooks/useGetFavGames';
-import { useRemoveFavouriteGame } from '@/api/hooks/useRemoveFavouriteGame';
 import { ListGame, PopKey } from '@/api/types/game';
 import LandingHeader from '@/components/CategoryHeader';
 import { AppText, View } from '@/components/Themed';
 import { useTheme } from '@/theme/theme-context';
 import { getHumanDate } from '@/utils';
 import { Link, Stack } from 'expo-router';
-import { Heart } from 'lucide-react-native';
 import React from 'react';
 import Animated, { FadeInRight, FadeOutLeft } from 'react-native-reanimated';
 
@@ -36,26 +31,10 @@ const popTypeTitleMap: Record<PopKey, string> = {
 
 export default function Page() {
   const { data: popularGames, isError, isPending } = usePopularGames();
-  const { data: favouriteGames } = useGetFavouriteGames();
-  // ** Mutations for adding/removing favourite games
-  const { mutateAsync: addGameAsync } = useAddFavouriteGame();
-  const { mutateAsync: removeGameAsync } = useRemoveFavouriteGame();
-
-  const handleFavourite = async (id: string) => {
-    const isFaved = favouriteGames?.some((game) => game.gameId === id);
-    if (!isFaved) {
-      await addGameAsync(id);
-      Vibration.vibrate(50);
-    } else {
-      await removeGameAsync(id);
-      Vibration.vibrate(50);
-    }
-  };
 
   const { colors } = useTheme();
   const singleGame: ListRenderItem<ListGame> = ({ item }) => {
     const id = item.id.toString();
-    const isFavourite = favouriteGames?.some((game) => game.gameId === id);
 
     return (
       <Link href={`/games/${item.id}`} asChild>
@@ -72,18 +51,6 @@ export default function Page() {
               }}
               style={styles.image}
             />
-            {/* Fave Icon */}
-            <TouchableOpacity
-              style={styles.heartIcon}
-              onPress={() => handleFavourite(item.id.toString())}
-            >
-              <Heart
-                size={24}
-                color={'#fff'}
-                fill={isFavourite ? 'red' : 'transparent'}
-                stroke={isFavourite ? 'red' : '#fff'}
-              />
-            </TouchableOpacity>
 
             {/* Content */}
             <View style={styles.lowerContainer}>

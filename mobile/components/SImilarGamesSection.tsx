@@ -33,7 +33,7 @@ export const SimilarGamesSection = ({ similarGames }: Props) => {
             <Animated.Image
               source={{
                 uri: imageLoader({
-                  src: game.cover.url,
+                  imgSrc: game.cover.url,
                   quality: 6,
                   maxSize: true,
                 }),

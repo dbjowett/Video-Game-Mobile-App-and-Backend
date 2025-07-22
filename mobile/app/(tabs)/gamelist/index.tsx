@@ -8,7 +8,7 @@ import { GripVertical } from 'lucide-react-native';
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 
 import { useGetLists } from '@/api/hooks/useGetLists';
-import { GameList } from '@/api/types/game-list';
+import { GameListWithCovers } from '@/api/types/game-list';
 import { ThemeColors } from '@/theme/theme';
 import ReorderableList, {
   ReorderableListReorderEvent,
@@ -22,7 +22,7 @@ const GameListItem = ({
   list,
   colors,
 }: {
-  list: GameList;
+  list: GameListWithCovers;
   colors: ThemeColors;
 }) => {
   const router = useRouter();
@@ -72,7 +72,7 @@ const Page = () => {
   const { data: lists, isLoading } = useGetLists();
   const { colors } = useTheme();
 
-  const renderItem = ({ item }: { item: GameList }) => (
+  const renderItem = ({ item }: { item: GameListWithCovers }) => (
     <GameListItem list={item} colors={colors} />
   );
 

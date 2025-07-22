@@ -103,6 +103,24 @@ export class GamesService {
     return this.igdbService.request<ListGame[]>('games', igdbQuery);
   }
 
+  async getGameCover(id: string) {
+    if (isNaN(Number(id))) throw new Error('Invalid game ID');
+
+    const igdbQuery = `
+      fields 
+      cover.url;
+       
+      where id = ${id};
+    `;
+
+    const data = await this.igdbService.request<DetailedGame[]>(
+      'games',
+      igdbQuery,
+    );
+    if (data.length < 1) throw new Error('No game found for this id');
+    return data[0];
+  }
+
   async getGameDetails(id: string) {
     if (isNaN(Number(id))) throw new Error('Invalid game ID');
 

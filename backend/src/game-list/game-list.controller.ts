@@ -16,7 +16,7 @@ import {
   CreateGameListDto,
   RemoveGameFromListDto,
 } from './dto';
-import { GameListService } from './game-list.service';
+import { GameListService, GameListWithCovers } from './game-list.service';
 
 @UseGuards(JwtAuthGuard)
 @Controller('gamelist')
@@ -24,7 +24,7 @@ export class GameListController {
   constructor(private readonly gameListService: GameListService) {}
 
   @Get()
-  async getGameLists(@User() user: UserPayload): Promise<GameList[]> {
+  async getGameLists(@User() user: UserPayload): Promise<GameListWithCovers[]> {
     return await this.gameListService.getGameLists(user);
   }
 

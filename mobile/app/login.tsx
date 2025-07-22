@@ -118,7 +118,7 @@ const Page = () => {
               <Image
                 source={{
                   uri: imageLoader({
-                    src: item.cover?.url,
+                    imgSrc: item.cover?.url,
                     quality: 3,
                   }),
                 }}

@@ -1,18 +1,22 @@
-export type GameList = {
+export interface GameList {
   id: string;
   userId: string;
   title: string;
   description: string | null;
   isSystem: boolean;
   isPublic: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-};
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GameListWithCovers extends GameList {
+  items: Array<{ gameId: string; gameCoverUrl: string }>;
+}
 
 export type GameListItem = {
   id: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   listId: string;
   gameId: number;
   position: number;

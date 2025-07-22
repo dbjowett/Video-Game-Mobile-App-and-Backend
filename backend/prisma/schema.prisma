@@ -18,7 +18,7 @@ model User {
   updatedAt    DateTime       @updatedAt
   refreshToken RefreshToken[]
   gameLists    GameList[]
-  GameListLike GameListLike[]
+  gameListLike GameListLike[]
 }
 
 model RefreshToken {
@@ -43,19 +43,20 @@ model GameList {
 
   user         User           @relation(fields: [userId], references: [id])
   items        GameListItem[]
-  GameListLike GameListLike[]
+  gameListLike GameListLike[]
 
   @@unique([userId, title]) // No duplicate list names for a user
   @@index([userId])
 }
 
 model GameListItem {
-  id        String   @id @default(cuid())
-  listId    String
-  gameId    Int
-  position  Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(cuid())
+  listId       String
+  gameId       Int
+  position     Int
+  gameCoverUrl String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   gameList GameList @relation(fields: [listId], references: [id], onDelete: Cascade)
 

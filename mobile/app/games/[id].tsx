@@ -195,7 +195,7 @@ const Page = () => {
           onLoad={() => setIsImageLoaded(true)}
           source={{
             uri: imageLoader({
-              src: game?.cover?.url,
+              imgSrc: game?.cover?.url,
               quality: 6,
               maxSize: true,
             }),
@@ -226,13 +226,8 @@ const Page = () => {
         <SimilarGamesSection similarGames={game.similar_games} />
       </Animated.ScrollView>
       <Animated.View
-        style={[
-          defaultStyles.footer,
-          {
-            backgroundColor: colors.background,
-          },
-        ]}
-        entering={SlideInDown.delay(200).damping(20)}
+        style={[defaultStyles.footer]}
+        entering={SlideInDown.delay(700).damping(20)}
       >
         <View
           style={{
@@ -242,8 +237,7 @@ const Page = () => {
           }}
         >
           <AppButton
-            title="Add to list"
-            variant="default"
+            title="Add"
             size="md"
             fontSize="md"
             borderRadius="md"
@@ -255,7 +249,7 @@ const Page = () => {
       <ImageViewing
         swipeToCloseEnabled
         images={game.screenshots.map((s) => ({
-          uri: imageLoader({ src: s.url, quality: 10, maxSize: true }),
+          uri: imageLoader({ imgSrc: s.url, quality: 10, maxSize: true }),
         }))}
         imageIndex={activeImageIndex}
         visible={isImageViewerVisible}
@@ -287,7 +281,6 @@ const styles = StyleSheet.create({
   },
 
   contentContainer: {
-    // backgroundColor: 'white',
     zIndex: 2,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,

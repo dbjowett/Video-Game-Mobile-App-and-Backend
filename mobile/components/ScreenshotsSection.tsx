@@ -27,7 +27,7 @@ export const ScreenshotsSection = ({ screenshots, onImagePress }: Props) => {
             <Animated.Image
               source={{
                 uri: imageLoader({
-                  src: screenshot.url,
+                  imgSrc: screenshot.url,
                   quality: 6,
                   maxSize: true,
                 }),

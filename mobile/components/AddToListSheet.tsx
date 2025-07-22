@@ -3,13 +3,13 @@ import { useCreateGameList } from '@/api/hooks/useCreateGameList';
 
 import { useGetLists } from '@/api/hooks/useGetLists';
 import { DetailedGame } from '@/api/types/game';
-import { GameList } from '@/api/types/game-list';
+import { GameListWithCovers } from '@/api/types/game-list';
 import { radius } from '@/theme/radius';
 import { spacing } from '@/theme/spacing';
 import { useTheme } from '@/theme/theme-context';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { useForm } from '@tanstack/react-form';
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -25,6 +25,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import AppButton from './AppButton';
 import CreateNewForm from './CreateNew';
+import { IgdbImage } from './IgdbImage';
 import { AppText } from './Themed';
 
 const screenWidth = Dimensions.get('window').width;
@@ -42,7 +43,6 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
     const createGameListMutation = useCreateGameList();
     const addGameMutation = useAddGameToList();
     const offset = useSharedValue(0);
-    const formRef = useRef<{ submit: ({}: unknown) => void }>(null);
     const [selected, setSelected] = useState<string | null>(null);
     const [isCreatingNew, setIsCreatingNew] = useState<boolean>(false);
 
@@ -70,12 +70,13 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
       },
     });
 
-    const renderItem = ({ item }: { item: GameList }) => {
-      const isSelected = item.id === selected;
+    const renderItem = ({ item: list }: { item: GameListWithCovers }) => {
+      const isSelected = game.id === selected;
+      const isDisabled = list.items.some((i) => i.gameId === list.id);
 
       return (
         <TouchableOpacity
-          onPress={() => setSelected(item.id)}
+          onPress={() => setSelected(game.id)}
           style={[
             styles.card,
             {
@@ -86,8 +87,24 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
               borderWidth: 1,
               borderColor: colors.primary,
             },
+            isDisabled && {
+              backgroundColor: 'black',
+            },
           ]}
         >
+          <View style={{ flexDirection: 'row', gap: 10 }}>
+            {list.items.map((gameCover) => (
+              <IgdbImage
+                key={gameCover.gameId}
+                style={{ borderRadius: radius.xs }}
+                height={40}
+                width={40}
+                imgSrc={gameCover.gameCoverUrl}
+                quality={2}
+              />
+            ))}
+          </View>
+
           <AppText
             style={[
               styles.cardText,
@@ -96,7 +113,7 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
               },
             ]}
           >
-            {item.title}
+            {list.title}
           </AppText>
         </TouchableOpacity>
       );
@@ -110,7 +127,7 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
       return {
         transform: [
           {
-            translateX: withTiming(offset.value === 0 ? 0 : -width, {
+            translateX: withTiming(offset.value === 0 ? 0 : width, {
               duration: 200,
               easing: Easing.inOut(Easing.quad),
             }),
@@ -125,7 +142,7 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
       return {
         transform: [
           {
-            translateX: withTiming(offset.value === 1 ? 0 : width, {
+            translateX: withTiming(offset.value === 1 ? 0 : -width, {
               duration: 200,
               easing: Easing.inOut(Easing.quad),
             }),
@@ -183,23 +200,21 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
               <AppButton
                 title="Add to Existing"
                 onPress={() => setIsCreatingNew(false)}
-                variant="default"
                 size="md"
                 fontSize="md"
                 borderRadius="md"
-                leftIcon="ListEnd"
+                leftIcon="ArrowLeft"
               />
               <CreateNewForm form={form} />
             </Animated.View>
 
             <Animated.View style={[{ flex: 1, gap: spacing.md }, listStyle]}>
               <AppButton
-                title="Create New"
-                variant="default"
+                title="Create New List"
                 size="md"
                 fontSize="md"
                 borderRadius="md"
-                leftIcon="ListPlus"
+                rightIcon="ArrowRight"
                 onPress={() => setIsCreatingNew(true)}
               />
               <FlatList

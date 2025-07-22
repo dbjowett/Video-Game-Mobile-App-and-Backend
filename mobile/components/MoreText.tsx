@@ -1,5 +1,4 @@
-import { LinearGradient } from 'expo-linear-gradient';
-
+import { useTheme } from '@/theme/theme-context';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -16,6 +15,8 @@ export const MoreText = ({ text }: { text: string }) => {
   const [expanded, setExpanded] = useState(false);
   const [fullHeight, setFullHeight] = useState(startingHeight);
   const animatedHeight = useRef(new Animated.Value(startingHeight)).current;
+
+  const { colors } = useTheme();
 
   useEffect(() => {
     Animated.spring(animatedHeight, {
@@ -44,16 +45,16 @@ export const MoreText = ({ text }: { text: string }) => {
 
       {expander && (
         <React.Fragment>
-          <LinearGradient
+          {/* <LinearGradient
             colors={[
               'rgba(255, 255, 255, 0)', // Change this gradient to match BG
               'rgba(255, 255, 255, 0)',
               'rgba(255, 255, 255, 0)',
             ]}
             style={styles.gradient}
-          />
+          /> */}
           <TouchableWithoutFeedback onPress={() => setExpanded(!expanded)}>
-            <AppText style={styles.readBtn}>
+            <AppText style={[styles.readBtn, { color: colors.primary }]}>
               {expanded ? 'Read Less' : 'Read More'}
             </AppText>
           </TouchableWithoutFeedback>
@@ -79,11 +80,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   text: {
-    // color: '#fff',
     alignSelf: 'flex-start',
     textAlign: 'justify',
-    fontSize: 14,
-    fontFamily: 'Avenir',
+    fontSize: 16,
   },
   gradient: {
     backgroundColor: 'transparent', // required for gradient
@@ -94,7 +93,6 @@ const styles = StyleSheet.create({
   },
   readBtn: {
     flex: 1,
-    color: 'blue',
     alignSelf: 'flex-end',
   },
 });
