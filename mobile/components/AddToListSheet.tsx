@@ -25,7 +25,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import AppButton from './AppButton';
 import CreateNewForm from './CreateNew';
-import { IgdbImage } from './IgdbImage';
+import GameListPreview from './GameListPreview';
 import { AppText } from './Themed';
 
 const screenWidth = Dimensions.get('window').width;
@@ -70,54 +70,14 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
       },
     });
 
-    const renderItem = ({ item: list }: { item: GameListWithCovers }) => {
-      const isSelected = game.id === selected;
-      const isDisabled = list.items.some((i) => i.gameId === list.id);
-
-      return (
-        <TouchableOpacity
-          onPress={() => setSelected(game.id)}
-          style={[
-            styles.card,
-            {
-              backgroundColor: colors.background,
-              borderColor: colors.border,
-            },
-            isSelected && {
-              borderWidth: 1,
-              borderColor: colors.primary,
-            },
-            isDisabled && {
-              backgroundColor: 'black',
-            },
-          ]}
-        >
-          <View style={{ flexDirection: 'row', gap: 10 }}>
-            {list.items.map((gameCover) => (
-              <IgdbImage
-                key={gameCover.gameId}
-                style={{ borderRadius: radius.xs }}
-                height={40}
-                width={40}
-                imgSrc={gameCover.gameCoverUrl}
-                quality={2}
-              />
-            ))}
-          </View>
-
-          <AppText
-            style={[
-              styles.cardText,
-              {
-                color: isSelected ? colors.primary : colors.textPrimary,
-              },
-            ]}
-          >
-            {list.title}
-          </AppText>
-        </TouchableOpacity>
-      );
-    };
+    const renderItem = ({ item }: { item: GameListWithCovers }) => (
+      <GameListPreview
+        list={item}
+        game={game}
+        selected={selected}
+        setSelected={setSelected}
+      />
+    );
 
     useEffect(() => {
       offset.value = isCreatingNew ? 0 : 1;

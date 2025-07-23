@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 
 // --- Type Definitions ---
-type ButtonVariant = 'default' | 'outline' | 'subtle' | 'destructive';
+type ButtonVariant = 'default' | 'outline' | 'subtle' | 'destructive' | 'dark';
 type ButtonSize = 'sm' | 'md' | 'lg';
 type ButtonFontSize = 'sm' | 'md' | 'lg';
 
@@ -103,6 +103,15 @@ const AppButton: React.FC<AppButtonProps> = ({
           color: colors.buttonPrimaryText,
         };
         variantIconColor = colors.buttonPrimaryText;
+        break;
+      case 'dark':
+        variantButton = {
+          backgroundColor: colors.buttonContrastBackground,
+        };
+        variantText = {
+          color: colors.buttonContrastText,
+        };
+        variantIconColor = colors.buttonContrastText;
         break;
       case 'outline':
         variantButton = {
