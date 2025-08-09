@@ -24,6 +24,11 @@ export type GameListWithCovers = Prisma.GameListGetPayload<{
         gameCoverUrl: true;
       };
     };
+    _count: {
+      select: {
+        items: true;
+      };
+    };
   };
 }>;
 
@@ -51,6 +56,9 @@ export class GameListService {
             orderBy: { position: 'asc' },
             take: 4,
             select: { gameId: true, gameCoverUrl: true },
+          },
+          _count: {
+            select: { items: true },
           },
         },
       });

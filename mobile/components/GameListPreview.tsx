@@ -9,10 +9,13 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   View,
+  StyleProp,
+  ViewStyle,
 } from 'react-native';
 import AppButton from './AppButton';
 import { IgdbImage } from './IgdbImage';
 import { AppText } from './Themed';
+import { useAddGameToList } from '@/api/hooks/useAddGameToList';
 
 interface Props {
   list: GameListWithCovers;
@@ -21,21 +24,92 @@ interface Props {
   setSelected: Dispatch<SetStateAction<string | null>>;
 }
 
+const getImageStyle = (count: number, index: number): StyleProp<ViewStyle> => {
+  const base = {
+    padding: 2,
+  };
+
+  switch (count) {
+    case 1:
+      return [
+        base,
+        {
+          width: '100%',
+          aspectRatio: 1,
+        },
+      ];
+
+    case 2:
+      return [
+        base,
+        {
+          width: '50%',
+          aspectRatio: 1 / 2,
+        },
+      ];
+
+    case 3:
+      if (index === 0) {
+        return [
+          base,
+          {
+            width: '100%',
+            aspectRatio: 2 / 1,
+          },
+        ];
+      }
+      return [
+        base,
+        {
+          width: '50%',
+          aspectRatio: 1,
+        },
+      ];
+
+    case 4:
+      return [
+        base,
+        {
+          width: '50%',
+          aspectRatio: 1,
+        },
+      ];
+
+    default:
+      // 4+ case — 3 images + "more" box
+      return [
+        base,
+        {
+          width: '50%',
+          aspectRatio: 1,
+        },
+      ];
+  }
+};
+
 export default function GameListPreview({
   list,
   game,
   selected,
   setSelected,
 }: Props) {
-  const isSelected = game.id === selected;
   const isDisabled = list.items.some((i) => i.gameId === list.id);
   const { colors, shadows } = useTheme();
   const { width } = useWindowDimensions();
+  console.log('List', list);
+  const count = list._count.items;
+  const addGameMutation = useAddGameToList();
+
+  const addToList = (id: string, listId: string) => {
+    // TODO: Update to use Tanstack Form
+    addGameMutation.mutate({
+      gameListId: listId,
+      gameId: Number(id),
+    });
+    //    handleClose();
+  };
 
   const cardWidth = width / 2 - spacing.md * 2;
-  const imageSize = cardWidth / 2 - (spacing.md - spacing.sm / 2);
-  const imageWrapSize = cardWidth / 2;
-
   return (
     <TouchableOpacity
       onPress={() => setSelected(list.id)}
@@ -49,36 +123,29 @@ export default function GameListPreview({
         },
       ])}
     >
-      {/* Grid 1 item = 1 large || 4 items and fill || if more than 4 add `+{count - 4}` */}
-      <View style={styles.imageGrid}>
-        {list.items.slice(0, 3).map(({ gameId, gameCoverUrl }) => (
-          <IgdbImage
-            style={StyleSheet.flatten([
-              styles.image,
-              { borderRadius: radius.sm },
-            ])}
-            height={imageSize}
-            width={imageSize}
-            imgSrc={gameCoverUrl}
-            quality={2}
-          />
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+        {list.items.slice(0, count > 4 ? 3 : count).map((item, i) => (
+          <View key={item.gameId} style={getImageStyle(count, i)}>
+            <IgdbImage
+              style={{ width: '100%', height: '100%', borderRadius: 6 }}
+              imgSrc={item.gameCoverUrl}
+            />
+          </View>
         ))}
-        {list.items.length >= 3 && (
+
+        {count > 4 && (
           <View
-            style={StyleSheet.flatten([
-              styles.image,
+            style={[
+              getImageStyle(count, 3),
               {
-                alignItems: 'center',
                 justifyContent: 'center',
-                borderWidth: 1,
-                borderColor: colors.border,
-                background: colors.border,
-                width: imageSize,
-                height: imageSize,
+                alignItems: 'center',
+                borderRadius: radius.md,
+                backgroundColor: colors.border,
               },
-            ])}
+            ]}
           >
-            <AppText>+1</AppText>
+            <AppText>+{count - 3}</AppText>
           </View>
         )}
       </View>
@@ -87,7 +154,7 @@ export default function GameListPreview({
         {list.title}
       </AppText>
       <AppText numberOfLines={1} style={styles.subtitle}>
-        {list.items.length} items in this list
+        {count} items in this list
       </AppText>
 
       <AppButton
@@ -96,7 +163,7 @@ export default function GameListPreview({
         size="sm"
         variant="dark"
         leftIcon="Plus"
-        onPress={() => ''}
+        onPress={() => addToList(game.id, list.id)}
       />
     </TouchableOpacity>
   );

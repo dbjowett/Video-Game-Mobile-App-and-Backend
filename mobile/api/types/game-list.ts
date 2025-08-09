@@ -7,6 +7,8 @@ export interface GameList {
   isPublic: boolean;
   createdAt: string;
   updatedAt: string;
+
+  _count: { items: number };
 }
 
 export interface GameListWithCovers extends GameList {
