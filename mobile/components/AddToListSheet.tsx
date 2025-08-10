@@ -177,6 +177,20 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
                 rightIcon="ArrowRight"
                 onPress={() => setIsCreatingNew(true)}
               />
+
+              {gameLists?.length === 0 && (
+                <View style={styles.emptyList}>
+                  <AppText style={styles.emptyListText}>No Game Lists</AppText>
+                  <AppText
+                    style={[
+                      { color: colors.textSecondary },
+                      styles.emptyListSubtext,
+                    ]}
+                  >
+                    Please create a new list
+                  </AppText>
+                </View>
+              )}
               <FlatList
                 keyboardShouldPersistTaps="handled"
                 style={{ flex: 1 }}
@@ -221,6 +235,20 @@ const styles = StyleSheet.create({
   row: {
     justifyContent: 'space-between',
     marginBottom: spacing.md,
+  },
+  emptyList: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 10,
+  },
+  emptyListText: {
+    fontSize: 20,
+    fontWeight: 600,
+  },
+  emptyListSubtext: {
+    fontSize: 14,
+    fontWeight: 400,
   },
 
   card: {

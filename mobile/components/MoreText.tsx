@@ -1,98 +1,80 @@
 import { useTheme } from '@/theme/theme-context';
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  Animated,
-  LayoutChangeEvent,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
-import { AppText } from './Themed';
+import React, { useState } from 'react';
+import { Text, TextLayoutLine, TextProps } from 'react-native';
 
-export const MoreText = ({ text }: { text: string }) => {
-  const startingHeight = 118;
-  const [expander, setExpander] = useState(false);
-  const [expanded, setExpanded] = useState(false);
-  const [fullHeight, setFullHeight] = useState(startingHeight);
-  const animatedHeight = useRef(new Animated.Value(startingHeight)).current;
+interface ReadMoreTextProps extends TextProps {
+  text: string;
+  numberOfLines?: number;
+  readMoreText?: string;
+  readLessText?: string;
+  readMoreStyle?: object;
+  readLessStyle?: object;
+}
+
+export const MoreText = ({
+  text,
+  style,
+  numberOfLines = 5,
+  readMoreText = 'more',
+  readLessText = 'less',
+  readMoreStyle,
+  readLessStyle,
+  ...props
+}: ReadMoreTextProps) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [truncatedLength, setTruncatedLength] = useState<number | null>(null);
+  const [isTruncated, setIsTruncated] = useState(false);
 
   const { colors } = useTheme();
 
-  useEffect(() => {
-    Animated.spring(animatedHeight, {
-      friction: 100,
-      toValue: expanded ? fullHeight : startingHeight,
-      useNativeDriver: false,
-    }).start();
-  }, [expanded]);
+  const handleTextLayout = (lines: TextLayoutLine[]) => {
+    if (truncatedLength !== null) return; // already calculated
 
-  const onTextLayout = (e: LayoutChangeEvent) => {
-    let { height } = e.nativeEvent.layout;
-    height = Math.floor(height) + 40;
-    if (height > startingHeight) {
-      setFullHeight(height);
-      setExpander(true);
+    if (lines.length > numberOfLines) {
+      let length = 0;
+      for (let i = 0; i < numberOfLines; i++) {
+        length += lines[i].text.length;
+      }
+      setTruncatedLength(length);
+      setIsTruncated(true);
+    } else {
+      setTruncatedLength(text.length);
+      setIsTruncated(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Animated.View style={[styles.viewPort, { height: animatedHeight }]}>
-        <View style={styles.textBox} onLayout={(e) => onTextLayout(e)}>
-          <AppText style={styles.text}>{text}</AppText>
-        </View>
-      </Animated.View>
+    <>
+      {/* Hidden text for iOS measurement */}
+      <Text
+        style={{ height: 0 }}
+        onTextLayout={(e) => handleTextLayout(e.nativeEvent.lines)}
+      >
+        {text}
+      </Text>
 
-      {expander && (
-        <React.Fragment>
-          {/* <LinearGradient
-            colors={[
-              'rgba(255, 255, 255, 0)', // Change this gradient to match BG
-              'rgba(255, 255, 255, 0)',
-              'rgba(255, 255, 255, 0)',
+      {/* Display text */}
+      <Text
+        style={style}
+        numberOfLines={truncatedLength === null ? numberOfLines : undefined}
+        {...props}
+      >
+        {isTruncated && !isExpanded && truncatedLength !== null
+          ? `${text.slice(0, truncatedLength - 10).trim()}...`
+          : text}
+        {isTruncated && (
+          <Text
+            style={[
+              { color: colors.primary, fontWeight: 500 },
+              isExpanded ? readLessStyle : readMoreStyle,
             ]}
-            style={styles.gradient}
-          /> */}
-          <TouchableWithoutFeedback onPress={() => setExpanded(!expanded)}>
-            <AppText style={[styles.readBtn, { color: colors.primary }]}>
-              {expanded ? 'Read Less' : 'Read More'}
-            </AppText>
-          </TouchableWithoutFeedback>
-        </React.Fragment>
-      )}
-    </View>
+            onPress={() => setIsExpanded(!isExpanded)}
+          >
+            {' '}
+            {isExpanded ? readLessText : readMoreText}
+          </Text>
+        )}
+      </Text>
+    </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  viewPort: {
-    flex: 1,
-    overflow: 'hidden',
-    top: 12,
-    marginBottom: 20,
-  },
-  textBox: {
-    color: 'black',
-    flex: 1,
-    position: 'absolute',
-  },
-  text: {
-    alignSelf: 'flex-start',
-    textAlign: 'justify',
-    fontSize: 16,
-  },
-  gradient: {
-    backgroundColor: 'transparent', // required for gradient
-    height: 40,
-    width: '100%',
-    position: 'absolute',
-    bottom: 20,
-  },
-  readBtn: {
-    flex: 1,
-    alignSelf: 'flex-end',
-  },
-});
