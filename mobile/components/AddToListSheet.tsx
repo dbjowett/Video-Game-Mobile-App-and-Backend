@@ -7,7 +7,7 @@ import { GameListWithCovers } from '@/api/types/game-list';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
-import BottomSheet from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { useForm } from '@tanstack/react-form';
 import React, { forwardRef, useEffect, useState } from 'react';
 import {
@@ -66,7 +66,6 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
           isPublic: value.isPublic,
           gameIds: [game.id],
         });
-        handleClose();
       },
     });
 
@@ -110,16 +109,21 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
 
     const addToList = () => {
       if (!selected) return;
-      // TODO: Update to use Tanstack Form
       addGameMutation.mutate({
         gameListId: selected,
         gameId: Number(game.id),
       });
-      handleClose();
+    };
+
+    const handleSaveNewList = async () => {
+      // TODO: Add exists check here1
+      // check for title
+      await form.handleSubmit();
+      setIsCreatingNew(false);
     };
 
     const handleSaveClick = () =>
-      isCreatingNew ? form.handleSubmit() : addToList();
+      isCreatingNew ? handleSaveNewList() : addToList();
 
     return (
       <BottomSheet
@@ -128,7 +132,8 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
         backgroundStyle={{ backgroundColor: colors.surface }}
         ref={ref}
         index={-1}
-        snapPoints={['50%']}
+        style={{ flex: 1 }}
+        snapPoints={['50%', '80%']}
       >
         <View style={styles.sheetContainer}>
           <View style={styles.header}>
@@ -163,7 +168,13 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
               <CreateNewForm form={form} />
             </Animated.View>
 
-            <Animated.View style={[{ flex: 1, gap: spacing.md }, listStyle]}>
+            <Animated.View
+              style={[
+                StyleSheet.absoluteFill,
+                { flex: 1, gap: spacing.md },
+                listStyle,
+              ]}
+            >
               <AppButton
                 title="Create New List"
                 size="md"
@@ -186,7 +197,7 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
                   </AppText>
                 </View>
               )}
-              <FlatList
+              <BottomSheetFlatList
                 keyboardShouldPersistTaps="handled"
                 style={{ flex: 1 }}
                 data={gameLists}

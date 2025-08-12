@@ -92,14 +92,6 @@ const getImageWrapStyle = (
 export default function GameListPreview({ list, game, handleClose }: Props) {
   const isDisabled = list.items.some((i) => i.gameId === game.id);
 
-  console.log(
-    'Is add button disabled?',
-    isDisabled,
-    'ITEMS:',
-    list.items,
-    'Game ID',
-    game.id,
-  );
   const { colors, shadows } = useTheme();
   const { width } = useWindowDimensions();
   const count = list.items.length;
