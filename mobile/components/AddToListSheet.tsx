@@ -71,12 +71,7 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
     });
 
     const renderItem = ({ item }: { item: GameListWithCovers }) => (
-      <GameListPreview
-        list={item}
-        game={game}
-        selected={selected}
-        setSelected={setSelected}
-      />
+      <GameListPreview list={item} game={game} handleClose={handleClose} />
     );
 
     useEffect(() => {

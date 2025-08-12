@@ -20,13 +20,15 @@ import { useAddGameToList } from '@/api/hooks/useAddGameToList';
 interface Props {
   list: GameListWithCovers;
   game: DetailedGame;
-  selected: string | null;
-  setSelected: Dispatch<SetStateAction<string | null>>;
+  handleClose: () => void;
 }
 
-const getImageStyle = (count: number, index: number): StyleProp<ViewStyle> => {
+const getImageWrapStyle = (
+  count: number,
+  index: number,
+): StyleProp<ViewStyle> => {
   const base = {
-    padding: 2,
+    padding: spacing.xs,
   };
 
   switch (count) {
@@ -87,17 +89,20 @@ const getImageStyle = (count: number, index: number): StyleProp<ViewStyle> => {
   }
 };
 
-export default function GameListPreview({
-  list,
-  game,
-  selected,
-  setSelected,
-}: Props) {
-  const isDisabled = list.items.some((i) => i.gameId === list.id);
+export default function GameListPreview({ list, game, handleClose }: Props) {
+  const isDisabled = list.items.some((i) => i.gameId === game.id);
+
+  console.log(
+    'Is add button disabled?',
+    isDisabled,
+    'ITEMS:',
+    list.items,
+    'Game ID',
+    game.id,
+  );
   const { colors, shadows } = useTheme();
   const { width } = useWindowDimensions();
-  console.log('List', list);
-  const count = list._count.items;
+  const count = list.items.length;
   const addGameMutation = useAddGameToList();
 
   const addToList = (id: string, listId: string) => {
@@ -106,46 +111,40 @@ export default function GameListPreview({
       gameListId: listId,
       gameId: Number(id),
     });
-    //    handleClose();
+
+    setTimeout(() => {
+      handleClose();
+    }, 1000);
   };
 
   const cardWidth = width / 2 - spacing.md * 2;
   return (
-    <TouchableOpacity
-      onPress={() => setSelected(list.id)}
+    <View
       style={StyleSheet.flatten([
         styles.cardWrap,
         shadows.lg,
         {
           borderRadius: radius.md,
-          backgroundColor: colors.background,
+          backgroundColor: colors.surface,
           width: cardWidth,
         },
       ])}
     >
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
         {list.items.slice(0, count > 4 ? 3 : count).map((item, i) => (
-          <View key={item.gameId} style={getImageStyle(count, i)}>
+          <View key={item.gameId} style={getImageWrapStyle(count, i)}>
             <IgdbImage
-              style={{ width: '100%', height: '100%', borderRadius: 6 }}
+              style={[styles.image, { borderColor: colors.border }]}
               imgSrc={item.gameCoverUrl}
             />
           </View>
         ))}
 
         {count > 4 && (
-          <View
-            style={[
-              getImageStyle(count, 3),
-              {
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderRadius: radius.md,
-                backgroundColor: colors.border,
-              },
-            ]}
-          >
-            <AppText>+{count - 3}</AppText>
+          <View style={[getImageWrapStyle(count, 3)]}>
+            <View style={[styles.image, { borderColor: colors.border }]}>
+              <AppText>+{count - 3}</AppText>
+            </View>
           </View>
         )}
       </View>
@@ -163,17 +162,18 @@ export default function GameListPreview({
         size="sm"
         variant="dark"
         leftIcon="Plus"
+        disabled={isDisabled}
         onPress={() => addToList(game.id, list.id)}
       />
-    </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   cardWrap: {
     // height: 220,
+    position: 'relative',
   },
-
   titleText: {
     fontSize: 20,
     fontWeight: 500,
@@ -192,8 +192,12 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    aspectRatio: 1,
-    borderRadius: 6,
-    marginBottom: spacing.sm,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: radius.sm,
+    //  padding: spacing.xs,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+    width: '100%',
   },
 });
