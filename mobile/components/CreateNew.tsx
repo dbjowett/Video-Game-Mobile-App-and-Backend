@@ -3,12 +3,13 @@ import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useTheme } from '@/theme/theme-context';
 import { Check } from 'lucide-react-native';
 import React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { AppText } from './Themed';
 import { useCreateGameList } from '@/api/hooks/useCreateGameList';
 import { useForm } from '@tanstack/react-form';
 import { DetailedGame } from '@/api/types/game';
 import AppButton from './AppButton';
+import { spacing } from '@/theme/constants/spacing';
 
 const CreateNewForm = ({ game }: { game: DetailedGame }) => {
   const { colors } = useTheme();
@@ -34,51 +35,67 @@ const CreateNewForm = ({ game }: { game: DetailedGame }) => {
     <View style={{ marginBottom: 60 }}>
       <View style={{ marginBottom: 16 }}>
         <AppText style={{ marginBottom: 4 }}>Title</AppText>
-        <View
-          style={{
-            borderWidth: 1,
-            borderColor: colors.border,
-            borderRadius: 8,
-            paddingHorizontal: 10,
-            backgroundColor: colors.background,
+        <form.Field
+          name="title"
+          validators={{
+            onSubmit: ({ value }) =>
+              !value ? 'Please enter a title' : undefined,
           }}
-        >
-          <form.Field
-            name="title"
-            children={(field) => (
+          children={(field) => (
+            <>
               <BottomSheetTextInput
                 value={field.state.value}
                 onChangeText={field.handleChange}
                 placeholder="List title"
-                style={{ height: 40, color: colors.textPrimary }}
+                style={[
+                  styles.input,
+                  {
+                    borderColor: colors.border,
+                    backgroundColor: colors.background,
+                    color: colors.textPrimary,
+                  },
+                ]}
               />
-            )}
-          />
-        </View>
+              {field.state.meta.errors?.length > 0 && (
+                <AppText style={styles.error}>
+                  {field.state.meta.errors.join(', ')}
+                </AppText>
+              )}
+            </>
+          )}
+        />
       </View>
       <View style={{ marginBottom: 16 }}>
         <AppText style={{ marginBottom: 4 }}>Description</AppText>
-        <View
-          style={{
-            borderWidth: 1,
-            borderColor: colors.border,
-            borderRadius: 8,
-            paddingHorizontal: 10,
-            backgroundColor: colors.background,
+        <form.Field
+          name="description"
+          validators={{
+            onSubmit: ({ value }) =>
+              !value ? 'Please enter a description' : undefined,
           }}
-        >
-          <form.Field
-            name="description"
-            children={(field) => (
+          children={(field) => (
+            <>
               <BottomSheetTextInput
                 value={field.state.value}
                 onChangeText={field.handleChange}
                 placeholder="Description (optional)"
-                style={{ height: 40, color: colors.textPrimary }}
+                style={[
+                  styles.input,
+                  {
+                    borderColor: colors.border,
+                    backgroundColor: colors.background,
+                    color: colors.textPrimary,
+                  },
+                ]}
               />
-            )}
-          />
-        </View>
+              {field.state.meta.errors?.length > 0 && (
+                <AppText style={styles.error}>
+                  {field.state.meta.errors.join(', ')}
+                </AppText>
+              )}
+            </>
+          )}
+        />
       </View>
       <form.Field
         name="isPublic"
@@ -124,3 +141,14 @@ const CreateNewForm = ({ game }: { game: DetailedGame }) => {
 };
 
 export default CreateNewForm;
+
+const styles = StyleSheet.create({
+  input: { borderWidth: 1, borderRadius: 8, height: 40, paddingHorizontal: 10 },
+  error: {
+    marginTop: spacing.xs,
+    paddingHorizontal: 12,
+    color: 'red',
+    fontSize: 12,
+    marginBottom: spacing.sm,
+  },
+});
