@@ -68,6 +68,12 @@ const AppButton: React.FC<AppButtonProps> = ({
       lg: 24,
     };
 
+    const baseSpacing = {
+      sm: spacing.xs,
+      md: spacing.sm,
+      lg: spacing.md,
+    };
+
     const basePadding = {
       sm: {
         paddingVertical: spacing.sm,
@@ -172,13 +178,13 @@ const AppButton: React.FC<AppButtonProps> = ({
       },
       icon: {
         color: variantIconColor,
-        fontSize: baseIconSize[size], // Use icon size based on button size
+        fontSize: baseIconSize[size],
       },
       leftIconSpacing: {
-        marginRight: spacing.xs,
+        marginRight: baseSpacing[size],
       },
       rightIconSpacing: {
-        marginLeft: spacing.xs,
+        marginLeft: baseSpacing[size],
       },
     });
   }, [

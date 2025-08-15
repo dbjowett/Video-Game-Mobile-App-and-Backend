@@ -10,13 +10,7 @@ import { useTheme } from '@/theme/theme-context';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { useForm } from '@tanstack/react-form';
 import React, { forwardRef, useEffect, useState } from 'react';
-import {
-  Dimensions,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -40,10 +34,7 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
     const { colors } = useTheme();
 
     const { data: gameLists, isLoading } = useGetLists();
-    const createGameListMutation = useCreateGameList();
-    const addGameMutation = useAddGameToList();
     const offset = useSharedValue(0);
-    const [selected, setSelected] = useState<string | null>(null);
     const [isCreatingNew, setIsCreatingNew] = useState<boolean>(false);
 
     const handleClose = () => {
@@ -51,23 +42,6 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
         ref.current.close();
       }
     };
-
-    const form = useForm({
-      defaultValues: {
-        title: '',
-        description: '',
-        isPublic: false,
-      },
-
-      onSubmit: async ({ value }) => {
-        createGameListMutation.mutate({
-          title: value.title,
-          description: value.description,
-          isPublic: value.isPublic,
-          gameIds: [game.id],
-        });
-      },
-    });
 
     const renderItem = ({ item }: { item: GameListWithCovers }) => (
       <GameListPreview list={item} game={game} handleClose={handleClose} />
@@ -107,24 +81,6 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
       };
     });
 
-    const addToList = () => {
-      if (!selected) return;
-      addGameMutation.mutate({
-        gameListId: selected,
-        gameId: Number(game.id),
-      });
-    };
-
-    const handleSaveNewList = async () => {
-      // TODO: Add exists check here1
-      // check for title
-      await form.handleSubmit();
-      setIsCreatingNew(false);
-    };
-
-    const handleSaveClick = () =>
-      isCreatingNew ? handleSaveNewList() : addToList();
-
     return (
       <BottomSheet
         enablePanDownToClose={true}
@@ -137,9 +93,9 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
       >
         <View style={styles.sheetContainer}>
           <View style={styles.header}>
-            <TouchableOpacity onPress={handleClose}>
-              <AppText style={styles.headerButton}>Cancel</AppText>
-            </TouchableOpacity>
+            {/* <TouchableOpacity onPress={handleClose}> */}
+            {/*   <AppText style={styles.headerButton}>Cancel</AppText> */}
+            {/* </TouchableOpacity> */}
 
             <View style={{ flex: 1, alignItems: 'center', gap: spacing.xs }}>
               <AppText style={styles.headerTitle}>Add To List</AppText>
@@ -147,10 +103,6 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
                 {game.name}
               </AppText>
             </View>
-
-            <TouchableOpacity onPress={handleSaveClick}>
-              <AppText style={styles.headerButton}>Save</AppText>
-            </TouchableOpacity>
           </View>
 
           <View style={{ flex: 1, overflow: 'hidden' }}>
@@ -165,7 +117,7 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
                 borderRadius="md"
                 leftIcon="ArrowLeft"
               />
-              <CreateNewForm form={form} />
+              <CreateNewForm game={game} />
             </Animated.View>
 
             <Animated.View

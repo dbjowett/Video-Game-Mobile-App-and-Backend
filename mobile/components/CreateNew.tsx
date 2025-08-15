@@ -5,10 +5,31 @@ import { Check } from 'lucide-react-native';
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { AppText } from './Themed';
+import { useCreateGameList } from '@/api/hooks/useCreateGameList';
+import { useForm } from '@tanstack/react-form';
+import { DetailedGame } from '@/api/types/game';
+import AppButton from './AppButton';
 
-const CreateNewForm = ({ form }: { form: unknown }) => {
+const CreateNewForm = ({ game }: { game: DetailedGame }) => {
   const { colors } = useTheme();
 
+  const createGameListMutation = useCreateGameList();
+  const form = useForm({
+    defaultValues: {
+      title: '',
+      description: '',
+      isPublic: false,
+    },
+
+    onSubmit: async ({ value }) => {
+      createGameListMutation.mutate({
+        title: value.title,
+        description: value.description,
+        isPublic: value.isPublic,
+        gameIds: [game.id],
+      });
+    },
+  });
   return (
     <View style={{ marginBottom: 60 }}>
       <View style={{ marginBottom: 16 }}>
@@ -90,6 +111,13 @@ const CreateNewForm = ({ form }: { form: unknown }) => {
             <AppText>Public</AppText>
           </TouchableOpacity>
         )}
+      />
+
+      <AppButton
+        leftIcon="FilePlus2"
+        variant="dark"
+        title="Create List"
+        onPress={form.handleSubmit}
       />
     </View>
   );
