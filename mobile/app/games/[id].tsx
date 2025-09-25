@@ -6,7 +6,7 @@ import AddToListSheet from '@/components/AddToListSheet';
 import AppButton from '@/components/AppButton';
 import { MoreText } from '@/components/MoreText';
 import { ScreenshotsSection } from '@/components/ScreenshotsSection';
-import { SimilarGamesSection } from '@/components/SImilarGamesSection';
+import { SimilarGamesSection } from '@/components/SimilarGamesSection';
 import { AppText } from '@/components/Themed';
 import { VideosSection } from '@/components/VideosSection';
 import { defaultStyles } from '@/constants/Styles';

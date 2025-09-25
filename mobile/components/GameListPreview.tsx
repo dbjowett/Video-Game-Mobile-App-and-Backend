@@ -1,93 +1,21 @@
+import { useAddGameToList } from '@/api/hooks/useAddGameToList';
 import { DetailedGame } from '@/api/types/game';
 import { GameListWithCovers } from '@/api/types/game-list';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
-import React, { Dispatch, SetStateAction } from 'react';
-import {
-  StyleSheet,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
-  StyleProp,
-  ViewStyle,
-} from 'react-native';
+import { getImageWrapStyle } from '@/utils/getImageGrid';
+import React from 'react';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import AppButton from './AppButton';
 import { IgdbImage } from './IgdbImage';
 import { AppText } from './Themed';
-import { useAddGameToList } from '@/api/hooks/useAddGameToList';
 
 interface Props {
   list: GameListWithCovers;
   game: DetailedGame;
   handleClose: () => void;
 }
-
-const getImageWrapStyle = (
-  count: number,
-  index: number,
-): StyleProp<ViewStyle> => {
-  const base = {
-    padding: spacing.xs,
-  };
-
-  switch (count) {
-    case 1:
-      return [
-        base,
-        {
-          width: '100%',
-          aspectRatio: 1,
-        },
-      ];
-
-    case 2:
-      return [
-        base,
-        {
-          width: '50%',
-          aspectRatio: 1 / 2,
-        },
-      ];
-
-    case 3:
-      if (index === 0) {
-        return [
-          base,
-          {
-            width: '100%',
-            aspectRatio: 2 / 1,
-          },
-        ];
-      }
-      return [
-        base,
-        {
-          width: '50%',
-          aspectRatio: 1,
-        },
-      ];
-
-    case 4:
-      return [
-        base,
-        {
-          width: '50%',
-          aspectRatio: 1,
-        },
-      ];
-
-    default:
-      // 4+ case — 3 images + "more" box
-      return [
-        base,
-        {
-          width: '50%',
-          aspectRatio: 1,
-        },
-      ];
-  }
-};
 
 export default function GameListPreview({ list, game, handleClose }: Props) {
   const isDisabled = list.items.some((i) => i.gameId === game.id);
