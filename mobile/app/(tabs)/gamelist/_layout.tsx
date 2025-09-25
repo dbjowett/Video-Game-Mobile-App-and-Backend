@@ -13,8 +13,6 @@ const Layout = () => {
           headerLargeTitleShadowVisible: false,
           headerShadowVisible: false,
           headerStyle: { backgroundColor: colors.background },
-          // headerBlurEffect: 'light',
-          // headerTransparent: true,
         }}
       />
     </Stack>

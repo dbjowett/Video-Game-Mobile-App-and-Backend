@@ -10,9 +10,6 @@ import { useReorderableDrag } from 'react-native-reorderable-list';
 import { IgdbImage } from './IgdbImage';
 import { AppText } from './Themed';
 
-const DEFAULT_HEIGHT = 104;
-const EXPANDED_HEIGHT = 180;
-
 interface GameListItemProps {
   list: GameListWithCovers;
   expanded?: boolean;
@@ -40,7 +37,7 @@ export const ListItem: React.FC<GameListItemProps> = ({
         router.push(`/game-list/${list.id}`);
         onPress?.();
       }}
-      style={styles.listItem}
+      style={[styles.listItem, { borderColor: colors.borderStrong }]}
     >
       <View style={styles.innerWrap}>
         <View style={styles.leftContainer}>
@@ -100,7 +97,8 @@ export const ListItem: React.FC<GameListItemProps> = ({
 const styles = StyleSheet.create({
   listItem: {
     marginVertical: spacing.sm,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: 1,
+
     borderRadius: radius.md,
     padding: spacing.xs,
   },
@@ -123,7 +121,6 @@ const styles = StyleSheet.create({
   image: {
     borderWidth: StyleSheet.hairlineWidth,
     borderRadius: radius.sm,
-    borderColor: 'red',
     height: '100%',
     width: '100%',
   },

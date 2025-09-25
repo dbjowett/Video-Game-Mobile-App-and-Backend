@@ -26,6 +26,7 @@ export const lightColors: ThemeColors = {
   textDisabled: tailwindColors.neutral['400'],
   textPlaceholder: tailwindColors.neutral['500'],
   border: tailwindColors.neutral['200'],
+  borderStrong: tailwindColors.neutral['300'],
   divider: tailwindColors.neutral['300'],
 
   buttonPrimaryBackground: tailwindColors.blue['600'],
@@ -69,6 +70,7 @@ export const darkColors: ThemeColors = {
   textDisabled: tailwindColors.neutral['600'],
   textPlaceholder: tailwindColors.neutral['500'],
   border: tailwindColors.neutral['800'],
+  borderStrong: tailwindColors.neutral['900'],
   divider: tailwindColors.neutral['700'],
 
   buttonPrimaryBackground: tailwindColors.blue['400'],
@@ -114,6 +116,7 @@ export interface ThemeColors {
   textDisabled: string;
   textPlaceholder: string;
   border: string;
+  borderStrong: string;
   divider: string;
   buttonPrimaryBackground: string;
   buttonPrimaryText: string;
