@@ -33,24 +33,24 @@ const Page = () => {
       {isLoading ? (
         <ActivityIndicator />
       ) : (
-        <View style={styles.listContainer}>
-          <ReorderableList
-            onReorder={handleReorder}
-            data={lists || []}
-            renderItem={renderItem}
-            keyExtractor={(list) => list.id.toString()}
-          >
-            <View style={styles.listContainer}>
-              {lists?.map((list) => (
-                <ListItem
-                  key={list.id}
-                  list={list}
-                  expanded={isExpanded(expanded, list.id)}
-                />
-              ))}
-            </View>
-          </ReorderableList>
-        </View>
+        <ReorderableList
+          style={styles.listContainer}
+          contentInsetAdjustmentBehavior="automatic"
+          onReorder={handleReorder}
+          data={lists || []}
+          renderItem={renderItem}
+          keyExtractor={(list) => list.id.toString()}
+        >
+          <View style={styles.listContainer}>
+            {lists?.map((list) => (
+              <ListItem
+                key={list.id}
+                list={list}
+                expanded={isExpanded(expanded, list.id)}
+              />
+            ))}
+          </View>
+        </ReorderableList>
       )}
     </View>
   );
@@ -61,7 +61,6 @@ export default Page;
 const styles = StyleSheet.create({
   pageContainer: {
     flex: 1,
-    marginTop: 152, // TODO: Fix this to account for the header
   },
   listContainer: {
     flex: 1,
