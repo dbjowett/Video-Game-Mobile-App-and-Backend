@@ -1,7 +1,7 @@
 import { spacing } from '@/theme/constants/spacing';
 import { StyleProp, ViewStyle } from 'react-native';
 
-const pad = spacing.xs;
+const pad = spacing.xs / 2;
 
 type LayoutKey = 1 | 2 | 3 | 4;
 

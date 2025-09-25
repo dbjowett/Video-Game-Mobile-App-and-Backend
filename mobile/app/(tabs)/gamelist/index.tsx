@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 import { AppText } from '@/components/Themed';
 
-import { useTheme } from '@/theme/theme-context';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { useGetLists } from '@/api/hooks/useGetLists';
@@ -18,14 +17,9 @@ const isExpanded = (expanded: number | null, id: string) =>
 const Page = () => {
   const [expanded, setExpanded] = useState<number | null>(null);
   const { data: lists, isLoading } = useGetLists();
-  const { colors } = useTheme();
 
   const renderItem = ({ item }: { item: GameListWithCovers }) => (
-    <ListItem
-      list={item}
-      colors={colors}
-      expanded={isExpanded(expanded, item.id)}
-    />
+    <ListItem list={item} expanded={isExpanded(expanded, item.id)} />
   );
 
   const handleReorder = ({ from, to }: ReorderableListReorderEvent) => {
@@ -51,7 +45,6 @@ const Page = () => {
                 <ListItem
                   key={list.id}
                   list={list}
-                  colors={colors}
                   expanded={isExpanded(expanded, list.id)}
                 />
               ))}
@@ -72,6 +65,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
-    paddingHorizontal: 16,
+    alignSelf: 'center',
+    width: '90%',
   },
 });

@@ -1,7 +1,7 @@
 import { GameListWithCovers } from '@/api/types/game-list';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
-import { ThemeColors } from '@/theme/theme';
+import { useTheme } from '@/theme/theme-context';
 import { getImageWrapStyle } from '@/utils/getImageGrid';
 import { useRouter } from 'expo-router';
 import { GripVertical } from 'lucide-react-native';
@@ -15,7 +15,6 @@ const EXPANDED_HEIGHT = 180;
 
 interface GameListItemProps {
   list: GameListWithCovers;
-  colors: ThemeColors;
   expanded?: boolean;
   onPress?: () => void;
   onLongPress?: () => void;
@@ -23,14 +22,13 @@ interface GameListItemProps {
 
 export const ListItem: React.FC<GameListItemProps> = ({
   list,
-  colors,
-  expanded = false,
   onPress,
   onLongPress,
 }) => {
   const router = useRouter();
   const drag = useReorderableDrag();
   const count = list.items?.length || 0;
+  const { colors } = useTheme();
 
   return (
     <Pressable
@@ -45,63 +43,39 @@ export const ListItem: React.FC<GameListItemProps> = ({
       style={styles.listItem}
     >
       <View style={styles.innerWrap}>
-        {/* Left Container */}
         <View style={styles.leftContainer}>
-          {/* Image Grid */}
-          <View style={{ width: 100 }}>
-            {list.items && list.items.length > 0 && (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                }}
-              >
-                {list.items
-                  .slice(0, list.items.length > 4 ? 3 : list.items.length)
-                  .map((item, i) => (
-                    <View
-                      key={item.gameId}
-                      style={[getImageWrapStyle(list.items.length, i)]}
-                    >
-                      <IgdbImage
-                        imgSrc={item.gameCoverUrl}
-                        style={[
-                          {
-                            borderWidth: StyleSheet.hairlineWidth,
-                            borderRadius: radius.sm,
-                            borderColor: colors.border,
-                            height: '100%',
-                            width: '100%',
-                          },
-                        ]}
-                      />
-                    </View>
-                  ))}
-                {count > 4 && (
-                  <View style={[getImageWrapStyle(list.items.length, 3)]}>
-                    <View
-                      style={[
-                        {
-                          borderWidth: StyleSheet.hairlineWidth,
-                          borderRadius: radius.sm,
-                          borderColor: colors.border,
-                          height: '100%',
-                          width: '100%',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          backgroundColor: colors.surface,
-                        },
-                      ]}
-                    >
-                      <AppText style={{ fontSize: 12, fontWeight: '500' }}>
-                        +{count - 3}
-                      </AppText>
-                    </View>
+          {count > 0 && (
+            <View style={styles.imageWrap}>
+              {list.items
+                .slice(0, list.items.length > 4 ? 3 : list.items.length)
+                .map((item, i) => (
+                  <View
+                    key={item.gameId}
+                    style={[getImageWrapStyle(list.items.length, i)]}
+                  >
+                    <IgdbImage
+                      imgSrc={item.gameCoverUrl}
+                      style={[styles.image, { borderColor: colors.border }]}
+                    />
                   </View>
-                )}
-              </View>
-            )}
-          </View>
+                ))}
+              {count > 4 && (
+                <View style={[getImageWrapStyle(list.items.length, 3)]}>
+                  <View
+                    style={[
+                      styles.imagePlaceholder,
+                      styles.image,
+                      { backgroundColor: colors.surface },
+                    ]}
+                  >
+                    <AppText style={{ fontSize: 12, fontWeight: '500' }}>
+                      +{count - 3}
+                    </AppText>
+                  </View>
+                </View>
+              )}
+            </View>
+          )}
 
           {/* Title and Description */}
           <View>
@@ -139,15 +113,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    borderWidth: 1,
-    borderColor: 'green',
-    borderStyle: 'dashed',
+  },
+  imageWrap: {
+    width: 100,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
 
-  imageWrap: {
-    borderWidth: 1,
+  image: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: radius.sm,
     borderColor: 'red',
-    borderStyle: 'dashed',
+    height: '100%',
+    width: '100%',
+  },
+
+  imagePlaceholder: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   rightContainer: {
