@@ -20,4 +20,5 @@ export type GameListItem = {
   listId: string;
   gameId: number;
   position: number;
+  gameCoverUrl: string;
 };

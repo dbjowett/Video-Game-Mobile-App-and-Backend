@@ -1,6 +1,3 @@
-import { useAddGameToList } from '@/api/hooks/useAddGameToList';
-import { useCreateGameList } from '@/api/hooks/useCreateGameList';
-
 import { useGetLists } from '@/api/hooks/useGetLists';
 import { DetailedGame } from '@/api/types/game';
 import { GameListWithCovers } from '@/api/types/game-list';
@@ -8,9 +5,8 @@ import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
-import { useForm } from '@tanstack/react-form';
 import React, { forwardRef, useEffect, useState } from 'react';
-import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,

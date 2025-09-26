@@ -15,6 +15,7 @@ import {
   AddGameToListDto,
   CreateGameListDto,
   RemoveGameFromListDto,
+  UpdateListOrderDto,
 } from './dto';
 import { GameListService, GameListWithCovers } from './game-list.service';
 
@@ -58,6 +59,15 @@ export class GameListController {
     @Body() body: RemoveGameFromListDto,
   ) {
     return await this.gameListService.removeGameFromList(user, body);
+  }
+
+  @Post('update-order')
+  async updateListOrder(
+    @User() user: UserPayload,
+    @Body() body: UpdateListOrderDto,
+  ) {
+    console.log('updateListOrder', body);
+    return await this.gameListService.updateListOrder(user, body);
   }
 
   // @Get()

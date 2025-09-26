@@ -12,6 +12,7 @@ import {
   AddGameToListDto,
   CreateGameListDto,
   RemoveGameFromListDto,
+  UpdateListOrderDto,
 } from './dto';
 
 export type GameListWithCovers = Prisma.GameListGetPayload<{
@@ -92,6 +93,15 @@ export class GameListService {
     );
 
     const imgMap = new Map<number, string>(entries);
+    const maxPosition = await this.databaseService.gameList.aggregate({
+      _max: {
+        position: true,
+      },
+      where: {
+        userId: user.id,
+      },
+    });
+    const nextPosition = (maxPosition._max.position ?? -1) + 1;
 
     try {
       gameList = await this.databaseService.gameList.create({
@@ -100,6 +110,7 @@ export class GameListService {
           title,
           description,
           isPublic: Boolean(isPublic),
+          position: nextPosition,
         },
       });
 
@@ -108,7 +119,7 @@ export class GameListService {
           return {
             gameId,
             listId: gameList.id,
-            position: 0,
+            position: nextPosition,
             gameCoverUrl: imgMap.get(gameId),
           };
         }),
@@ -215,6 +226,23 @@ export class GameListService {
       return gameListItem;
     } catch (error) {
       throw new Error('Failed to remove game from list: ' + error.message);
+    }
+  }
+
+  async updateListOrder(user: UserPayload, { to, from }: UpdateListOrderDto) {
+    try {
+      this.databaseService.$transaction([
+        this.databaseService.gameList.updateMany({
+          data: { position: to },
+          where: { position: from },
+        }),
+        this.databaseService.gameList.updateMany({
+          data: { position: from },
+          where: { position: to },
+        }),
+      ]);
+    } catch (error) {
+      throw new Error('Failed to update list order: ' + error.message);
     }
   }
 

@@ -36,4 +36,14 @@ export class AddGameToListDto {
   gameId: number;
 }
 
+export class UpdateListOrderDto {
+  @IsInt({ message: 'To must be a number' })
+  @Type(() => Number)
+  to: number;
+
+  @IsInt({ message: 'From must be a number' })
+  @Type(() => Number)
+  from: number;
+}
+
 export class RemoveGameFromListDto extends AddGameToListDto {}

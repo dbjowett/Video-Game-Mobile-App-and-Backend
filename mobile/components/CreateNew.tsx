@@ -1,15 +1,15 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 
+import { useCreateGameList } from '@/api/hooks/useCreateGameList';
+import { DetailedGame } from '@/api/types/game';
+import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
+import { useForm } from '@tanstack/react-form';
 import { Check } from 'lucide-react-native';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { AppText } from './Themed';
-import { useCreateGameList } from '@/api/hooks/useCreateGameList';
-import { useForm } from '@tanstack/react-form';
-import { DetailedGame } from '@/api/types/game';
 import AppButton from './AppButton';
-import { spacing } from '@/theme/constants/spacing';
+import { AppText } from './Themed';
 
 const CreateNewForm = ({ game }: { game: DetailedGame }) => {
   const { colors } = useTheme();
@@ -78,7 +78,7 @@ const CreateNewForm = ({ game }: { game: DetailedGame }) => {
               <BottomSheetTextInput
                 value={field.state.value}
                 onChangeText={field.handleChange}
-                placeholder="Description (optional)"
+                placeholder="Description"
                 style={[
                   styles.input,
                   {

@@ -1,4 +1,5 @@
 import { useGetListsGames } from '@/api/hooks/useGetListsGames';
+import { GameListItem } from '@/api/types/game-list';
 import { IgdbImage } from '@/components/IgdbImage';
 import { AppText } from '@/components/Themed';
 import { radius } from '@/theme/constants/radius';
@@ -32,31 +33,42 @@ const Page = () => {
     return null;
   }
 
-  const renderGameItem = ({ item }: { item: any }) => (
-    <TouchableOpacity
-      style={[styles.gameItem, { borderColor: colors.borderStrong }]}
-      onPress={() => {
-        router.push(`/games/${item.gameId}`);
-      }}
-    >
-      <View style={styles.gameContent}>
-        <View style={styles.imageContainer}>
-          <IgdbImage
-            imgSrc={item.gameCoverUrl}
-            style={[styles.gameImage, { borderColor: colors.border }]}
-          />
+  const renderGameItem = ({ item: gameItem }: { item: GameListItem }) => {
+    console.log('ITEM!!', gameItem);
+    const { id, createdAt, updatedAt, listId, gameId, position, gameCoverUrl } =
+      gameItem;
+    console.log('Game item!!', gameItem);
+
+    return (
+      <TouchableOpacity
+        style={[styles.gameItem, { borderColor: colors.borderStrong }]}
+        onPress={() => {
+          router.push(`/games/${gameId}`);
+        }}
+      >
+        <View style={styles.gameContent}>
+          <View style={styles.imageContainer}>
+            <IgdbImage
+              imgSrc={gameCoverUrl}
+              style={[styles.gameImage, { borderColor: colors.border }]}
+            />
+          </View>
+          <View style={styles.gameInfo}>
+            <AppText style={styles.gameTitle}>Game ID: {gameId}</AppText>
+            <AppText
+              style={[styles.gameSubtitle, { color: colors.textSecondary }]}
+            >
+              Position: {position}
+              Created At: {createdAt}
+              Updated At: {updatedAt}
+              List ID: {listId}
+              ID: {id}
+            </AppText>
+          </View>
         </View>
-        <View style={styles.gameInfo}>
-          <AppText style={styles.gameTitle}>Game ID: {item.gameId}</AppText>
-          <AppText
-            style={[styles.gameSubtitle, { color: colors.textSecondary }]}
-          >
-            Position: {item.position}
-          </AppText>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.container}>
