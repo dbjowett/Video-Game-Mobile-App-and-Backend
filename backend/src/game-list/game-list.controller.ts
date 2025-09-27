@@ -66,7 +66,6 @@ export class GameListController {
     @User() user: UserPayload,
     @Body() body: UpdateListOrderDto,
   ) {
-    console.log('updateListOrder', body);
     return await this.gameListService.updateListOrder(user, body);
   }
 

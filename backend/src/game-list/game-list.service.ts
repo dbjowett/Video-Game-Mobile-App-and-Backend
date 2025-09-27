@@ -12,7 +12,6 @@ import {
   AddGameToListDto,
   CreateGameListDto,
   RemoveGameFromListDto,
-  UpdateListOrderDto,
 } from './dto';
 
 export type GameListWithCovers = Prisma.GameListGetPayload<{
@@ -71,6 +70,7 @@ export class GameListService {
         where: {
           listId: id,
         },
+        orderBy: { position: 'asc' },
       });
     } catch (error) {
       throw new NotFoundException('No games found with ID: ', id);
@@ -229,18 +229,39 @@ export class GameListService {
     }
   }
 
-  async updateListOrder(user: UserPayload, { to, from }: UpdateListOrderDto) {
+  async updateListOrder(
+    user: UserPayload,
+    { id, from, to }: { id: string; from: number; to: number },
+  ) {
     try {
-      this.databaseService.$transaction([
-        this.databaseService.gameList.updateMany({
+      await this.databaseService.$transaction(async (tx) => {
+        if (from < to) {
+          await tx.gameList.updateMany({
+            where: {
+              userId: user.id,
+              position: { gt: from, lte: to },
+            },
+            data: {
+              position: { decrement: 1 },
+            },
+          });
+        } else if (from > to) {
+          await tx.gameList.updateMany({
+            where: {
+              userId: user.id,
+              position: { gte: to, lt: from },
+            },
+            data: {
+              position: { increment: 1 },
+            },
+          });
+        }
+
+        await tx.gameList.update({
+          where: { id },
           data: { position: to },
-          where: { position: from },
-        }),
-        this.databaseService.gameList.updateMany({
-          data: { position: from },
-          where: { position: to },
-        }),
-      ]);
+        });
+      });
     } catch (error) {
       throw new Error('Failed to update list order: ' + error.message);
     }

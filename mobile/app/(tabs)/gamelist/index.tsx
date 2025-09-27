@@ -16,7 +16,9 @@ const Page = () => {
   const updateListOrderMutation = useUpdateListOrder();
 
   const handleReorder = ({ from, to }: ReorderableListReorderEvent) => {
-    updateListOrderMutation.mutate({ from, to });
+    const id = lists?.[from]?.id;
+    if (!id) return;
+    updateListOrderMutation.mutate({ from, to, id });
   };
 
   return (
