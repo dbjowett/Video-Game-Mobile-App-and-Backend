@@ -10,7 +10,6 @@ const getUsersLists = async (): Promise<GameListWithCovers[]> => {
 
 export function useGetLists() {
   return useQuery({
-    // TODO: Add key to invalidate single list
     queryKey: ['game-lists'],
     queryFn: getUsersLists,
   });

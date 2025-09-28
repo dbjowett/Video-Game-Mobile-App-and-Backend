@@ -35,6 +35,7 @@ export class GameListService {
   ) {}
 
   async getGameCover(gameId: number): Promise<string> {
+    if (!gameId) return '';
     const game = await this.gamesService.getGameCover(gameId.toString());
     return game.cover.url;
   }
@@ -52,6 +53,7 @@ export class GameListService {
             select: { gameId: true, gameCoverUrl: true },
           },
         },
+        orderBy: { position: 'asc' },
       });
     } catch (error) {
       throw new NotFoundException('Cannot find any lists for this user');
@@ -73,8 +75,9 @@ export class GameListService {
         orderBy: { position: 'asc' },
       });
     } catch (error) {
-      throw new NotFoundException('No games found with ID: ', id);
+      throw new NotFoundException('No games found with ID: ' + id);
     }
+
     return games;
   }
 
