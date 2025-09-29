@@ -15,7 +15,7 @@ import { AppText, View } from '@/components/Themed';
 import { useTheme } from '@/theme/theme-context';
 import { getHumanDate } from '@/utils';
 import { Link, Stack } from 'expo-router';
-import React from 'react';
+import React, { FC } from 'react';
 import Animated, { FadeInRight, FadeOutLeft } from 'react-native-reanimated';
 
 const popTypeTitleMap: Record<PopKey, string> = {
@@ -33,7 +33,7 @@ export default function Page() {
   const { data: popularGames, isError, isPending } = usePopularGames();
 
   const { colors } = useTheme();
-  const singleGame: ListRenderItem<ListGame> = ({ item }) => {
+  const SingleGame: ListRenderItem<ListGame> = ({ item }) => {
     const id = item.id.toString();
 
     return (
@@ -79,14 +79,17 @@ export default function Page() {
     );
   };
 
-  const GameList = ({ title, games }: { title: PopKey; games: ListGame[] }) => (
+  const GameList: FC<{ title: PopKey; games: ListGame[] }> = ({
+    title,
+    games,
+  }) => (
     <View>
       <AppText style={styles.categoryTitle}>{popTypeTitleMap[title]}</AppText>
       <FlatList
         horizontal
         style={styles.listContainer}
         data={games}
-        renderItem={singleGame}
+        renderItem={SingleGame}
       />
     </View>
   );

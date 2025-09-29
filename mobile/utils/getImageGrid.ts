@@ -11,8 +11,8 @@ const layouts: Record<LayoutKey, Array<ViewStyle>> = {
 
   // [0, 1]
   2: [
-    { paddingRight: pad, width: '50%', aspectRatio: 1 },
-    { paddingLeft: pad, width: '50%', aspectRatio: 1 },
+    { paddingRight: pad, width: '50%', aspectRatio: 1 / 2 },
+    { paddingLeft: pad, width: '50%', aspectRatio: 1 / 2 },
   ],
   // [ 0 ]
   // [1, 2]

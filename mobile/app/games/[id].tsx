@@ -2,7 +2,6 @@ import { useAddFavouriteGame } from '@/api/hooks/useAddFavouriteGame';
 import { useGameDetails } from '@/api/hooks/useGameDetails';
 import { useGetFavouriteGames } from '@/api/hooks/useGetFavGames';
 import { useRemoveFavouriteGame } from '@/api/hooks/useRemoveFavouriteGame';
-import AddToListSheet from '@/components/AddToListSheet';
 import AppButton from '@/components/AppButton';
 import { MoreText } from '@/components/MoreText';
 import { ScreenshotsSection } from '@/components/ScreenshotsSection';
@@ -10,12 +9,12 @@ import { SimilarGamesSection } from '@/components/SimilarGamesSection';
 import { AppText } from '@/components/Themed';
 import { VideosSection } from '@/components/VideosSection';
 import { defaultStyles } from '@/constants/Styles';
+import { useAddToList } from '@/providers/AddToListProvider';
 import { useTheme } from '@/theme/theme-context';
 import { imageLoader } from '@/utils';
-import BottomSheet from '@gorhom/bottom-sheet';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { ChevronLeft, Share as ShareIcon } from 'lucide-react-native';
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
@@ -39,12 +38,12 @@ const IMG_HEIGHT = 500;
 const { width } = Dimensions.get('window');
 
 const Page = () => {
-  const addToListRef = useRef<BottomSheet | null>(null);
   const [imageLoaded, setIsImageLoaded] = useState<boolean>(false);
   const [isImageViewerVisible, setIsImageViewerVisible] =
     useState<boolean>(false);
   const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
 
+  const { openAddToListSheet } = useAddToList();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { colors } = useTheme();
 
@@ -126,7 +125,7 @@ const Page = () => {
     }
   });
 
-  const openBottomSheet = () => addToListRef.current?.snapToIndex(0);
+  const openBottomSheet = () => game && openAddToListSheet(game);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -255,8 +254,6 @@ const Page = () => {
         visible={isImageViewerVisible}
         onRequestClose={() => setIsImageViewerVisible(false)}
       />
-
-      <AddToListSheet ref={addToListRef} game={game} />
     </View>
   );
 };

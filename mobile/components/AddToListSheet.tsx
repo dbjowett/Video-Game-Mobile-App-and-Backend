@@ -1,6 +1,5 @@
 import { useGetLists } from '@/api/hooks/useGetLists';
 import { DetailedGame } from '@/api/types/game';
-import { GameListWithCovers } from '@/api/types/game-list';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
@@ -38,10 +37,6 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
         ref.current.close();
       }
     };
-
-    const renderItem = ({ item }: { item: GameListWithCovers }) => (
-      <GameListPreview list={item} game={game} handleClose={handleClose} />
-    );
 
     useEffect(() => {
       offset.value = isCreatingNew ? 0 : 1;
@@ -149,7 +144,13 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
                 keyboardShouldPersistTaps="handled"
                 style={{ flex: 1 }}
                 data={gameLists}
-                renderItem={renderItem}
+                renderItem={({ item }) => (
+                  <GameListPreview
+                    list={item}
+                    game={game}
+                    handleClose={handleClose}
+                  />
+                )}
                 keyExtractor={(item, index) => `${item}-${index}`}
                 numColumns={2}
                 columnWrapperStyle={styles.row}

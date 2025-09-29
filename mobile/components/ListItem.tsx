@@ -5,6 +5,7 @@ import { useTheme } from '@/theme/theme-context';
 import { getImageWrapStyle } from '@/utils/getImageGrid';
 import { useRouter } from 'expo-router';
 import { GripVertical } from 'lucide-react-native';
+import { FC } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useReorderableDrag } from 'react-native-reorderable-list';
 import { IgdbImage } from './IgdbImage';
@@ -13,36 +14,19 @@ import { AppText } from './Themed';
 interface GameListItemProps {
   list: GameListWithCovers;
   expanded?: boolean;
-  onPress?: () => void;
-  onLongPress?: () => void;
 }
 
-export const ListItem: React.FC<GameListItemProps> = ({
-  list,
-  onPress,
-  onLongPress,
-}) => {
+export const ListItem: FC<GameListItemProps> = ({ list }) => {
   const router = useRouter();
   const drag = useReorderableDrag();
   const count = list.items?.length || 0;
   const { colors } = useTheme();
 
   return (
-    <View
-      style={{
-        marginVertical: spacing.sm,
-        width: '100%',
-      }}
-    >
+    <View style={styles.container}>
       <Pressable
-        onLongPress={() => {
-          drag();
-          onLongPress?.();
-        }}
-        onPress={() => {
-          router.push(`/game-list/${list.id}`);
-          onPress?.();
-        }}
+        onLongPress={drag}
+        onPress={() => router.push(`/list/${list.id}`)}
         style={[styles.listItem, { borderColor: colors.borderStrong }]}
       >
         <View style={styles.innerWrap}>
@@ -81,14 +65,17 @@ export const ListItem: React.FC<GameListItemProps> = ({
             )}
 
             {/* Title and Description */}
-            <View>
-              <AppText style={{ fontSize: 18, fontWeight: '500' }}>
+            <View style={styles.textContainer}>
+              <AppText numberOfLines={2} style={styles.textTitle}>
                 {list.title}
               </AppText>
               <AppText
-                style={{ fontSize: 14, color: colors.textSecondary }}
-              >{`${count} games`}</AppText>
-              <AppText style={{ fontSize: 14, color: colors.textSecondary }}>
+                numberOfLines={3}
+                style={[
+                  styles.textDescription,
+                  { color: colors.textSecondary },
+                ]}
+              >
                 {list.description}
               </AppText>
             </View>
@@ -105,6 +92,10 @@ export const ListItem: React.FC<GameListItemProps> = ({
 };
 
 const styles = StyleSheet.create({
+  container: {
+    marginVertical: spacing.sm,
+    width: '100%',
+  },
   listItem: {
     width: '90%',
     alignSelf: 'center',
@@ -119,8 +110,20 @@ const styles = StyleSheet.create({
   },
   leftContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
     gap: 12,
+    flex: 1,
+  },
+  textContainer: {
+    marginTop: spacing.xs,
+    flex: 1,
+    gap: spacing.sm,
+  },
+  textTitle: {
+    fontSize: 20,
+    fontWeight: '500',
+  },
+  textDescription: {
+    fontSize: 14,
   },
   imageWrap: {
     width: 100,
