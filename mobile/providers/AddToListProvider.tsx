@@ -1,10 +1,10 @@
-import { DetailedGame } from '@/api/types/game';
+import { DetailedGame, ListGame } from '@/api/types/game';
 import AddToListSheet from '@/components/AddToListSheet';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { createContext, useContext, useRef, useState } from 'react';
 
 interface AddToListContextType {
-  openAddToListSheet: (game: DetailedGame) => void;
+  openAddToListSheet: (game: DetailedGame | ListGame) => void;
   closeAddToListSheet: () => void;
 }
 
@@ -14,8 +14,10 @@ const AddToListContext = createContext<AddToListContextType | undefined>(
 
 const AddToListProvider = ({ children }: { children: React.ReactNode }) => {
   const addToListSheetRef = useRef<BottomSheet>(null);
-  const [selectedGame, setSelectedGame] = useState<DetailedGame | null>(null);
-  const openAddToListSheet = (game: DetailedGame) => {
+  const [selectedGame, setSelectedGame] = useState<
+    DetailedGame | ListGame | null
+  >(null);
+  const openAddToListSheet = (game: DetailedGame | ListGame) => {
     setSelectedGame(game);
     addToListSheetRef.current?.expand();
   };

@@ -1,5 +1,5 @@
 import { useGetLists } from '@/api/hooks/useGetLists';
-import { DetailedGame } from '@/api/types/game';
+import { DetailedGame, ListGame } from '@/api/types/game';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
@@ -20,7 +20,7 @@ import { AppText } from './Themed';
 const screenWidth = Dimensions.get('window').width;
 
 interface CreateNewFormProps {
-  game: DetailedGame;
+  game: DetailedGame | ListGame;
 }
 
 const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
