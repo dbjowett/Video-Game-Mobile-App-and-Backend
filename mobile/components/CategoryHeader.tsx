@@ -17,18 +17,11 @@ import { AppText } from './Themed';
 
 const LandingHeader = () => {
   const { data: user } = useUser();
-
   const { colors } = useTheme();
 
   return (
-    <SafeAreaView
-      style={{
-        backgroundColor: colors.background,
-        borderBottomWidth: 1,
-        borderBottomColor: colors.border,
-      }}
-    >
-      <View style={styles.container}>
+    <SafeAreaView style={{ backgroundColor: colors.background }}>
+      <View style={[styles.container, { borderBottomColor: colors.border }]}>
         <View style={styles.actionRow}>
           <Link href={'/(modals)/search'} asChild>
             <TouchableOpacity
@@ -48,7 +41,7 @@ const LandingHeader = () => {
           </Link>
           <TouchableOpacity>
             <Image
-              source={{ uri: user?.profileImage }} // Use the user's profile image or a default one
+              source={{ uri: user?.profileImage }}
               style={styles.profileImage}
             />
           </TouchableOpacity>
@@ -60,7 +53,8 @@ const LandingHeader = () => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 68,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    paddingBottom: spacing.sm,
   },
   profileImage: {
     width: 46,

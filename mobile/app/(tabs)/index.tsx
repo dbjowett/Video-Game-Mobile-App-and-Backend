@@ -12,6 +12,7 @@ import { usePopularGames } from '@/api';
 import { ListGame, PopKey } from '@/api/types/game';
 import LandingHeader from '@/components/CategoryHeader';
 import { AppText, View } from '@/components/Themed';
+import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
 import { getHumanDate } from '@/utils';
 import { Link, Stack } from 'expo-router';
@@ -107,7 +108,7 @@ export default function Page() {
           <ActivityIndicator />
         </View>
       ) : (
-        <ScrollView>
+        <ScrollView style={{ paddingTop: spacing.md }}>
           {popularGames
             ? Object.entries(popularGames).map(([title, games]) => (
                 <GameList key={title} title={title as PopKey} games={games} />
