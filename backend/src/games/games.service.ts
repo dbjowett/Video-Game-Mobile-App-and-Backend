@@ -14,6 +14,7 @@ import {
   PopularityMultiQuery,
 } from './types';
 
+const platformIds = [6, 167, 169, 130, 48, 49]; // PC, PS5, Xbox Series X, Switch, PS4, Xbox One
 const allowedTypes = [0, 1, 2, 4, 8, 9]; // Game, DLC, Expansion, Bundle, Standalone Expansion, Remake
 
 // ** Must match `ListGame` interface in `mobile/api/types/game.ts` and frontend type
@@ -84,7 +85,6 @@ export class GamesService {
   async getPopGamesWithDetails() {
     const cacheKey = 'popular_games';
     const cachedData = this.cache.get(cacheKey);
-
     if (cachedData) return cachedData;
 
     const popularGames = await this.getPopularGames();
@@ -175,9 +175,6 @@ export class GamesService {
 
     const startUnix = Math.floor(start.getTime() / 1000);
     const endUnix = Math.floor(end.getTime() / 1000);
-
-    const platformIds = [6, 167, 169, 130, 48, 49]; // PC, PS5, Xbox Series X, Switch, PS4, Xbox One
-    const allowedTypes = [0, 1, 2, 4, 8, 9]; // Game, DLC, Expansion, Bundle, Standalone Expansion, Remake
 
     const igdbQuery = `
     ${LIST_GAME_FIELDS_QUERY};

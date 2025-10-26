@@ -21,7 +21,13 @@ const LandingHeader = () => {
   const { colors } = useTheme();
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+    <SafeAreaView
+      style={{
+        backgroundColor: colors.background,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.border,
+      }}
+    >
       <View style={styles.container}>
         <View style={styles.actionRow}>
           <Link href={'/(modals)/search'} asChild>
@@ -63,14 +69,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#c2c2c2',
     borderColor: '#c2c2c2',
     borderWidth: 1,
-
-    // elevation: 2,
-    // shadowColor: '#000',
-    // shadowOpacity: 0.12,
-    // shadowOffset: {
-    //   width: 1,
-    //   height: 1,
-    // },
   },
   actionRow: {
     flexDirection: 'row',

@@ -34,8 +34,6 @@ export default function Page() {
 
   const { colors } = useTheme();
   const SingleGame: ListRenderItem<ListGame> = ({ item }) => {
-    const id = item.id.toString();
-
     return (
       <Link href={`/games/${item.id}`} asChild>
         <TouchableOpacity style={styles.itemContainer}>
@@ -123,7 +121,6 @@ export default function Page() {
 
 const styles = StyleSheet.create({
   pageContainer: {
-    paddingTop: 80,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,

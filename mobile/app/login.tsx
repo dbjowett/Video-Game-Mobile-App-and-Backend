@@ -4,6 +4,7 @@ import { apiNoAuth } from '@/api/utils/api';
 import { useSession } from '@/components/AuthContext';
 import { GoogleIcon } from '@/components/GoogleIcon';
 import { imageLoader } from '@/utils';
+import { sleep } from '@/utils/sleep';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -142,8 +143,6 @@ const Page = () => {
       );
 
       if (result.type === 'success' && result.url) {
-        console.log('OAuth flow completed with URL:', result.url);
-
         if (result.url.includes('vg-app://login')) {
           const params = new URL(result.url).searchParams;
           const access_token = params.get('token');
@@ -151,6 +150,7 @@ const Page = () => {
 
           if (access_token && refresh_token) {
             signIn({ access_token, refresh_token });
+            await sleep(300);
             router.replace('/(tabs)');
           }
         }

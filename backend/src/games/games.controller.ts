@@ -8,7 +8,7 @@ import { GamesService } from './games.service';
 export class GamesController {
   constructor(private readonly gamesService: GamesService) {}
 
-  // To populate the login page on web
+  // To populate the login page
   @Public()
   @Get('popular')
   async getPopularGames(): Promise<unknown> {
