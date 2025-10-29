@@ -4,10 +4,9 @@ import { useTheme } from '@/theme/theme-context';
 import { imageLoader } from '@/utils';
 import { useQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
-import { ChevronDown } from 'lucide-react-native';
+import { Calendar, ChevronDown } from 'lucide-react-native';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
-  ActivityIndicator,
   Animated,
   Easing,
   Image,
@@ -23,7 +22,6 @@ import {
   ExpandableCalendar,
   WeekCalendar,
 } from 'react-native-calendars';
-import { CalendarNavigationTypes } from 'react-native-calendars/src/expandableCalendar/commons';
 import { Theme } from 'react-native-calendars/src/types';
 
 interface Props {
@@ -38,7 +36,11 @@ const date = new Date();
 const initialDate = new Date(date.getFullYear(), date.getMonth(), 2)
   .toISOString()
   .split('T')[0]; // "YYYY-MM-DD"
-const today = new Date().toISOString().split('T')[0];
+
+const todayDate = new Date();
+todayDate.setHours(0, 0, 0, 0);
+const todayDateString = todayDate.toISOString().split('T')[0];
+
 const initialMonth = new Date().toISOString().slice(0, 7); // "YYYY-MM"
 
 const ExpandableCalendarScreen = ({ weekView }: Props) => {
@@ -47,8 +49,9 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
   const rotation = useRef(new Animated.Value(0));
   const { colors, isDarkMode } = useTheme();
 
-  const [selectedDate, setSelectedDate] = React.useState<string>(initialDate); // "YYYY-MM-DD"
+  const [selectedDate, setSelectedDate] = useState<string>(todayDateString);
   const [visibleMonth, setVisibleMonth] = useState<string>(initialMonth);
+  const [shouldShowPast, setShouldShowPast] = useState<boolean>(false);
 
   // TODO: Move this to a custom hook
   const {
@@ -69,6 +72,8 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
     games.forEach((game: ListGame) => {
       if (!game.first_release_date) return; // Skip if no release date
       const releaseDate = new Date(game.first_release_date * 1000);
+      releaseDate.setHours(0, 0, 0, 0);
+      if (releaseDate < todayDate && !shouldShowPast) return;
       const dateStr = releaseDate.toISOString().split('T')[0]; // YYYY-MM-DD
 
       if (!grouped[dateStr]) grouped[dateStr] = [];
@@ -80,7 +85,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
       title: date,
       data,
     }));
-  }, [games]);
+  }, [games, shouldShowPast]);
 
   const marked = useMemo(() => {
     if (!games) return {};
@@ -127,10 +132,6 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
       </View>
     </TouchableOpacity>
   );
-
-  const renderItem = ({ item }: { item: ListGame }) => {
-    return <AgendaItem item={item} />;
-  };
 
   const toggleCalendarExpansion = useCallback(() => {
     const isOpen = calendarRef.current?.toggleCalendarPosition();
@@ -200,34 +201,43 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
     </View>
   );
 
-  const LoadingSkeleton = () => (
-    // TODO: FIX
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <ActivityIndicator color={colors.primary} />
-    </View>
-  );
+  const TodayButton = () => {
+    return (
+      <TouchableOpacity
+        onPress={() => setSelectedDate(todayDateString)}
+        style={styles.floatingButton}
+      >
+        <Calendar size={18} color={colors.primary} />
+        <AppText style={{ color: colors.primary }}>Today</AppText>
+      </TouchableOpacity>
+    );
+  };
 
-  // const TodayButton = () => {
-  //   const handleTodayPress = () => {
-  //     setSelectedDate(today);
-  //   };
+  const ShowPastButton = () => {
+    const handlePress = () => {
+      // initialDate
+      // if
+      setShouldShowPast((prev) => !prev);
+    };
 
-  //   return (
-  //     <TouchableOpacity onPress={handleTodayPress} style={styles.todayButton}>
-  //       <Calendar size={18} color={colors.primary} />
-  //       <AppText style={{ color: colors.primary }}>Today</AppText>
-  //     </TouchableOpacity>
-  //   );
-  // };
+    return (
+      <TouchableOpacity
+        onPress={() => setShouldShowPast((prev) => !prev)}
+        style={styles.floatingButton}
+      >
+        <Calendar size={18} color={colors.primary} />
+        <AppText style={{ color: colors.primary }}>
+          {shouldShowPast ? 'Hide' : 'Show'} Past
+        </AppText>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <CalendarProvider
       date={selectedDate}
-      disableAutoDaySelection={[CalendarNavigationTypes.WEEK_SCROLL]}
       onDateChanged={(e, src) => {
-        if (src !== 'weekScroll') {
-          setSelectedDate(e);
-        }
+        setSelectedDate(e);
       }}
     >
       <View
@@ -237,7 +247,10 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
           position: 'relative',
         }}
       >
-        {/* <TodayButton /> */}
+        <View style={styles.buttonWrapper}>
+          <ShowPastButton />
+          <TodayButton />
+        </View>
 
         {weekView ? (
           <WeekCalendar
@@ -250,6 +263,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
           />
         ) : (
           <ExpandableCalendar
+            allowShadow
             displayLoadingIndicator={isLoadingData}
             theme={theme}
             onDayPress={(day) => setSelectedDate(day.dateString)}
@@ -261,16 +275,17 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
             markedDates={marked}
           />
         )}
-        {isLoadingData ? <LoadingSkeleton /> : null}
         <View style={styles.bottomContainer}>
-          {!noGamesFound && (
-            <AgendaList
-              ref={listRef}
-              sections={transformedItems}
-              renderItem={renderItem}
-              sectionStyle={styles.agendaItemList}
-            />
-          )}
+          <AgendaList
+            markToday
+            ref={listRef}
+            sections={transformedItems}
+            renderItem={({ item }: { item: ListGame }) => (
+              <AgendaItem item={item} />
+            )}
+            sectionStyle={styles.agendaItemList}
+          />
+
           {noGamesFound ? <NoGames /> : null}
         </View>
       </View>
@@ -319,19 +334,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
+  buttonWrapper: {
+    zIndex: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+  },
 
-  // todayButton: {
-  //   zIndex: 10,
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   gap: 10,
-  //   position: 'absolute',
-  //   bottom: 10,
-  //   right: 10,
-  //   backgroundColor: '#fff',
-  //   padding: 10,
-  //   borderRadius: 20,
-  //   borderWidth: 1,
-  //   borderColor: '#ddd',
-  // },
+  floatingButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
 });

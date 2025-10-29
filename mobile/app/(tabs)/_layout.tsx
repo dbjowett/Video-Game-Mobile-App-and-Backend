@@ -4,7 +4,7 @@ import React from 'react';
 import { useSession } from '@/components/AuthContext';
 import { AppText } from '@/components/Themed';
 import { useTheme } from '@/theme/theme-context';
-import { CalendarClock, List, Search, User } from 'lucide-react-native';
+import { CalendarClock, List, Search } from 'lucide-react-native';
 
 interface IconProps {
   color: string;
@@ -62,7 +62,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
@@ -70,7 +70,7 @@ export default function TabLayout() {
             <User size={size} color={color} />
           ),
         }}
-      />
+      /> */}
     </Tabs>
   );
 }

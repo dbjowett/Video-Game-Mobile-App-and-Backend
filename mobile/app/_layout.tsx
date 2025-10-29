@@ -60,6 +60,10 @@ const StackScreens = () => {
         name="(modals)/search"
         options={{ presentation: 'transparentModal' }}
       />
+      <Stack.Screen
+        name="(modals)/profile"
+        options={{ presentation: 'transparentModal' }}
+      />
     </Stack>
   );
 };

@@ -7,11 +7,7 @@ const Layout = () => {
         name="index"
         options={{
           headerTitle: 'Upcoming Releases',
-          // headerLargeTitle: true,
-          // headerBlurEffect: 'light',
-          // headerTransparent: true,
           headerShadowVisible: false,
-          // headerLargeTitleShadowVisible: false,
         }}
       />
     </Stack>

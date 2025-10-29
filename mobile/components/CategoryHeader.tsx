@@ -39,12 +39,14 @@ const LandingHeader = () => {
               </View>
             </TouchableOpacity>
           </Link>
-          <TouchableOpacity>
-            <Image
-              source={{ uri: user?.profileImage }}
-              style={styles.profileImage}
-            />
-          </TouchableOpacity>
+          <Link href={'/(modals)/profile'} asChild>
+            <TouchableOpacity>
+              <Image
+                source={{ uri: user?.profileImage }}
+                style={styles.profileImage}
+              />
+            </TouchableOpacity>
+          </Link>
         </View>
       </View>
     </SafeAreaView>

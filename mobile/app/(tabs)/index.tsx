@@ -98,6 +98,7 @@ export default function Page() {
       <Stack.Screen
         options={{
           headerShown: true,
+          headerShadowVisible: true,
           header: () => <LandingHeader />,
         }}
       />
