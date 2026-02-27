@@ -1,17 +1,17 @@
 import { useGetListsGames } from '@/api/hooks/useGetListsGames';
 import { GameListItem } from '@/api/types/game-list';
-import { IgdbImage } from '@/components/IgdbImage';
+import GameCard from '@/components/GameCard';
 import { AppText } from '@/components/Themed';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
+import { mapGameListItemToCard } from '@/utils/gameCard';
 import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import {
   ActivityIndicator,
   FlatList,
   StyleSheet,
-  TouchableOpacity,
   View,
 } from 'react-native';
 
@@ -31,7 +31,7 @@ const formatDate = (value: string) => {
 
 const Page = () => {
   const { id: gameListId } = useLocalSearchParams<{ id: string }>();
-  const { colors, shadows } = useTheme();
+  const { colors } = useTheme();
   const { data: games, isLoading } = useGetListsGames(gameListId);
 
   if (isLoading) {
@@ -48,83 +48,19 @@ const Page = () => {
   }
 
   const renderGameItem = ({ item: gameItem }: { item: GameListItem }) => {
-    const { createdAt, updatedAt, gameId, gameTitle, position, gameCoverUrl } =
-      gameItem;
+    const card = mapGameListItemToCard(gameItem, {
+      meta: `Added ${formatDate(gameItem.createdAt)}`,
+    });
 
     return (
-      <TouchableOpacity
-        activeOpacity={0.9}
-        style={[
-          styles.gameItem,
-          shadows.sm,
-          {
-            borderColor: colors.border,
-            backgroundColor: colors.card,
-          },
-        ]}
+      <GameCard
+        game={card}
+        variant="default"
+        style={styles.gameItem}
         onPress={() => {
-          router.push(`/games/${gameId}`);
+          router.push(`/games/${gameItem.gameId}`);
         }}
-      >
-        <View style={styles.gameContent}>
-          <View style={styles.imageContainer}>
-            <IgdbImage
-              imgSrc={gameCoverUrl}
-              style={[styles.gameImage, { borderColor: colors.border }]}
-            />
-          </View>
-          <View style={styles.gameInfo}>
-            <View style={styles.titleRow}>
-              <AppText style={styles.gameTitle}>{gameTitle}</AppText>
-              <View
-                style={[
-                  styles.rankBadge,
-                  {
-                    backgroundColor: colors.primary,
-                    borderColor: colors.primary,
-                  },
-                ]}
-              >
-                <AppText
-                  style={[
-                    styles.rankBadgeText,
-                    { color: colors.textOnPrimary },
-                  ]}
-                >
-                  #{position}
-                </AppText>
-              </View>
-            </View>
-
-            <AppText
-              style={[styles.gameSubtitle, { color: colors.textSecondary }]}
-            >
-              Game ID {gameId} • Position {position + 1}
-            </AppText>
-
-            <View style={styles.metaRow}>
-              <View
-                style={[
-                  styles.metaChip,
-                  {
-                    backgroundColor: colors.surface,
-                    borderColor: colors.border,
-                  },
-                ]}
-              >
-                <AppText
-                  style={[styles.metaLabel, { color: colors.textSecondary }]}
-                >
-                  Added
-                </AppText>
-                <AppText style={styles.metaValue}>
-                  {formatDate(createdAt)}
-                </AppText>
-              </View>
-            </View>
-          </View>
-        </View>
-      </TouchableOpacity>
+      />
     );
   };
 
@@ -175,75 +111,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.lg,
   },
   gameItem: {
-    borderWidth: 1,
-    borderRadius: radius.lg,
     marginBottom: spacing.md,
-  },
-  gameContent: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    padding: spacing.sm,
-  },
-  imageContainer: {
-    width: 88,
-    height: 120,
-    marginRight: spacing.md,
-  },
-  gameImage: {
-    width: '100%',
-    height: '100%',
-    borderRadius: radius.md,
-    borderWidth: StyleSheet.hairlineWidth,
-  },
-  gameInfo: {
-    flex: 1,
-    gap: spacing.sm,
-  },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.sm,
-  },
-  gameTitle: {
-    flex: 1,
-    fontSize: 20,
-    fontWeight: '600',
-  },
-  gameSubtitle: {
-    fontSize: 14,
-  },
-  rankBadge: {
-    minWidth: 48,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 6,
-    borderRadius: radius.round,
-    borderWidth: 1,
-    alignItems: 'center',
-  },
-  rankBadgeText: {
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  metaRow: {
-    flexDirection: 'row',
-    gap: spacing.sm,
-  },
-  metaChip: {
-    flex: 1,
-    borderWidth: 1,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.sm,
-    gap: 2,
-  },
-  metaLabel: {
-    fontSize: 12,
-    textTransform: 'uppercase',
-  },
-  metaValue: {
-    fontSize: 14,
-    fontWeight: '600',
   },
   loadingWrapper: {
     flex: 1,

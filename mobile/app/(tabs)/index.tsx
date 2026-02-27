@@ -1,21 +1,19 @@
 import {
   ActivityIndicator,
   FlatList,
-  Image,
   ListRenderItem,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
 } from 'react-native';
 
 import { usePopularGames } from '@/api';
 import { ListGame, PopKey } from '@/api/types/game';
 import LandingHeader from '@/components/CategoryHeader';
+import GameCard from '@/components/GameCard';
 import { AppText, View } from '@/components/Themed';
 import { spacing } from '@/theme/constants/spacing';
-import { useTheme } from '@/theme/theme-context';
-import { getHumanDate } from '@/utils';
-import { Link, Stack } from 'expo-router';
+import { mapListGameToCard } from '@/utils/gameCard';
+import { Stack, router } from 'expo-router';
 import React, { FC } from 'react';
 import Animated, { FadeInRight, FadeOutLeft } from 'react-native-reanimated';
 
@@ -33,48 +31,23 @@ const popTypeTitleMap: Record<PopKey, string> = {
 export default function Page() {
   const { data: popularGames, isError, isPending } = usePopularGames();
 
-  const { colors } = useTheme();
   const SingleGame: ListRenderItem<ListGame> = ({ item }) => {
-    return (
-      <Link href={`/games/${item.id}`} asChild>
-        <TouchableOpacity style={styles.itemContainer}>
-          <Animated.View
-            style={styles.innerWrap}
-            entering={FadeInRight}
-            exiting={FadeOutLeft}
-          >
-            {/* Image */}
-            <Image
-              source={{
-                uri: `https:${item.cover.url.replace('t_thumb', 't_cover_big_2x')}`,
-              }}
-              style={styles.image}
-            />
+    const card = mapListGameToCard(item, {
+      badge: `${Math.trunc(item.total_rating)}%`,
+    });
 
-            {/* Content */}
-            <View style={styles.lowerContainer}>
-              <View>
-                <AppText numberOfLines={1} style={styles.gameName}>
-                  {item.name}
-                </AppText>
-              </View>
-              <View style={styles.infoContainer}>
-                <AppText
-                  style={StyleSheet.flatten([
-                    styles.rating,
-                    { backgroundColor: colors.surface },
-                  ])}
-                >
-                  {Math.trunc(item?.total_rating)}%
-                </AppText>
-                <AppText style={styles.releaseDate}>
-                  {getHumanDate(item?.first_release_date)}
-                </AppText>
-              </View>
-            </View>
-          </Animated.View>
-        </TouchableOpacity>
-      </Link>
+    return (
+      <Animated.View
+        style={styles.itemContainer}
+        entering={FadeInRight}
+        exiting={FadeOutLeft}
+      >
+        <GameCard
+          game={card}
+          variant="feature"
+          onPress={() => router.push(`/games/${item.id}`)}
+        />
+      </Animated.View>
     );
   };
 
@@ -138,54 +111,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   itemContainer: {
-    borderRadius: 8,
-    padding: 2,
-
     width: 200,
     marginHorizontal: 8,
-  },
-  innerWrap: {
-    flex: 1,
-    gap: 1,
-    marginVertical: 0,
-    position: 'relative',
-  },
-
-  image: {
-    height: 300,
-    borderRadius: 8,
-  },
-  heartIcon: {
-    position: 'absolute',
-    right: 12,
-    top: 12,
-  },
-
-  lowerContainer: {
-    paddingHorizontal: 2,
-    marginTop: 2,
-  },
-  gameName: {
-    flex: 1,
-    marginRight: 8,
-    fontWeight: 600,
-    flexWrap: 'wrap',
-  },
-  infoContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  rating: {
-    backgroundColor: '#f0f0f0',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-    marginTop: 2,
-    fontWeight: '600',
-  },
-  releaseDate: {
-    fontSize: 12,
   },
 });

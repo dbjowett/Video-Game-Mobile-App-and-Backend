@@ -1,7 +1,9 @@
 import { ListGame } from '@/api/types/game';
 import { api } from '@/api/utils/api';
+import GameCard from '@/components/GameCard';
+import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
-import { imageLoader } from '@/utils';
+import { mapListGameToCard } from '@/utils/gameCard';
 import { useQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { Calendar, ChevronDown } from 'lucide-react-native';
@@ -9,7 +11,6 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   Easing,
-  Image,
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
@@ -127,39 +128,20 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
     }, {});
   }, [colors.primary, games, selectedDate]);
 
-  // Placeholder AgendaItem component
-  const AgendaItem = ({ item }: { item: ListGame }) => (
-    <TouchableOpacity onPress={() => router.navigate(`/games/${item.id}`)}>
-      <View
-        style={StyleSheet.flatten([
-          styles.agendaItem,
-          {
-            backgroundColor: colors.background,
-            borderBottomColor: colors.border,
-          },
-        ])}
-      >
-        {item.cover && item.cover.url ? (
-          <Image
-            source={{
-              uri: imageLoader({
-                imgSrc: item.cover.url,
-                quality: 1,
-              }),
-            }}
-            style={styles.agendaImage}
-          />
-        ) : null}
-        <AppText style={styles.agendaText}>{item.name}</AppText>
-        <AppText
-          style={{ color: colors.textSecondary, fontSize: 12, maxWidth: 100 }}
-          numberOfLines={1}
-        >
-          {item.platforms?.map((p) => p.name).join(', ') || 'Unknown Platform'}
-        </AppText>
-      </View>
-    </TouchableOpacity>
-  );
+  const AgendaItem = ({ item }: { item: ListGame }) => {
+    const card = mapListGameToCard(item, {
+      meta: item.platforms?.map((p) => p.name).join(', ') || 'Unknown Platform',
+    });
+
+    return (
+      <GameCard
+        game={card}
+        variant="compact"
+        onPress={() => router.navigate(`/games/${item.id}`)}
+        style={styles.agendaCard}
+      />
+    );
+  };
 
   const toggleCalendarExpansion = useCallback(() => {
     const isOpen = calendarRef.current?.toggleCalendarPosition();
@@ -340,25 +322,11 @@ const styles = StyleSheet.create({
   },
 
   agendaItemList: {
-    // textTransform: 'capitalize',
+    paddingHorizontal: spacing.md,
+    marginBottom: spacing.sm,
   },
-  agendaItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    gap: 10,
-  },
-
-  agendaImage: {
-    width: 35,
-    height: 35,
-    borderRadius: 4,
-  },
-  agendaText: {
-    flex: 1,
-    fontSize: 16,
-    fontWeight: '500',
+  agendaCard: {
+    width: '100%',
   },
   buttonWrapper: {
     zIndex: 10,

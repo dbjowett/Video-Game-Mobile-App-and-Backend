@@ -137,11 +137,11 @@ export class GameListService {
       });
 
       const gameListItemsToCreate = await Promise.all(
-        gameIds.map(async (gameId) => {
+        gameIds.map(async (gameId, index) => {
           return {
             gameId,
             listId: gameList.id,
-            position: nextPosition,
+            position: index,
             gameCoverUrl: imgMap.get(gameId),
           };
         }),
@@ -288,38 +288,4 @@ export class GameListService {
       throw new Error('Failed to update list order: ' + error.message);
     }
   }
-
-  // async addToFavourites(userId: string, gameId: string): Promise<unknown> {
-  //   if (existingFavourite) {
-  //     throw new ConflictException('Game already favourited');
-  //   }
-  // }
-
-  // async removeFromFavourites(userId: string, gameId: string): Promise<unknown> {
-  //   return this.databaseService.userGameList.deleteMany({
-  //     where: {
-  //       userId,
-  //       gameId,
-  //     },
-  //   });
-  // }
-
-  // async getFavourites(userId: string): Promise<FaveGame[]> {
-  //   return this.databaseService.userGameList.findMany({
-  //     where: {
-  //       userId,
-  //     },
-  //   });
-  // }
-
-  // async getFavouriteDetails(userId: string): Promise<ListGame[]> {
-  //   const favourites = await this.getFavourites(userId);
-
-  //   if (favourites.length === 0) {
-  //     throw new Error('No games found');
-  //   }
-
-  //   const gameIds = favourites.map((game) => Number(game.gameId));
-  //   return this.gamesService.getListGames(gameIds);
-  // }
 }

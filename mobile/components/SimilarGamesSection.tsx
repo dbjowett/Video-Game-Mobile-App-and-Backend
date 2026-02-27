@@ -1,8 +1,9 @@
 import { SimilarGame } from '@/api/types/game';
-import { imageLoader } from '@/utils';
+import GameCard from '@/components/GameCard';
+import { useTheme } from '@/theme/theme-context';
+import { mapSimilarGameToCard } from '@/utils/gameCard';
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import Animated from 'react-native-reanimated';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { AppText } from './Themed';
 
 type Props = {
@@ -10,6 +11,8 @@ type Props = {
 };
 
 export const SimilarGamesSection = ({ similarGames }: Props) => {
+  const { colors } = useTheme();
+
   const navigateToGameDetails = (gameId: string) => {
     router.navigate(`/games/${gameId}`);
   };
@@ -23,32 +26,24 @@ export const SimilarGamesSection = ({ similarGames }: Props) => {
         showsHorizontalScrollIndicator={false}
       >
         {similarGames.map((game, index) => (
-          <TouchableOpacity
-            key={index}
-            activeOpacity={0.8}
+          <GameCard
+            key={game.id}
+            game={mapSimilarGameToCard(game)}
+            variant="feature"
+            style={[
+              styles.card,
+              {
+                marginRight: index === similarGames.length - 1 ? 20 : 8,
+                marginLeft: index === 0 ? 20 : 0,
+                backgroundColor: colors.card,
+                borderColor: colors.border,
+              },
+            ]}
+            imageStyle={styles.cardImage}
             onPress={() => {
               navigateToGameDetails(game.id.toString());
             }}
-          >
-            <Animated.Image
-              source={{
-                uri: imageLoader({
-                  imgSrc: game.cover.url,
-                  quality: 6,
-                  maxSize: true,
-                }),
-              }}
-              style={[
-                styles.screenshot,
-                {
-                  height: 160,
-                  width: 120,
-                  marginRight: index === similarGames.length - 1 ? 20 : 8,
-                  marginLeft: index === 0 ? 20 : 0,
-                },
-              ]}
-            />
-          </TouchableOpacity>
+          />
         ))}
       </ScrollView>
     </View>
@@ -64,8 +59,10 @@ const styles = StyleSheet.create({
   },
   screenshotsContent: { flexDirection: 'row', gap: 10 },
   screenshots: {},
-  screenshot: {
-    borderRadius: 10,
-    overflow: 'hidden',
+  card: {
+    width: 132,
+  },
+  cardImage: {
+    height: 176,
   },
 });

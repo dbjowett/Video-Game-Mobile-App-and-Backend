@@ -1,19 +1,19 @@
 import { useGameSearch } from '@/api/hooks/useGameSearch';
 import { ListGame } from '@/api/types/game';
+import GameCard from '@/components/GameCard';
 import { AppText, View } from '@/components/Themed';
 import { useAddToList } from '@/providers/AddToListProvider';
 import { useSearchStore } from '@/store/searchStore';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
-import { getHumanDate, imageLoader } from '@/utils';
+import { mapListGameToCard } from '@/utils/gameCard';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { router } from 'expo-router';
-import { CalendarCheck, ListPlus, XIcon } from 'lucide-react-native';
+import { ListPlus, XIcon } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
-  Image,
   StyleSheet,
   TextInput,
   TouchableOpacity,
@@ -27,47 +27,26 @@ const GameItem = ({
   onPlusPress: (item: ListGame) => void;
 }) => {
   const { colors } = useTheme();
+  const card = mapListGameToCard(item);
+
   return (
-    <TouchableOpacity
+    <GameCard
+      game={card}
+      variant="compact"
       onPress={() => {
         router.dismissAll();
         router.push(`/games/${item.id}`);
       }}
-    >
-      <View style={styles.innerWrap}>
-        <View style={styles.leftContainer}>
-          <Image
-            source={{
-              uri: imageLoader({
-                imgSrc: item.cover?.url,
-                quality: 1,
-              }),
-            }}
-            style={{ width: 50, height: 50, borderRadius: 25 }}
-          />
-          <View style={{ flex: 1, gap: 5 }}>
-            <AppText style={styles.gameTitle}>{item.name}</AppText>
-            {item.first_release_date && (
-              <View
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}
-              >
-                <CalendarCheck size={14} color={colors.textPrimary} />
-                <AppText style={styles.gamedescription}>
-                  {getHumanDate(item.first_release_date)}
-                </AppText>
-              </View>
-            )}
-          </View>
-        </View>
-
+      style={styles.card}
+      rightAccessory={
         <TouchableOpacity
           style={styles.rightContainer}
           onPress={() => onPlusPress(item)}
         >
           <ListPlus size={18} color={colors.textPrimary} />
         </TouchableOpacity>
-      </View>
-    </TouchableOpacity>
+      }
+    />
   );
 };
 
@@ -138,16 +117,12 @@ const Page = () => {
       )}
 
       <FlatList
-        ItemSeparatorComponent={() => (
-          <View
-            style={[styles.separator, { borderColor: colors.borderStrong }]}
-          />
-        )}
         data={searchedGames}
         keyExtractor={({ id }) => id.toString()}
         renderItem={({ item }) => (
           <GameItem item={item} onPlusPress={handlePlusPress} />
         )}
+        contentContainerStyle={styles.listContent}
       />
       {(isLoading || isFetching) && (
         <View style={styles.loadingWrapper}>
@@ -169,38 +144,25 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     marginVertical: spacing.sm,
   },
+  listContent: {
+    paddingHorizontal: spacing.md,
+    paddingBottom: spacing.md,
+    gap: spacing.sm,
+  },
   loadingWrapper: {
     flex: 1,
     padding: spacing.md,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  gameTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  card: {
+    width: '100%',
   },
-  gamedescription: {
-    fontSize: 12,
-    alignItems: 'center',
-  },
-
-  innerWrap: {
-    paddingHorizontal: spacing.md,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  leftContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: spacing.sm,
-    flex: 1,
-  },
-
   rightContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
+    paddingTop: 2,
   },
   inputWrapper: {
     flexDirection: 'row',
