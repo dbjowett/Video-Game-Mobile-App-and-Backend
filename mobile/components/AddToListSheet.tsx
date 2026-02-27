@@ -1,5 +1,5 @@
 import { useGetLists } from '@/api/hooks/useGetLists';
-import { DetailedGame, ListGame } from '@/api/types/game';
+import { AddableGame } from '@/api/types/game';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
@@ -20,7 +20,7 @@ import { AppText } from './Themed';
 const screenWidth = Dimensions.get('window').width;
 
 interface CreateNewFormProps {
-  game: DetailedGame | ListGame;
+  game: AddableGame;
 }
 
 const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
@@ -151,7 +151,7 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
                     handleClose={handleClose}
                   />
                 )}
-                keyExtractor={(item, index) => `${item}-${index}`}
+                keyExtractor={(item) => item.id}
                 numColumns={2}
                 columnWrapperStyle={styles.row}
                 contentContainerStyle={{ paddingBottom: spacing.md }}

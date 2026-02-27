@@ -1,7 +1,7 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 
 import { useCreateGameList } from '@/api/hooks/useCreateGameList';
-import { DetailedGame } from '@/api/types/game';
+import { AddableGame } from '@/api/types/game';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
 import { useForm } from '@tanstack/react-form';
@@ -11,7 +11,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import AppButton from './AppButton';
 import { AppText } from './Themed';
 
-const CreateNewForm = ({ game }: { game: DetailedGame }) => {
+const CreateNewForm = ({ game }: { game: AddableGame }) => {
   const { colors } = useTheme();
 
   const createGameListMutation = useCreateGameList();
@@ -27,7 +27,7 @@ const CreateNewForm = ({ game }: { game: DetailedGame }) => {
         title: value.title,
         description: value.description,
         isPublic: value.isPublic,
-        gameIds: [game.id],
+        gameIds: [Number(game.id)],
       });
     },
   });

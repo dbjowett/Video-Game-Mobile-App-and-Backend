@@ -43,6 +43,20 @@ const todayDateString = todayDate.toISOString().split('T')[0];
 
 const initialMonth = new Date().toISOString().slice(0, 7); // "YYYY-MM"
 
+const getMonthLabel = (value: string) => {
+  const [year, month] = value.split('-').map(Number);
+  const date = new Date(Date.UTC(year, (month || 1) - 1, 1));
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    year: 'numeric',
+  }).format(date);
+};
+
 const ExpandableCalendarScreen = ({ weekView }: Props) => {
   const listRef = useRef<React.LegacyRef<unknown>>(null);
   const calendarRef = useRef<{ toggleCalendarPosition: () => boolean }>(null);
@@ -51,7 +65,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
 
   const [selectedDate, setSelectedDate] = useState<string>(todayDateString);
   const [visibleMonth, setVisibleMonth] = useState<string>(initialMonth);
-  const [shouldShowPast, setShouldShowPast] = useState<boolean>(false);
+  const [shouldShowPast, setShouldShowPast] = useState<boolean>(true);
 
   // TODO: Move this to a custom hook
   const {
@@ -73,7 +87,13 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
       if (!game.first_release_date) return; // Skip if no release date
       const releaseDate = new Date(game.first_release_date * 1000);
       releaseDate.setHours(0, 0, 0, 0);
-      if (releaseDate < todayDate && !shouldShowPast) return;
+      if (
+        releaseDate < todayDate &&
+        !shouldShowPast &&
+        visibleMonth === initialMonth
+      ) {
+        return;
+      }
       const dateStr = releaseDate.toISOString().split('T')[0]; // YYYY-MM-DD
 
       if (!grouped[dateStr]) grouped[dateStr] = [];
@@ -81,23 +101,31 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
       grouped[dateStr].push(game);
     });
 
-    return Object.entries(grouped).map(([date, data]) => ({
-      title: date,
-      data,
-    }));
-  }, [games, shouldShowPast]);
+    return Object.entries(grouped)
+      .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
+      .map(([date, data]) => ({
+        title: date,
+        data,
+      }));
+  }, [games, shouldShowPast, visibleMonth]);
 
   const marked = useMemo(() => {
     if (!games) return {};
 
     return games.reduce((acc: any, game: any) => {
+      if (!game.first_release_date) return acc;
+
       const dateStr = new Date(game.first_release_date * 1000)
         .toISOString()
         .split('T')[0];
-      acc[dateStr] = { marked: true };
+      acc[dateStr] = {
+        marked: true,
+        selected: dateStr === selectedDate,
+        selectedColor: dateStr === selectedDate ? colors.primary : undefined,
+      };
       return acc;
     }, {});
-  }, [games]);
+  }, [colors.primary, games, selectedDate]);
 
   // Placeholder AgendaItem component
   const AgendaItem = ({ item }: { item: ListGame }) => (
@@ -192,11 +220,12 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
 
   const isLoadingData = isPending || isLoading;
   const noGamesFound = !isLoadingData && transformedItems.length === 0;
+  const monthLabel = useMemo(() => getMonthLabel(visibleMonth), [visibleMonth]);
 
   const NoGames = () => (
     <View style={{ padding: 20, alignItems: 'center' }}>
       <AppText>
-        {isError ? 'Error loading games' : 'No games found for this date'}
+        {isError ? 'Error loading games' : `No releases found for ${monthLabel}`}
       </AppText>
     </View>
   );
@@ -204,7 +233,10 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
   const TodayButton = () => {
     return (
       <TouchableOpacity
-        onPress={() => setSelectedDate(todayDateString)}
+        onPress={() => {
+          setSelectedDate(todayDateString);
+          setVisibleMonth(initialMonth);
+        }}
         style={styles.floatingButton}
       >
         <Calendar size={18} color={colors.primary} />
@@ -214,12 +246,6 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
   };
 
   const ShowPastButton = () => {
-    const handlePress = () => {
-      // initialDate
-      // if
-      setShouldShowPast((prev) => !prev);
-    };
-
     return (
       <TouchableOpacity
         onPress={() => setShouldShowPast((prev) => !prev)}

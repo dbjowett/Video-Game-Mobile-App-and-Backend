@@ -1,5 +1,5 @@
 import { useAddGameToList } from '@/api/hooks/useAddGameToList';
-import { DetailedGame } from '@/api/types/game';
+import { AddableGame } from '@/api/types/game';
 import { GameListWithCovers } from '@/api/types/game-list';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
@@ -13,23 +13,24 @@ import { AppText } from './Themed';
 
 interface Props {
   list: GameListWithCovers;
-  game: DetailedGame;
+  game: AddableGame;
   handleClose: () => void;
 }
 
 export default function GameListPreview({ list, game, handleClose }: Props) {
-  const isDisabled = list.items.some((i) => i.gameId === game.id);
+  const gameId = Number(game.id);
+  const isDisabled = list.items.some((i) => Number(i.gameId) === gameId);
 
   const { colors, shadows } = useTheme();
   const { width } = useWindowDimensions();
   const count = list.items.length;
   const addGameMutation = useAddGameToList();
 
-  const addToList = (id: string, listId: string) => {
+  const addToList = (id: number, listId: string) => {
     // TODO: Update to use Tanstack Form
     addGameMutation.mutate({
       gameListId: listId,
-      gameId: Number(id),
+      gameId: id,
     });
 
     setTimeout(() => {
@@ -83,7 +84,7 @@ export default function GameListPreview({ list, game, handleClose }: Props) {
         variant="dark"
         leftIcon="Plus"
         disabled={isDisabled}
-        onPress={() => addToList(game.id, list.id)}
+        onPress={() => addToList(gameId, list.id)}
       />
     </View>
   );

@@ -17,7 +17,11 @@ import {
   RemoveGameFromListDto,
   UpdateListOrderDto,
 } from './dto';
-import { GameListService, GameListWithCovers } from './game-list.service';
+import {
+  GameListGame,
+  GameListService,
+  GameListWithCovers,
+} from './game-list.service';
 
 @UseGuards(JwtAuthGuard)
 @Controller('gamelist')
@@ -33,7 +37,7 @@ export class GameListController {
   async getGameListsGames(
     @User() user: UserPayload,
     @Param('id') id: string,
-  ): Promise<GameListItem[]> {
+  ): Promise<GameListGame[]> {
     return await this.gameListService.getGameListGames(user, id);
   }
 

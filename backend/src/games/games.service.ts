@@ -182,8 +182,7 @@ export class GamesService {
       first_release_date >= ${startUnix} &
       first_release_date < ${endUnix} &
       platforms = (${platformIds.join(',')}) &
-      game_type = (${allowedTypes.join(',')}) &
-      (hypes > 1 | total_rating_count > 1);
+      game_type = (${allowedTypes.join(',')});
       sort first_release_date asc;
       limit 500;
     `;

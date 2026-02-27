@@ -15,9 +15,23 @@ import {
   View,
 } from 'react-native';
 
+const formatDate = (value: string) => {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(date);
+};
+
 const Page = () => {
   const { id: gameListId } = useLocalSearchParams<{ id: string }>();
-  const { colors } = useTheme();
+  const { colors, shadows } = useTheme();
   const { data: games, isLoading } = useGetListsGames(gameListId);
 
   if (isLoading) {
@@ -34,14 +48,20 @@ const Page = () => {
   }
 
   const renderGameItem = ({ item: gameItem }: { item: GameListItem }) => {
-    console.log('ITEM!!', gameItem);
-    const { id, createdAt, updatedAt, listId, gameId, position, gameCoverUrl } =
+    const { createdAt, updatedAt, gameId, gameTitle, position, gameCoverUrl } =
       gameItem;
-    console.log('Game item!!', gameItem);
 
     return (
       <TouchableOpacity
-        style={[styles.gameItem, { borderColor: colors.borderStrong }]}
+        activeOpacity={0.9}
+        style={[
+          styles.gameItem,
+          shadows.sm,
+          {
+            borderColor: colors.border,
+            backgroundColor: colors.card,
+          },
+        ]}
         onPress={() => {
           router.push(`/games/${gameId}`);
         }}
@@ -54,16 +74,54 @@ const Page = () => {
             />
           </View>
           <View style={styles.gameInfo}>
-            <AppText style={styles.gameTitle}>Game ID: {gameId}</AppText>
+            <View style={styles.titleRow}>
+              <AppText style={styles.gameTitle}>{gameTitle}</AppText>
+              <View
+                style={[
+                  styles.rankBadge,
+                  {
+                    backgroundColor: colors.primary,
+                    borderColor: colors.primary,
+                  },
+                ]}
+              >
+                <AppText
+                  style={[
+                    styles.rankBadgeText,
+                    { color: colors.textOnPrimary },
+                  ]}
+                >
+                  #{position}
+                </AppText>
+              </View>
+            </View>
+
             <AppText
               style={[styles.gameSubtitle, { color: colors.textSecondary }]}
             >
-              Position: {position}
-              Created At: {createdAt}
-              Updated At: {updatedAt}
-              List ID: {listId}
-              ID: {id}
+              Game ID {gameId} • Position {position + 1}
             </AppText>
+
+            <View style={styles.metaRow}>
+              <View
+                style={[
+                  styles.metaChip,
+                  {
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                  },
+                ]}
+              >
+                <AppText
+                  style={[styles.metaLabel, { color: colors.textSecondary }]}
+                >
+                  Added
+                </AppText>
+                <AppText style={styles.metaValue}>
+                  {formatDate(createdAt)}
+                </AppText>
+              </View>
+            </View>
           </View>
         </View>
       </TouchableOpacity>
@@ -77,6 +135,16 @@ const Page = () => {
         data={games}
         renderItem={renderGameItem}
         keyExtractor={(item) => item.id}
+        ListHeaderComponent={
+          <View style={styles.headerBlock}>
+            <AppText
+              style={[styles.headerSubtitle, { color: colors.textSecondary }]}
+            >
+              {games.length} {games.length === 1 ? 'entry' : 'entries'} in this
+              list
+            </AppText>
+          </View>
+        }
         contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
       />
@@ -89,49 +157,93 @@ export default Page;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: spacing.md,
+    paddingHorizontal: spacing.md,
   },
-  header: {
-    fontSize: 24,
-    fontWeight: '600',
-    marginBottom: spacing.lg,
+  headerBlock: {
+    paddingTop: spacing.md,
+    paddingBottom: spacing.lg,
+    gap: spacing.xs,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+  },
+  headerSubtitle: {
+    fontSize: 15,
   },
   listContainer: {
     paddingBottom: spacing.lg,
   },
   gameItem: {
     borderWidth: 1,
-    borderRadius: radius.md,
-    marginBottom: spacing.sm,
-    backgroundColor: 'transparent',
+    borderRadius: radius.lg,
+    marginBottom: spacing.md,
   },
   gameContent: {
     flexDirection: 'row',
-    alignItems: 'center',
-    padding: spacing.xs,
+    alignItems: 'flex-start',
+    padding: spacing.sm,
   },
   imageContainer: {
-    width: 80,
-    height: 100,
+    width: 88,
+    height: 120,
     marginRight: spacing.md,
   },
   gameImage: {
     width: '100%',
     height: '100%',
-    borderRadius: radius.sm,
+    borderRadius: radius.md,
     borderWidth: StyleSheet.hairlineWidth,
   },
   gameInfo: {
     flex: 1,
-    justifyContent: 'center',
+    gap: spacing.sm,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.sm,
   },
   gameTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: spacing.xs,
+    flex: 1,
+    fontSize: 20,
+    fontWeight: '600',
   },
   gameSubtitle: {
     fontSize: 14,
+  },
+  rankBadge: {
+    minWidth: 48,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 6,
+    borderRadius: radius.round,
+    borderWidth: 1,
+    alignItems: 'center',
+  },
+  rankBadgeText: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  metaRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  metaChip: {
+    flex: 1,
+    borderWidth: 1,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.sm,
+    gap: 2,
+  },
+  metaLabel: {
+    fontSize: 12,
+    textTransform: 'uppercase',
+  },
+  metaValue: {
+    fontSize: 14,
+    fontWeight: '600',
   },
   loadingWrapper: {
     flex: 1,

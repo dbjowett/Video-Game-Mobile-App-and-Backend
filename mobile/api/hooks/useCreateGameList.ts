@@ -7,7 +7,7 @@ interface CreateGameListObject {
   title: string;
   description?: string;
   isPublic: boolean;
-  gameIds: string[];
+  gameIds: number[];
 }
 
 export function useCreateGameList() {

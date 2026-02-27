@@ -20,6 +20,7 @@ export type GameListItem = {
   updatedAt: string;
   listId: string;
   gameId: number;
+  gameTitle: string;
   position: number;
   gameCoverUrl: string;
 };

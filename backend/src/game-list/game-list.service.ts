@@ -7,6 +7,7 @@ import { GameList, GameListItem, Prisma } from '@prisma/client';
 import { UserPayload } from 'src/auth/types';
 import { DatabaseService } from 'src/database/database.service';
 import { GamesService } from 'src/games/games.service';
+import { ListGame } from 'src/games/types';
 import { BatchPayload } from 'src/types';
 import {
   AddGameToListDto,
@@ -26,6 +27,10 @@ export type GameListWithCovers = Prisma.GameListGetPayload<{
     };
   };
 }>;
+
+export type GameListGame = GameListItem & {
+  gameTitle: string;
+};
 
 @Injectable()
 export class GameListService {
@@ -65,7 +70,7 @@ export class GameListService {
   async getGameListGames(
     user: UserPayload,
     id: string,
-  ): Promise<GameListItem[]> {
+  ): Promise<GameListGame[]> {
     let games: GameListItem[] = [];
     try {
       games = await this.databaseService.gameListItem.findMany({
@@ -78,7 +83,21 @@ export class GameListService {
       throw new NotFoundException('No games found with ID: ' + id);
     }
 
-    return games;
+    if (games.length === 0) {
+      return [];
+    }
+
+    const gameDetails = await this.gamesService.getListGames(
+      games.map((game) => game.gameId),
+    );
+    const titlesById = new Map<number, ListGame>(
+      gameDetails.map((game) => [game.id, game]),
+    );
+
+    return games.map((game) => ({
+      ...game,
+      gameTitle: titlesById.get(game.gameId)?.name ?? `Game #${game.gameId}`,
+    }));
   }
 
   async createNewGameList(user: UserPayload, body: CreateGameListDto) {
