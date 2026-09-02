@@ -15,9 +15,7 @@ export function useCreateGameList() {
 
   return useMutation<CreateGameListObject, Error, CreateGameListObject>({
     mutationFn: async (formData: CreateGameListObject) =>
-      await api
-        .post('gamelist/new-game-list', { json: formData })
-        .json<CreateGameListObject>(),
+      await api.post('gamelist/new-game-list', { json: formData }).json<CreateGameListObject>(),
     onSuccess: ({ title }) => {
       Toast.show({
         type: 'success',

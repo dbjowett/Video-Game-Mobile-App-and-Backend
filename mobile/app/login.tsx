@@ -41,8 +41,7 @@ const Page = () => {
     mutationFn: async (data) => {
       return await apiNoAuth.post('api/signup', { json: data }).json<Tokens>();
     },
-    onSuccess: async ({ access_token, refresh_token }) =>
-      signIn({ access_token, refresh_token }),
+    onSuccess: async ({ access_token, refresh_token }) => signIn({ access_token, refresh_token }),
     onError: (error) => {
       Alert.alert('Something went wrong. Please try again later.');
     },
@@ -51,9 +50,7 @@ const Page = () => {
   const signInMutation = useMutation<Tokens, Error, Values>({
     mutationFn: async (data: Values): Promise<Tokens> => {
       try {
-        return await apiNoAuth
-          .post('auth/signin', { json: data })
-          .json<Tokens>();
+        return await apiNoAuth.post('auth/signin', { json: data }).json<Tokens>();
       } catch {
         throw new Error('Error logging in');
       }
@@ -102,8 +99,7 @@ const Page = () => {
   ] as const;
 
   // TODO: maybe this can be stored in useTheme() (and maybe theme dark vs light can be returned from there )
-  const gradientColorArr =
-    useColorScheme() === 'dark' ? darkModeColors : lightModeColors;
+  const gradientColorArr = useColorScheme() === 'dark' ? darkModeColors : lightModeColors;
 
   const GameLayout = () => {
     return (
@@ -137,10 +133,7 @@ const Page = () => {
     const authUrl = `${process.env.EXPO_PUBLIC_API_URL}/auth/google?platform=mobile`;
 
     try {
-      const result = await WebBrowser.openAuthSessionAsync(
-        authUrl,
-        redirectUri,
-      );
+      const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
 
       if (result.type === 'success' && result.url) {
         if (result.url.includes('vg-app://login')) {
@@ -177,19 +170,12 @@ const Page = () => {
           <View style={styles.lowerContainer}>
             <>
               {/* Header */}
-              <AppText style={styles.header}>
-                {isSignUp ? 'Sign Up' : 'Sign In'}
-              </AppText>
+              <AppText style={styles.header}>{isSignUp ? 'Sign Up' : 'Sign In'}</AppText>
 
               {/* Google Sign in */}
-              <TouchableOpacity
-                style={styles.googleButton}
-                onPress={handleGoogleLogin}
-              >
+              <TouchableOpacity style={styles.googleButton} onPress={handleGoogleLogin}>
                 <GoogleIcon />
-                <AppText style={styles.buttonText}>
-                  Continue with Google
-                </AppText>
+                <AppText style={styles.buttonText}>Continue with Google</AppText>
               </TouchableOpacity>
 
               {/* Form */}
@@ -216,9 +202,7 @@ const Page = () => {
                         onChangeText={field.handleChange}
                       />
                       {field.state.meta.errors && (
-                        <AppText style={styles.error}>
-                          {field.state.meta.errors.join(', ')}
-                        </AppText>
+                        <AppText style={styles.error}>{field.state.meta.errors.join(', ')}</AppText>
                       )}
                     </>
                   )}
@@ -245,21 +229,14 @@ const Page = () => {
                         secureTextEntry
                       />
                       {field.state.meta.errors && (
-                        <AppText style={styles.error}>
-                          {field.state.meta.errors.join(', ')}
-                        </AppText>
+                        <AppText style={styles.error}>{field.state.meta.errors.join(', ')}</AppText>
                       )}
                     </>
                   )}
                 />
 
-                <TouchableOpacity
-                  style={styles.signUpBtn}
-                  onPress={form.handleSubmit}
-                >
-                  <AppText style={styles.signUpBtnText}>
-                    {isSignUp ? 'Sign Up' : 'Sign In'}
-                  </AppText>
+                <TouchableOpacity style={styles.signUpBtn} onPress={form.handleSubmit}>
+                  <AppText style={styles.signUpBtnText}>{isSignUp ? 'Sign Up' : 'Sign In'}</AppText>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => setIsSignUp((prev) => !prev)}>

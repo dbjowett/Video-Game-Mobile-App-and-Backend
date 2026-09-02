@@ -21,15 +21,9 @@ export const CustomHeader = ({ title }: { title: string }) => {
         onPress={() => navigation.goBack()}
         style={{ position: 'absolute', bottom: 10, left: 15 }}
       >
-        <Text style={{ fontSize: 18, color: colors.textPrimary }}>
-          {'< Back'}
-        </Text>
+        <Text style={{ fontSize: 18, color: colors.textPrimary }}>{'< Back'}</Text>
       </TouchableOpacity>
-      <Text
-        style={{ fontSize: 30, fontWeight: 'bold', color: colors.textPrimary }}
-      >
-        {title}
-      </Text>
+      <Text style={{ fontSize: 30, fontWeight: 'bold', color: colors.textPrimary }}>{title}</Text>
     </View>
   );
 };

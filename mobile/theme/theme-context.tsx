@@ -39,8 +39,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [themeMode, setThemeMode] = useState<ColorSchemeName | 'system'>(
     systemColorScheme || 'light',
   );
-  const currentThemeMode =
-    themeMode === 'system' ? systemColorScheme : themeMode;
+  const currentThemeMode = themeMode === 'system' ? systemColorScheme : themeMode;
 
   const shadows = useShadows(currentThemeMode);
 
@@ -70,9 +69,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const currentColors = themeMode === 'dark' ? darkColors : lightColors;
   const isDarkMode = themeMode === 'dark';
 
-  const statusBarStyle: StatusBarStyle = isDarkMode
-    ? 'light-content'
-    : 'dark-content';
+  const statusBarStyle: StatusBarStyle = isDarkMode ? 'light-content' : 'dark-content';
 
   const setTheme = useCallback(
     async (mode: ColorSchemeName) => {
@@ -100,11 +97,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     statusBarStyle,
   };
 
-  return (
-    <ThemeContext.Provider value={contextValue}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={contextValue}>{children}</ThemeContext.Provider>;
 };
 
 export const useTheme = () => {

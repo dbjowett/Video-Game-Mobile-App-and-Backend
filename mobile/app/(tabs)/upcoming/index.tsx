@@ -8,12 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { Calendar, ChevronDown } from 'lucide-react-native';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import {
-  Animated,
-  Easing,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import { Animated, Easing, StyleSheet, TouchableOpacity } from 'react-native';
 
 import { AppText, View } from '@/components/Themed';
 
@@ -34,9 +29,7 @@ const fetchReleasesByMonth = async (month: string) =>
 
 const date = new Date();
 
-const initialDate = new Date(date.getFullYear(), date.getMonth(), 2)
-  .toISOString()
-  .split('T')[0]; // "YYYY-MM-DD"
+const initialDate = new Date(date.getFullYear(), date.getMonth(), 2).toISOString().split('T')[0]; // "YYYY-MM-DD"
 
 const todayDate = new Date();
 todayDate.setHours(0, 0, 0, 0);
@@ -88,11 +81,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
       if (!game.first_release_date) return; // Skip if no release date
       const releaseDate = new Date(game.first_release_date * 1000);
       releaseDate.setHours(0, 0, 0, 0);
-      if (
-        releaseDate < todayDate &&
-        !shouldShowPast &&
-        visibleMonth === initialMonth
-      ) {
+      if (releaseDate < todayDate && !shouldShowPast && visibleMonth === initialMonth) {
         return;
       }
       const dateStr = releaseDate.toISOString().split('T')[0]; // YYYY-MM-DD
@@ -116,9 +105,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
     return games.reduce((acc: any, game: any) => {
       if (!game.first_release_date) return acc;
 
-      const dateStr = new Date(game.first_release_date * 1000)
-        .toISOString()
-        .split('T')[0];
+      const dateStr = new Date(game.first_release_date * 1000).toISOString().split('T')[0];
       acc[dateStr] = {
         marked: true,
         selected: dateStr === selectedDate,
@@ -161,13 +148,8 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
       });
 
       return (
-        <TouchableOpacity
-          style={styles.header}
-          onPress={toggleCalendarExpansion}
-        >
-          <AppText style={styles.headerTitle}>
-            {date?.toString?.('MMMM yyyy') ?? ''}
-          </AppText>
+        <TouchableOpacity style={styles.header} onPress={toggleCalendarExpansion}>
+          <AppText style={styles.headerTitle}>{date?.toString?.('MMMM yyyy') ?? ''}</AppText>
           <Animated.View style={{ transform: [{ rotate: rotationInDegrees }] }}>
             <ChevronDown size={18} />
           </Animated.View>
@@ -206,9 +188,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
 
   const NoGames = () => (
     <View style={{ padding: 20, alignItems: 'center' }}>
-      <AppText>
-        {isError ? 'Error loading games' : `No releases found for ${monthLabel}`}
-      </AppText>
+      <AppText>{isError ? 'Error loading games' : `No releases found for ${monthLabel}`}</AppText>
     </View>
   );
 
@@ -234,9 +214,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
         style={styles.floatingButton}
       >
         <Calendar size={18} color={colors.primary} />
-        <AppText style={{ color: colors.primary }}>
-          {shouldShowPast ? 'Hide' : 'Show'} Past
-        </AppText>
+        <AppText style={{ color: colors.primary }}>{shouldShowPast ? 'Hide' : 'Show'} Past</AppText>
       </TouchableOpacity>
     );
   };
@@ -288,9 +266,7 @@ const ExpandableCalendarScreen = ({ weekView }: Props) => {
             markToday
             ref={listRef}
             sections={transformedItems}
-            renderItem={({ item }: { item: ListGame }) => (
-              <AgendaItem item={item} />
-            )}
+            renderItem={({ item }: { item: ListGame }) => <AgendaItem item={item} />}
             sectionStyle={styles.agendaItemList}
           />
 

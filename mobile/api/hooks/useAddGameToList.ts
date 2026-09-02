@@ -13,9 +13,7 @@ export function useAddGameToList() {
 
   return useMutation<AddGameToListObject, Error, AddGameToListObject>({
     mutationFn: async (formData: AddGameToListObject) =>
-      await api
-        .post('gamelist/add-to-list', { json: formData })
-        .json<AddGameToListObject>(),
+      await api.post('gamelist/add-to-list', { json: formData }).json<AddGameToListObject>(),
     onSuccess: () => {
       Toast.show({
         type: 'success',

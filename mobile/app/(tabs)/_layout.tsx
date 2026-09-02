@@ -35,9 +35,7 @@ export default function TabLayout() {
         options={{
           title: 'Explore',
           tabBarLabel: 'Explore',
-          tabBarIcon: ({ color, size }: IconProps) => (
-            <Search size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }: IconProps) => <Search size={size} color={color} />,
         }}
       />
 
@@ -46,9 +44,7 @@ export default function TabLayout() {
         options={{
           title: 'Upcoming',
           tabBarLabel: 'Upcoming',
-          tabBarIcon: ({ color, size }: IconProps) => (
-            <CalendarClock size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }: IconProps) => <CalendarClock size={size} color={color} />,
         }}
       />
 
@@ -57,9 +53,7 @@ export default function TabLayout() {
         options={{
           title: 'Game Lists',
           tabBarLabel: 'Lists',
-          tabBarIcon: ({ color, size }: IconProps) => (
-            <List size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }: IconProps) => <List size={size} color={color} />,
         }}
       />
       {/* <Tabs.Screen

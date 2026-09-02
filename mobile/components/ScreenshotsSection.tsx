@@ -19,11 +19,7 @@ export const ScreenshotsSection = ({ screenshots, onImagePress }: Props) => {
         showsHorizontalScrollIndicator={false}
       >
         {screenshots.map((screenshot, index) => (
-          <TouchableOpacity
-            key={index}
-            onPress={() => onImagePress(index)}
-            activeOpacity={0.8}
-          >
+          <TouchableOpacity key={index} onPress={() => onImagePress(index)} activeOpacity={0.8}>
             <Animated.Image
               source={{
                 uri: imageLoader({

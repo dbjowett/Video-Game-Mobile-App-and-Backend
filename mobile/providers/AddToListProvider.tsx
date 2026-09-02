@@ -8,15 +8,11 @@ interface AddToListContextType {
   closeAddToListSheet: () => void;
 }
 
-const AddToListContext = createContext<AddToListContextType | undefined>(
-  undefined,
-);
+const AddToListContext = createContext<AddToListContextType | undefined>(undefined);
 
 const AddToListProvider = ({ children }: { children: React.ReactNode }) => {
   const addToListSheetRef = useRef<BottomSheet>(null);
-  const [selectedGame, setSelectedGame] = useState<
-    DetailedGame | ListGame | null
-  >(null);
+  const [selectedGame, setSelectedGame] = useState<DetailedGame | ListGame | null>(null);
   const openAddToListSheet = (game: DetailedGame | ListGame) => {
     setSelectedGame(game);
     addToListSheetRef.current?.expand();
@@ -28,13 +24,9 @@ const AddToListProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AddToListContext.Provider
-      value={{ openAddToListSheet, closeAddToListSheet }}
-    >
+    <AddToListContext.Provider value={{ openAddToListSheet, closeAddToListSheet }}>
       {children}
-      {selectedGame && (
-        <AddToListSheet game={selectedGame} ref={addToListSheetRef} />
-      )}
+      {selectedGame && <AddToListSheet game={selectedGame} ref={addToListSheetRef} />}
     </AddToListContext.Provider>
   );
 };

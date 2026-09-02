@@ -2,13 +2,7 @@ import { useUser } from '@/api/hooks/useUser';
 import { useTheme } from '@/theme/theme-context';
 import { Link } from 'expo-router';
 
-import {
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Image, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
@@ -25,26 +19,18 @@ const LandingHeader = () => {
         <View style={styles.actionRow}>
           <Link href={'/(modals)/search'} asChild>
             <TouchableOpacity
-              style={StyleSheet.flatten([
-                styles.searchBtn,
-                { borderColor: colors.border },
-              ])}
+              style={StyleSheet.flatten([styles.searchBtn, { borderColor: colors.border }])}
             >
               <Search size={20} color={colors.textPrimary} />
               <View>
                 <AppText style={{ fontWeight: 600 }}>Search</AppText>
-                <AppText style={{ color: colors.textSecondary }}>
-                  Find your new favourite
-                </AppText>
+                <AppText style={{ color: colors.textSecondary }}>Find your new favourite</AppText>
               </View>
             </TouchableOpacity>
           </Link>
           <Link href={'/(modals)/profile'} asChild>
             <TouchableOpacity>
-              <Image
-                source={{ uri: user?.profileImage }}
-                style={styles.profileImage}
-              />
+              <Image source={{ uri: user?.profileImage }} style={styles.profileImage} />
             </TouchableOpacity>
           </Link>
         </View>

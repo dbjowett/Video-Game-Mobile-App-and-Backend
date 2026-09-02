@@ -12,7 +12,7 @@ export const ToggleSection = ({ open, setOpen }: ToggleSectionProps) => {
     <motion.button
       layout
       transition={{ duration: COLLAPSE_DURATION }}
-      onClick={() => setOpen(open ? false : true)}
+      onClick={() => setOpen(!open)}
       className={styles.ToggleButton}
     >
       <div className={styles.ToggleContent}>

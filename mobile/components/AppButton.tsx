@@ -187,16 +187,7 @@ const AppButton: React.FC<AppButtonProps> = ({
         marginLeft: baseSpacing[size],
       },
     });
-  }, [
-    colors,
-    isDarkMode,
-    variant,
-    size,
-    fontSize,
-    borderRadius,
-    disabled,
-    loading,
-  ]);
+  }, [colors, isDarkMode, variant, size, fontSize, borderRadius, disabled, loading]);
 
   return (
     <TouchableOpacity

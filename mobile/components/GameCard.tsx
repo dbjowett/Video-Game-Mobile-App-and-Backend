@@ -5,14 +5,7 @@ import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
 import { GameCardModel, GameCardVariant } from '@/utils/gameCard';
 import React, { ReactNode } from 'react';
-import {
-  ImageStyle,
-  Pressable,
-  StyleProp,
-  StyleSheet,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { ImageStyle, Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
 interface GameCardProps {
   game: GameCardModel;
@@ -59,11 +52,7 @@ export default function GameCard({
           quality={isCompact ? 2 : 6}
           style={[
             styles.imageBase,
-            isFeature
-              ? styles.featureImage
-              : isCompact
-                ? styles.compactImage
-                : styles.defaultImage,
+            isFeature ? styles.featureImage : isCompact ? styles.compactImage : styles.defaultImage,
             { borderColor: colors.borderStrong },
             imageStyle,
           ]}
@@ -122,10 +111,7 @@ export default function GameCard({
             ) : null}
 
             {game.meta ? (
-              <AppText
-                numberOfLines={1}
-                style={[styles.meta, { color: colors.textSecondary }]}
-              >
+              <AppText numberOfLines={1} style={[styles.meta, { color: colors.textSecondary }]}>
                 {game.meta}
               </AppText>
             ) : null}

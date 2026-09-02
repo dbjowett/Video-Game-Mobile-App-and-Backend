@@ -19,9 +19,7 @@ export const useRemoveFavouriteGame = () => {
       await queryClient.cancelQueries({
         queryKey: ['favouriteGames'],
       });
-      const prevFaves = queryClient.getQueryData([
-        'favouriteGames',
-      ]) as FaveGame[];
+      const prevFaves = queryClient.getQueryData(['favouriteGames']) as FaveGame[];
       queryClient.setQueryData(['favouriteGames'], (prev: FaveGame[]) =>
         prev.filter((fave) => fave.gameId !== gameId),
       );

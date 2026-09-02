@@ -18,22 +18,12 @@ export function AppText(props: TextProps) {
   const { style, lightColour, darkColour, ...otherProps } = props;
   const { colors } = useTheme();
 
-  return (
-    <DefaultText
-      style={[{ color: colors.textPrimary }, style]}
-      {...otherProps}
-    />
-  );
+  return <DefaultText style={[{ color: colors.textPrimary }, style]} {...otherProps} />;
 }
 
 export function View(props: ViewProps) {
   const { style, lightColour, darkColour, ...otherProps } = props;
   const { colors } = useTheme();
 
-  return (
-    <DefaultView
-      style={[{ backgroundColor: colors.background }, style]}
-      {...otherProps}
-    />
-  );
+  return <DefaultView style={[{ backgroundColor: colors.background }, style]} {...otherProps} />;
 }

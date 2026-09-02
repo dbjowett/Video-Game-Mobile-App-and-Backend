@@ -10,13 +10,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from 'expo-router';
 import { CameraIcon, CircleUserRound } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import {
-  ActivityIndicator,
-  Image,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 const Page = () => {
   const headerHeight = useHeaderHeight();
   const { signOut } = useSession();
@@ -88,10 +82,7 @@ const Page = () => {
     return (
       <View style={styles.imageContainer}>
         {user?.profileImage || image ? (
-          <Image
-            source={{ uri: image || user?.profileImage }}
-            style={styles.profileImage}
-          />
+          <Image source={{ uri: image || user?.profileImage }} style={styles.profileImage} />
         ) : (
           <View style={styles.profileImage}>
             <CircleUserRound color="white" size={40} />
@@ -99,10 +90,7 @@ const Page = () => {
         )}
 
         {isEditing ? (
-          <TouchableOpacity
-            style={styles.editImageOverlayWrap}
-            onPress={handleEditImg}
-          >
+          <TouchableOpacity style={styles.editImageOverlayWrap} onPress={handleEditImg}>
             <View style={styles.editImageOverlay} />
 
             <CameraIcon color="white" size={28} />
@@ -117,18 +105,8 @@ const Page = () => {
     <View style={[styles.container, { paddingTop: headerHeight }]}>
       <View style={styles.profileContainer}>
         <ProfileImage />
-        <View
-          style={StyleSheet.flatten([
-            styles.itemWrap,
-            { borderColor: colors.border },
-          ])}
-        >
-          <AppText
-            style={StyleSheet.flatten([
-              styles.subtext,
-              { color: colors.textSecondary },
-            ])}
-          >
+        <View style={StyleSheet.flatten([styles.itemWrap, { borderColor: colors.border }])}>
+          <AppText style={StyleSheet.flatten([styles.subtext, { color: colors.textSecondary }])}>
             Username
           </AppText>
 
@@ -148,29 +126,14 @@ const Page = () => {
           )}
         </View>
         {/* Email */}
-        <View
-          style={StyleSheet.flatten([
-            styles.itemWrap,
-            { borderColor: colors.border },
-          ])}
-        >
-          <AppText
-            style={StyleSheet.flatten([
-              styles.subtext,
-              { color: colors.textSecondary },
-            ])}
-          >
+        <View style={StyleSheet.flatten([styles.itemWrap, { borderColor: colors.border }])}>
+          <AppText style={StyleSheet.flatten([styles.subtext, { color: colors.textSecondary }])}>
             Email
           </AppText>
           <AppText style={styles.mainText}>{user?.email}</AppText>
         </View>
 
-        <AppButton
-          style={{ width: '80%' }}
-          title="Sign Out"
-          onPress={signOut}
-          rightIcon="LogOut"
-        />
+        <AppButton style={{ width: '80%' }} title="Sign Out" onPress={signOut} rightIcon="LogOut" />
       </View>
     </View>
   );

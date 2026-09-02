@@ -59,9 +59,7 @@ const websiteCategoryMap: Record<number, string> = {
   20: 'SoundCloud',
 };
 
-export const getObjectCategoryName = (
-  categoryId: number,
-): string | undefined => {
+export const getObjectCategoryName = (categoryId: number): string | undefined => {
   return websiteCategoryMap[categoryId];
 };
 

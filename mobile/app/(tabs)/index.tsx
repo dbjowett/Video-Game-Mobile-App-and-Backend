@@ -1,10 +1,4 @@
-import {
-  ActivityIndicator,
-  FlatList,
-  ListRenderItem,
-  ScrollView,
-  StyleSheet,
-} from 'react-native';
+import { ActivityIndicator, FlatList, ListRenderItem, ScrollView, StyleSheet } from 'react-native';
 
 import { usePopularGames } from '@/api';
 import { ListGame, PopKey } from '@/api/types/game';
@@ -37,32 +31,16 @@ export default function Page() {
     });
 
     return (
-      <Animated.View
-        style={styles.itemContainer}
-        entering={FadeInRight}
-        exiting={FadeOutLeft}
-      >
-        <GameCard
-          game={card}
-          variant="feature"
-          onPress={() => router.push(`/games/${item.id}`)}
-        />
+      <Animated.View style={styles.itemContainer} entering={FadeInRight} exiting={FadeOutLeft}>
+        <GameCard game={card} variant="feature" onPress={() => router.push(`/games/${item.id}`)} />
       </Animated.View>
     );
   };
 
-  const GameList: FC<{ title: PopKey; games: ListGame[] }> = ({
-    title,
-    games,
-  }) => (
+  const GameList: FC<{ title: PopKey; games: ListGame[] }> = ({ title, games }) => (
     <View>
       <AppText style={styles.categoryTitle}>{popTypeTitleMap[title]}</AppText>
-      <FlatList
-        horizontal
-        style={styles.listContainer}
-        data={games}
-        renderItem={SingleGame}
-      />
+      <FlatList horizontal style={styles.listContainer} data={games} renderItem={SingleGame} />
     </View>
   );
 

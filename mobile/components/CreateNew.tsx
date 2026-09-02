@@ -38,8 +38,7 @@ const CreateNewForm = ({ game }: { game: AddableGame }) => {
         <form.Field
           name="title"
           validators={{
-            onSubmit: ({ value }) =>
-              !value ? 'Please enter a title' : undefined,
+            onSubmit: ({ value }) => (!value ? 'Please enter a title' : undefined),
           }}
           children={(field) => (
             <>
@@ -57,9 +56,7 @@ const CreateNewForm = ({ game }: { game: AddableGame }) => {
                 ]}
               />
               {field.state.meta.errors?.length > 0 && (
-                <AppText style={styles.error}>
-                  {field.state.meta.errors.join(', ')}
-                </AppText>
+                <AppText style={styles.error}>{field.state.meta.errors.join(', ')}</AppText>
               )}
             </>
           )}
@@ -70,8 +67,7 @@ const CreateNewForm = ({ game }: { game: AddableGame }) => {
         <form.Field
           name="description"
           validators={{
-            onSubmit: ({ value }) =>
-              !value ? 'Please enter a description' : undefined,
+            onSubmit: ({ value }) => (!value ? 'Please enter a description' : undefined),
           }}
           children={(field) => (
             <>
@@ -89,9 +85,7 @@ const CreateNewForm = ({ game }: { game: AddableGame }) => {
                 ]}
               />
               {field.state.meta.errors?.length > 0 && (
-                <AppText style={styles.error}>
-                  {field.state.meta.errors.join(', ')}
-                </AppText>
+                <AppText style={styles.error}>{field.state.meta.errors.join(', ')}</AppText>
               )}
             </>
           )}
@@ -115,9 +109,7 @@ const CreateNewForm = ({ game }: { game: AddableGame }) => {
                 borderRadius: 12,
                 borderWidth: 1,
                 borderColor: colors.border,
-                backgroundColor: state.value
-                  ? colors.primary
-                  : colors.background,
+                backgroundColor: state.value ? colors.primary : colors.background,
                 marginRight: 8,
                 alignItems: 'center',
                 justifyContent: 'center',

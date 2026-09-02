@@ -46,10 +46,7 @@ export const MoreText = ({
   return (
     <>
       {/* Hidden text for iOS measurement */}
-      <Text
-        style={{ height: 0 }}
-        onTextLayout={(e) => handleTextLayout(e.nativeEvent.lines)}
-      >
+      <Text style={{ height: 0 }} onTextLayout={(e) => handleTextLayout(e.nativeEvent.lines)}>
         {text}
       </Text>
 

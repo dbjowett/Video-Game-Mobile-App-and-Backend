@@ -8,12 +8,7 @@ import { useTheme } from '@/theme/theme-context';
 import { mapGameListItemToCard } from '@/utils/gameCard';
 import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 
 const formatDate = (value: string) => {
   const date = new Date(value);
@@ -73,11 +68,8 @@ const Page = () => {
         keyExtractor={(item) => item.id}
         ListHeaderComponent={
           <View style={styles.headerBlock}>
-            <AppText
-              style={[styles.headerSubtitle, { color: colors.textSecondary }]}
-            >
-              {games.length} {games.length === 1 ? 'entry' : 'entries'} in this
-              list
+            <AppText style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
+              {games.length} {games.length === 1 ? 'entry' : 'entries'} in this list
             </AppText>
           </View>
         }

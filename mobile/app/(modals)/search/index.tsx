@@ -11,13 +11,7 @@ import { useHeaderHeight } from '@react-navigation/elements';
 import { router } from 'expo-router';
 import { ListPlus, XIcon } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
 const GameItem = ({
   item,
@@ -39,10 +33,7 @@ const GameItem = ({
       }}
       style={styles.card}
       rightAccessory={
-        <TouchableOpacity
-          style={styles.rightContainer}
-          onPress={() => onPlusPress(item)}
-        >
+        <TouchableOpacity style={styles.rightContainer} onPress={() => onPlusPress(item)}>
           <ListPlus size={18} color={colors.textPrimary} />
         </TouchableOpacity>
       }
@@ -79,11 +70,7 @@ const Page = () => {
     }, 100);
   };
 
-  const {
-    data: searchedGames,
-    isLoading,
-    isFetching,
-  } = useGameSearch(debouncedInput);
+  const { data: searchedGames, isLoading, isFetching } = useGameSearch(debouncedInput);
 
   const noResults =
     !isLoading &&
@@ -103,11 +90,7 @@ const Page = () => {
           value={input}
         />
         {input.length > 0 && (
-          <XIcon
-            size={20}
-            color={colors.textPrimary}
-            onPress={() => setInput('')}
-          />
+          <XIcon size={20} color={colors.textPrimary} onPress={() => setInput('')} />
         )}
       </View>
       {noResults && (
@@ -119,9 +102,7 @@ const Page = () => {
       <FlatList
         data={searchedGames}
         keyExtractor={({ id }) => id.toString()}
-        renderItem={({ item }) => (
-          <GameItem item={item} onPlusPress={handlePlusPress} />
-        )}
+        renderItem={({ item }) => <GameItem item={item} onPlusPress={handlePlusPress} />}
         contentContainerStyle={styles.listContent}
       />
       {(isLoading || isFetching) && (

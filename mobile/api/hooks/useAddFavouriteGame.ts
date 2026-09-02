@@ -11,17 +11,11 @@ export const useAddFavouriteGame = () => {
   return useMutation({
     mutationFn: addToFavourites,
     mutationKey: ['addFavouriteGame'],
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ['favouriteGames'] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['favouriteGames'] }),
     onMutate: async (gameId) => {
       await queryClient.cancelQueries({ queryKey: ['favouriteGames'] });
-      const prevFaves = queryClient.getQueryData([
-        'favouriteGames',
-      ]) as FaveGame[];
-      queryClient.setQueryData(['favouriteGames'], (prev: FaveGame[]) => [
-        ...prev,
-        { gameId },
-      ]);
+      const prevFaves = queryClient.getQueryData(['favouriteGames']) as FaveGame[];
+      queryClient.setQueryData(['favouriteGames'], (prev: FaveGame[]) => [...prev, { gameId }]);
       return { prevFaves };
     },
     onError: (error) => {

@@ -1,0 +1,8 @@
+allowBuilds:
+  "@nestjs/core": true
+  "@prisma/client": true
+  "@prisma/engines": true
+  argon2: false
+  esbuild: false
+  prisma: false
+  unrs-resolver: false

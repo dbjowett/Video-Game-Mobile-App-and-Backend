@@ -39,8 +39,7 @@ const { width } = Dimensions.get('window');
 
 const Page = () => {
   const [imageLoaded, setIsImageLoaded] = useState<boolean>(false);
-  const [isImageViewerVisible, setIsImageViewerVisible] =
-    useState<boolean>(false);
+  const [isImageViewerVisible, setIsImageViewerVisible] = useState<boolean>(false);
   const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
 
   const { openAddToListSheet } = useAddToList();
@@ -58,9 +57,7 @@ const Page = () => {
   const isFaved = favouriteGames?.some((game) => game.gameId.toString() === id);
 
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
-  const scrollOffset = useScrollViewOffset(
-    scrollRef.current ? scrollRef : null,
-  );
+  const scrollOffset = useScrollViewOffset(scrollRef.current ? scrollRef : null);
   const navigation = useNavigation();
 
   const shareListing = async () => {
@@ -114,11 +111,7 @@ const Page = () => {
             ),
           },
           {
-            scale: interpolate(
-              scrollOffset.value,
-              [-IMG_HEIGHT, 0, IMG_HEIGHT],
-              [2, 1, 1],
-            ),
+            scale: interpolate(scrollOffset.value, [-IMG_HEIGHT, 0, IMG_HEIGHT], [2, 1, 1]),
           },
         ],
       };
@@ -131,11 +124,7 @@ const Page = () => {
     navigation.setOptions({
       headerTitle: () => (
         <Animated.Text
-          style={[
-            styles.headerTitle,
-            titleAnimatedStyle,
-            { color: colors.textPrimary },
-          ]}
+          style={[styles.headerTitle, titleAnimatedStyle, { color: colors.textPrimary }]}
           numberOfLines={1}
         >
           {game?.name}
@@ -144,11 +133,7 @@ const Page = () => {
       headerTransparent: true,
       headerBackground: () => (
         <Animated.View
-          style={[
-            styles.header,
-            headerAnimatedStyle,
-            { backgroundColor: colors.background },
-          ]}
+          style={[styles.header, headerAnimatedStyle, { backgroundColor: colors.background }]}
         />
       ),
       headerRight: () => (
@@ -201,12 +186,7 @@ const Page = () => {
           }}
           style={[styles.image, imageAnimatedStyle]}
         />
-        <View
-          style={[
-            styles.contentContainer,
-            { backgroundColor: colors.background },
-          ]}
-        >
+        <View style={[styles.contentContainer, { backgroundColor: colors.background }]}>
           <AppText style={styles.title}>{game.name}</AppText>
           <View style={styles.summary}>
             <MoreText text={game.summary} />
@@ -224,10 +204,7 @@ const Page = () => {
         {/* Similar games game.similar_games */}
         <SimilarGamesSection similarGames={game.similar_games} />
       </Animated.ScrollView>
-      <Animated.View
-        style={[defaultStyles.footer]}
-        entering={SlideInDown.delay(700).damping(20)}
-      >
+      <Animated.View style={[defaultStyles.footer]} entering={SlideInDown.delay(700).damping(20)}>
         <View
           style={{
             flexDirection: 'row',

@@ -23,146 +23,125 @@ interface CreateNewFormProps {
   game: AddableGame;
 }
 
-const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(
-  ({ game }, ref) => {
-    const { width } = Dimensions.get('window');
-    const { colors } = useTheme();
+const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(({ game }, ref) => {
+  const { width } = Dimensions.get('window');
+  const { colors } = useTheme();
 
-    const { data: gameLists, isLoading } = useGetLists();
-    const offset = useSharedValue(0);
-    const [isCreatingNew, setIsCreatingNew] = useState<boolean>(false);
+  const { data: gameLists, isLoading } = useGetLists();
+  const offset = useSharedValue(0);
+  const [isCreatingNew, setIsCreatingNew] = useState<boolean>(false);
 
-    const handleClose = () => {
-      if (ref && typeof ref !== 'function' && ref.current) {
-        ref.current.close();
-      }
+  const handleClose = () => {
+    if (ref && typeof ref !== 'function' && ref.current) {
+      ref.current.close();
+    }
+  };
+
+  useEffect(() => {
+    offset.value = isCreatingNew ? 0 : 1;
+  }, [isCreatingNew]);
+
+  const createNewStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateX: withTiming(offset.value === 0 ? 0 : width, {
+            duration: 200,
+            easing: Easing.inOut(Easing.quad),
+          }),
+        },
+      ],
+      position: 'absolute',
+      width: '100%',
     };
+  });
 
-    useEffect(() => {
-      offset.value = isCreatingNew ? 0 : 1;
-    }, [isCreatingNew]);
+  const listStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateX: withTiming(offset.value === 1 ? 0 : -width, {
+            duration: 200,
+            easing: Easing.inOut(Easing.quad),
+          }),
+        },
+      ],
+      position: 'absolute',
+      width: '100%',
+    };
+  });
 
-    const createNewStyle = useAnimatedStyle(() => {
-      return {
-        transform: [
-          {
-            translateX: withTiming(offset.value === 0 ? 0 : width, {
-              duration: 200,
-              easing: Easing.inOut(Easing.quad),
-            }),
-          },
-        ],
-        position: 'absolute',
-        width: '100%',
-      };
-    });
+  return (
+    <BottomSheet
+      enablePanDownToClose={true}
+      enableDynamicSizing={false}
+      backgroundStyle={{ backgroundColor: colors.surface }}
+      ref={ref}
+      index={-1}
+      style={{ flex: 1 }}
+      snapPoints={['50%', '80%']}
+    >
+      <View style={styles.sheetContainer}>
+        <View style={styles.header}>
+          {/* <TouchableOpacity onPress={handleClose}> */}
+          {/*   <AppText style={styles.headerButton}>Cancel</AppText> */}
+          {/* </TouchableOpacity> */}
 
-    const listStyle = useAnimatedStyle(() => {
-      return {
-        transform: [
-          {
-            translateX: withTiming(offset.value === 1 ? 0 : -width, {
-              duration: 200,
-              easing: Easing.inOut(Easing.quad),
-            }),
-          },
-        ],
-        position: 'absolute',
-        width: '100%',
-      };
-    });
-
-    return (
-      <BottomSheet
-        enablePanDownToClose={true}
-        enableDynamicSizing={false}
-        backgroundStyle={{ backgroundColor: colors.surface }}
-        ref={ref}
-        index={-1}
-        style={{ flex: 1 }}
-        snapPoints={['50%', '80%']}
-      >
-        <View style={styles.sheetContainer}>
-          <View style={styles.header}>
-            {/* <TouchableOpacity onPress={handleClose}> */}
-            {/*   <AppText style={styles.headerButton}>Cancel</AppText> */}
-            {/* </TouchableOpacity> */}
-
-            <View style={{ flex: 1, alignItems: 'center', gap: spacing.xs }}>
-              <AppText style={styles.headerTitle}>Add To List</AppText>
-              <AppText style={{ fontSize: 14, color: colors.textSecondary }}>
-                {game.name}
-              </AppText>
-            </View>
-          </View>
-
-          <View style={{ flex: 1, overflow: 'hidden' }}>
-            <Animated.View
-              style={[{ flex: 1, gap: spacing.md }, createNewStyle]}
-            >
-              <AppButton
-                title="Add to Existing"
-                onPress={() => setIsCreatingNew(false)}
-                size="md"
-                fontSize="md"
-                borderRadius="md"
-                leftIcon="ArrowLeft"
-              />
-              <CreateNewForm game={game} />
-            </Animated.View>
-
-            <Animated.View
-              style={[
-                StyleSheet.absoluteFill,
-                { flex: 1, gap: spacing.md },
-                listStyle,
-              ]}
-            >
-              <AppButton
-                title="Create New List"
-                size="md"
-                fontSize="md"
-                borderRadius="md"
-                rightIcon="ArrowRight"
-                onPress={() => setIsCreatingNew(true)}
-              />
-
-              {gameLists?.length === 0 && (
-                <View style={styles.emptyList}>
-                  <AppText style={styles.emptyListText}>No Game Lists</AppText>
-                  <AppText
-                    style={[
-                      { color: colors.textSecondary },
-                      styles.emptyListSubtext,
-                    ]}
-                  >
-                    Please create a new list
-                  </AppText>
-                </View>
-              )}
-              <BottomSheetFlatList
-                keyboardShouldPersistTaps="handled"
-                style={{ flex: 1 }}
-                data={gameLists}
-                renderItem={({ item }) => (
-                  <GameListPreview
-                    list={item}
-                    game={game}
-                    handleClose={handleClose}
-                  />
-                )}
-                keyExtractor={(item) => item.id}
-                numColumns={2}
-                columnWrapperStyle={styles.row}
-                contentContainerStyle={{ paddingBottom: spacing.md }}
-              />
-            </Animated.View>
+          <View style={{ flex: 1, alignItems: 'center', gap: spacing.xs }}>
+            <AppText style={styles.headerTitle}>Add To List</AppText>
+            <AppText style={{ fontSize: 14, color: colors.textSecondary }}>{game.name}</AppText>
           </View>
         </View>
-      </BottomSheet>
-    );
-  },
-);
+
+        <View style={{ flex: 1, overflow: 'hidden' }}>
+          <Animated.View style={[{ flex: 1, gap: spacing.md }, createNewStyle]}>
+            <AppButton
+              title="Add to Existing"
+              onPress={() => setIsCreatingNew(false)}
+              size="md"
+              fontSize="md"
+              borderRadius="md"
+              leftIcon="ArrowLeft"
+            />
+            <CreateNewForm game={game} />
+          </Animated.View>
+
+          <Animated.View style={[StyleSheet.absoluteFill, { flex: 1, gap: spacing.md }, listStyle]}>
+            <AppButton
+              title="Create New List"
+              size="md"
+              fontSize="md"
+              borderRadius="md"
+              rightIcon="ArrowRight"
+              onPress={() => setIsCreatingNew(true)}
+            />
+
+            {gameLists?.length === 0 && (
+              <View style={styles.emptyList}>
+                <AppText style={styles.emptyListText}>No Game Lists</AppText>
+                <AppText style={[{ color: colors.textSecondary }, styles.emptyListSubtext]}>
+                  Please create a new list
+                </AppText>
+              </View>
+            )}
+            <BottomSheetFlatList
+              keyboardShouldPersistTaps="handled"
+              style={{ flex: 1 }}
+              data={gameLists}
+              renderItem={({ item }) => (
+                <GameListPreview list={item} game={game} handleClose={handleClose} />
+              )}
+              keyExtractor={(item) => item.id}
+              numColumns={2}
+              columnWrapperStyle={styles.row}
+              contentContainerStyle={{ paddingBottom: spacing.md }}
+            />
+          </Animated.View>
+        </View>
+      </View>
+    </BottomSheet>
+  );
+});
 
 export default AddToListSheet;
 

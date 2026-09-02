@@ -36,10 +36,7 @@ export const ListItem: FC<GameListItemProps> = ({ list }) => {
                 {list.items
                   .slice(0, list.items.length > 4 ? 3 : list.items.length)
                   .map((item, i) => (
-                    <View
-                      key={item.gameId}
-                      style={[getImageWrapStyle(list.items.length, i)]}
-                    >
+                    <View key={item.gameId} style={[getImageWrapStyle(list.items.length, i)]}>
                       <IgdbImage
                         imgSrc={item.gameCoverUrl}
                         style={[styles.image, { borderColor: colors.border }]}
@@ -55,9 +52,7 @@ export const ListItem: FC<GameListItemProps> = ({ list }) => {
                         { backgroundColor: colors.surface },
                       ]}
                     >
-                      <AppText style={{ fontSize: 12, fontWeight: '500' }}>
-                        +{count - 3}
-                      </AppText>
+                      <AppText style={{ fontSize: 12, fontWeight: '500' }}>+{count - 3}</AppText>
                     </View>
                   </View>
                 )}
@@ -71,10 +66,7 @@ export const ListItem: FC<GameListItemProps> = ({ list }) => {
               </AppText>
               <AppText
                 numberOfLines={3}
-                style={[
-                  styles.textDescription,
-                  { color: colors.textSecondary },
-                ]}
+                style={[styles.textDescription, { color: colors.textSecondary }]}
               >
                 {list.description}
               </AppText>

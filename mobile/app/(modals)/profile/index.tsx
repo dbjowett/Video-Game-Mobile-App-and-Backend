@@ -53,10 +53,7 @@ export default function Page() {
 
   return (
     <ScrollView
-      contentContainerStyle={[
-        styles.contentContainer,
-        { paddingTop: headerHeight + spacing.md },
-      ]}
+      contentContainerStyle={[styles.contentContainer, { paddingTop: headerHeight + spacing.md }]}
       showsVerticalScrollIndicator={false}
     >
       <View
@@ -85,9 +82,7 @@ export default function Page() {
 
         <View style={styles.heroTextBlock}>
           <AppText style={styles.username}>{user.username}</AppText>
-          <AppText style={[styles.email, { color: colors.textSecondary }]}>
-            {user.email}
-          </AppText>
+          <AppText style={[styles.email, { color: colors.textSecondary }]}>{user.email}</AppText>
         </View>
 
         <View style={styles.badgeRow}>
@@ -125,9 +120,7 @@ export default function Page() {
             <UserRound size={18} color={colors.primary} />
           </View>
           <View style={styles.infoTextBlock}>
-            <AppText style={[styles.infoLabel, { color: colors.textSecondary }]}>
-              Username
-            </AppText>
+            <AppText style={[styles.infoLabel, { color: colors.textSecondary }]}>Username</AppText>
             <AppText style={styles.infoValue}>{user.username}</AppText>
           </View>
         </View>
@@ -150,9 +143,7 @@ export default function Page() {
             <Mail size={18} color={colors.primary} />
           </View>
           <View style={styles.infoTextBlock}>
-            <AppText style={[styles.infoLabel, { color: colors.textSecondary }]}>
-              Email
-            </AppText>
+            <AppText style={[styles.infoLabel, { color: colors.textSecondary }]}>Email</AppText>
             <AppText style={styles.infoValue}>{user.email}</AppText>
           </View>
         </View>

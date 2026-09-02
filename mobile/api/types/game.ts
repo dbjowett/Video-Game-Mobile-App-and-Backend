@@ -88,9 +88,7 @@ export interface SimilarGame {
   };
 }
 
-export type AddableGame =
-  | Pick<ListGame, 'id' | 'name'>
-  | Pick<DetailedGame, 'id' | 'name'>;
+export type AddableGame = Pick<ListGame, 'id' | 'name'> | Pick<DetailedGame, 'id' | 'name'>;
 
 export interface FaveGame {
   createdAt: string;

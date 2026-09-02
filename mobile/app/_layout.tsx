@@ -2,10 +2,7 @@ import { SessionProvider } from '@/components/AuthContext';
 import AddToListProvider from '@/providers/AddToListProvider';
 import { useAppTheme } from '@/theme/hooks/useAppTheme';
 import { useToastConfig } from '@/theme/hooks/useToastConfig';
-import {
-  ThemeProvider as CustomAppThemeProvider,
-  useTheme,
-} from '@/theme/theme-context';
+import { ThemeProvider as CustomAppThemeProvider, useTheme } from '@/theme/theme-context';
 import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
@@ -56,14 +53,8 @@ const StackScreens = () => {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="games/[id]" />
-      <Stack.Screen
-        name="(modals)/search"
-        options={{ presentation: 'transparentModal' }}
-      />
-      <Stack.Screen
-        name="(modals)/profile"
-        options={{ presentation: 'transparentModal' }}
-      />
+      <Stack.Screen name="(modals)/search" options={{ presentation: 'transparentModal' }} />
+      <Stack.Screen name="(modals)/profile" options={{ presentation: 'transparentModal' }} />
     </Stack>
   );
 };

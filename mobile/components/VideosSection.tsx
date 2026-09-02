@@ -1,11 +1,5 @@
 import { PlayIcon } from 'lucide-react-native';
-import {
-  Linking,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Linking, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { AppText } from './Themed';
 
@@ -39,11 +33,7 @@ export const VideosSection = ({ videos }: Props) => {
               }}
             >
               <TouchableOpacity
-                onPress={() =>
-                  Linking.openURL(
-                    `https://www.youtube.com/watch?v=${video.video_id}`,
-                  )
-                }
+                onPress={() => Linking.openURL(`https://www.youtube.com/watch?v=${video.video_id}`)}
               >
                 <Animated.Image
                   source={{
@@ -74,9 +64,7 @@ export const VideosSection = ({ videos }: Props) => {
                   fill="#fff"
                   style={{}}
                   onPress={() =>
-                    Linking.openURL(
-                      `https://www.youtube.com/watch?v=${video.video_id}`,
-                    )
+                    Linking.openURL(`https://www.youtube.com/watch?v=${video.video_id}`)
                   }
                 />
               </View>

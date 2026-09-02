@@ -1,8 +1,4 @@
-import {
-  DetailedGame,
-  ListGame,
-  SimilarGame,
-} from '@/api/types/game';
+import { DetailedGame, ListGame, SimilarGame } from '@/api/types/game';
 import { GameListItem } from '@/api/types/game-list';
 import { getHumanDate } from '@/utils';
 
@@ -17,14 +13,9 @@ export interface GameCardModel {
   badge?: string;
 }
 
-type CardOverrides = Partial<
-  Pick<GameCardModel, 'subtitle' | 'meta' | 'badge'>
->;
+type CardOverrides = Partial<Pick<GameCardModel, 'subtitle' | 'meta' | 'badge'>>;
 
-export const mapListGameToCard = (
-  game: ListGame,
-  overrides?: CardOverrides,
-): GameCardModel => ({
+export const mapListGameToCard = (game: ListGame, overrides?: CardOverrides): GameCardModel => ({
   id: game.id.toString(),
   title: game.name,
   imageUrl: game.cover?.url,

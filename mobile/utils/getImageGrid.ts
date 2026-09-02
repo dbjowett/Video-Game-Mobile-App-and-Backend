@@ -31,10 +31,7 @@ const layouts: Record<LayoutKey, Array<ViewStyle>> = {
   ],
 };
 
-export const getImageWrapStyle = (
-  count: number,
-  index: number,
-): StyleProp<ViewStyle> => {
+export const getImageWrapStyle = (count: number, index: number): StyleProp<ViewStyle> => {
   const layoutKey: LayoutKey = count <= 4 ? (count as LayoutKey) : 4;
   return layouts[layoutKey][index] ?? {};
 };

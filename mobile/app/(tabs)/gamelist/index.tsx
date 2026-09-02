@@ -7,9 +7,7 @@ import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { useGetLists } from '@/api/hooks/useGetLists';
 import { useUpdateListOrder } from '@/api/hooks/useUpdateListOrder';
 import { ListItem } from '@/components/ListItem';
-import ReorderableList, {
-  ReorderableListReorderEvent,
-} from 'react-native-reorderable-list';
+import ReorderableList, { ReorderableListReorderEvent } from 'react-native-reorderable-list';
 
 const Page = () => {
   const { data: lists, isLoading } = useGetLists();
