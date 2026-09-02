@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { UsersService } from 'src/users/users.service';
@@ -16,8 +16,9 @@ const JWT_CONFIG = {
   signOptions: { expiresIn: '60s' as const },
 };
 
+@Global()
 @Module({
-  imports: [JwtModule.register(JWT_CONFIG), UsersModule, PassportModule],
+  imports: [JwtModule.register(JWT_CONFIG), UsersModule, PassportModule.register({})],
   providers: [
     AuthService,
     LocalStrategy,
@@ -27,6 +28,6 @@ const JWT_CONFIG = {
     UsersService,
   ],
   controllers: [AuthController],
-  exports: [AuthService],
+  exports: [AuthService, PassportModule],
 })
 export class AuthModule {}
