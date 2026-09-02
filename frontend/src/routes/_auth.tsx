@@ -1,14 +1,14 @@
-import { IconVideo } from '@tabler/icons-react';
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
-import { DashboardLayout } from '../components/AppLayout/AppLayout';
+import { IconVideo } from "@tabler/icons-react";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { DashboardLayout } from "../components/AppLayout/AppLayout";
 
-export const Route = createFileRoute('/_auth')({
+export const Route = createFileRoute("/_auth")({
   loader: async ({ context, location }) => {
     await context.auth.loadUser();
 
-    if (context.auth.status === 'loggedOut') {
+    if (context.auth.status === "loggedOut") {
       throw redirect({
-        to: '/login',
+        to: "/login",
         search: { redirect: location.href },
       });
     }
@@ -21,7 +21,7 @@ export const Route = createFileRoute('/_auth')({
 function AppLayoutComponent() {
   return (
     <div>
-      <DashboardLayout linkItems={[{ Icon: IconVideo, path: '/about', content: 'About' }]}>
+      <DashboardLayout linkItems={[{ Icon: IconVideo, path: "/about", content: "About" }]}>
         <Outlet />
       </DashboardLayout>
     </div>

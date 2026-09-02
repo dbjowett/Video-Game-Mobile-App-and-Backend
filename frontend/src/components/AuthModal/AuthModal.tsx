@@ -11,17 +11,17 @@ import {
   Stack,
   Text,
   TextInput,
-} from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { upperFirst, useToggle } from '@mantine/hooks';
-import { notifications } from '@mantine/notifications';
-import { IconX } from '@tabler/icons-react';
-import { useNavigate } from '@tanstack/react-router';
-import { api } from '../../utils/api';
-import { auth } from '../../utils/auth';
-import { GoogleButton } from '../AuthButtons/GoogleButton';
+} from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { upperFirst, useToggle } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
+import { IconX } from "@tabler/icons-react";
+import { useNavigate } from "@tanstack/react-router";
+import { api } from "../../utils/api";
+import { auth } from "../../utils/auth";
+import { GoogleButton } from "../AuthButtons/GoogleButton";
 
-type SocialProvider = 'google' | 'apple';
+type SocialProvider = "google" | "apple";
 
 const sleep = (time: number) => new Promise((resolve) => setTimeout(resolve, time));
 
@@ -32,20 +32,20 @@ export const AuthModal = ({
   opened: boolean;
   toggleModal: () => void;
 }) => {
-  const [type, toggle] = useToggle(['login', 'register']);
-  const navigate = useNavigate({ from: '/login' });
+  const [type, toggle] = useToggle(["login", "register"]);
+  const navigate = useNavigate({ from: "/login" });
 
   const form = useForm({
     initialValues: {
-      email: '',
-      username: '',
-      password: '',
+      email: "",
+      username: "",
+      password: "",
       terms: true,
     },
 
     validate: {
-      email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
-      password: (val) => (val.length <= 6 ? 'Password should include at least 6 characters' : null),
+      email: (val) => (/^\S+@\S+$/.test(val) ? null : "Invalid email"),
+      password: (val) => (val.length <= 6 ? "Password should include at least 6 characters" : null),
     },
   });
 
@@ -54,11 +54,11 @@ export const AuthModal = ({
   };
 
   const handleSocialLogin = (provider: SocialProvider) => {
-    if (provider === 'google') window.location.href = 'http://localhost:3000/auth/google';
+    if (provider === "google") window.location.href = "http://localhost:3000/auth/google";
   };
 
-  const handleAuth = async (type: 'login' | 'register') => {
-    const endpoint = type === 'login' ? 'auth/signin' : 'auth/signup';
+  const handleAuth = async (type: "login" | "register") => {
+    const endpoint = type === "login" ? "auth/signin" : "auth/signup";
     try {
       const data = await api
         .post(endpoint, {
@@ -67,25 +67,25 @@ export const AuthModal = ({
         .json<{ access_token: string }>();
 
       if (data?.access_token) {
-        localStorage.setItem('token', data.access_token);
+        localStorage.setItem("token", data.access_token);
         await auth.loadUser();
         toggleModal();
         notifications.show({
-          title: 'Successfully logged in!',
-          message: '',
+          title: "Successfully logged in!",
+          message: "",
         });
 
         await sleep(1000);
-        navigate({ to: '/' });
+        navigate({ to: "/" });
       } else {
-        throw new Error('No access token received');
+        throw new Error("No access token received");
       }
     } catch (err) {
       console.error(`${type} error`, err);
       notifications.show({
-        title: 'Error',
-        message: 'Invalid credentials or server error',
-        color: 'red',
+        title: "Error",
+        message: "Invalid credentials or server error",
+        color: "red",
       });
     }
   };
@@ -108,21 +108,21 @@ export const AuthModal = ({
         </Flex>
 
         <Group grow mb="md" mt="md">
-          <GoogleButton radius="xl" onClick={() => handleSocialLogin('google')}>
+          <GoogleButton radius="xl" onClick={() => handleSocialLogin("google")}>
             Google
           </GoogleButton>
         </Group>
 
         <Divider label="Or continue with email" labelPosition="center" my="lg" />
 
-        <form onSubmit={form.onSubmit(() => handleAuth(type as 'login' | 'register'))}>
+        <form onSubmit={form.onSubmit(() => handleAuth(type as "login" | "register"))}>
           <Stack>
-            {type === 'register' && (
+            {type === "register" && (
               <TextInput
                 label="Username"
                 placeholder="Your username"
                 value={form.values.username}
-                onChange={(event) => form.setFieldValue('username', event.currentTarget.value)}
+                onChange={(event) => form.setFieldValue("username", event.currentTarget.value)}
                 radius="md"
               />
             )}
@@ -132,8 +132,8 @@ export const AuthModal = ({
               label="Email"
               placeholder="hello@email.com"
               value={form.values.email}
-              onChange={(event) => form.setFieldValue('email', event.currentTarget.value)}
-              error={form.errors.email && 'Invalid email'}
+              onChange={(event) => form.setFieldValue("email", event.currentTarget.value)}
+              error={form.errors.email && "Invalid email"}
               radius="md"
             />
 
@@ -142,8 +142,8 @@ export const AuthModal = ({
               label="Password"
               placeholder="Your password"
               value={form.values.password}
-              onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
-              error={form.errors.password && 'Password should include at least 6 characters'}
+              onChange={(event) => form.setFieldValue("password", event.currentTarget.value)}
+              error={form.errors.password && "Password should include at least 6 characters"}
               radius="md"
             />
 
@@ -158,8 +158,8 @@ export const AuthModal = ({
 
           <Group justify="space-between" mt="xl">
             <Anchor component="button" type="button" c="dimmed" onClick={() => toggle()} size="xs">
-              {type === 'register'
-                ? 'Already have an account? Login'
+              {type === "register"
+                ? "Already have an account? Login"
                 : "Don't have an account? Register"}
             </Anchor>
             <Button type="submit" radius="xl">

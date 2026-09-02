@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Box, Card, Container, Flex, Grid, Stack, Text } from '@mantine/core';
+import { Box, Card, Container, Flex, Grid, Stack, Text } from "@mantine/core";
 import {
   IconHeart,
   IconSearch,
@@ -8,11 +8,11 @@ import {
   IconTrendingUp,
   IconTrophy,
   IconUsers,
-} from '@tabler/icons-react';
-import { motion } from 'motion/react';
-import { ReactNode, RefObject } from 'react';
-import { JumboTitle } from '../JumboTitle';
-import classes from './Features.module.css';
+} from "@tabler/icons-react";
+import { motion } from "motion/react";
+import { ReactNode, RefObject } from "react";
+import { JumboTitle } from "../JumboTitle";
+import classes from "./Features.module.css";
 
 type Feature = {
   icon: ReactNode;
@@ -23,33 +23,33 @@ type Feature = {
 const FEATURES: Feature[] = [
   {
     icon: <IconSearch />,
-    title: 'Search Games',
-    description: 'Quickly search our extensive library using advanced filters and categories.',
+    title: "Search Games",
+    description: "Quickly search our extensive library using advanced filters and categories.",
   },
   {
     icon: <IconHeart />,
-    title: 'Favourite Games',
-    description: 'Mark your favourite titles and build a personalized game collection.',
+    title: "Favourite Games",
+    description: "Mark your favourite titles and build a personalized game collection.",
   },
   {
     icon: <IconStar />,
-    title: 'Review Games',
-    description: 'Write detailed reviews and read community feedback to find your next adventure.',
+    title: "Review Games",
+    description: "Write detailed reviews and read community feedback to find your next adventure.",
   },
   {
     icon: <IconTrendingUp />,
-    title: 'Trending Titles',
-    description: 'Discover the most popular and buzz-worthy games in real time.',
+    title: "Trending Titles",
+    description: "Discover the most popular and buzz-worthy games in real time.",
   },
   {
     icon: <IconUsers />,
-    title: 'Community Interaction',
-    description: 'Engage with fellow gamers through discussions, forums, and live events.',
+    title: "Community Interaction",
+    description: "Engage with fellow gamers through discussions, forums, and live events.",
   },
   {
     icon: <IconTrophy />,
-    title: 'Personalized Recommendations',
-    description: 'Receive game suggestions tailored to your tastes and play history.',
+    title: "Personalized Recommendations",
+    description: "Receive game suggestions tailored to your tastes and play history.",
   },
 ] as const;
 
@@ -66,15 +66,15 @@ export const FeaturesCell = ({
   <motion.div
     initial={{ opacity: 0.0, y: 40 }}
     whileInView={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.4, delay: 0.2 * index, ease: 'easeInOut' }}
+    transition={{ duration: 0.4, delay: 0.2 * index, ease: "easeInOut" }}
     viewport={{ once: true }}
-    style={{ height: '100%' }}
+    style={{ height: "100%" }}
   >
     <motion.div
-      whileHover={{ boxShadow: 'var(--mantine-shadow-xs)' }}
+      whileHover={{ boxShadow: "var(--mantine-shadow-xs)" }}
       style={{
-        borderRadius: 'var(--mantine-radius-lg)',
-        height: '100%',
+        borderRadius: "var(--mantine-radius-lg)",
+        height: "100%",
       }}
     >
       <Card radius="lg" p="xl" className={classes.cell} h="100%">
@@ -103,24 +103,24 @@ type FeatureProps = {
 
 export const Features = ({
   ref,
-  title = 'Features',
+  title = "Features",
   features = FEATURES,
   iconSize = 20,
 }: FeatureProps) => (
   <Container
-    style={{ alignContent: 'center' }}
+    style={{ alignContent: "center" }}
     ref={ref}
     bg="var(--mantine-color-body)"
     py={{
-      base: 'calc(var(--mantine-spacing-lg) * 4)',
-      xs: 'calc(var(--mantine-spacing-lg) * 5)',
-      lg: 'calc(var(--mantine-spacing-lg) * 6)',
+      base: "calc(var(--mantine-spacing-lg) * 4)",
+      xs: "calc(var(--mantine-spacing-lg) * 5)",
+      lg: "calc(var(--mantine-spacing-lg) * 6)",
     }}
     h="100svh"
     fluid
   >
     <Container size="lg" px={0}>
-      <JumboTitle order={2} fz="md" style={{ textWrap: 'balance' }}>
+      <JumboTitle order={2} fz="md" style={{ textWrap: "balance" }}>
         {title}
       </JumboTitle>
     </Container>

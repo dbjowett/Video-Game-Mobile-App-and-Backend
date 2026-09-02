@@ -1,1 +1,1 @@
-export { LinksSkeleton } from './LinksSkeleton';
+export { LinksSkeleton } from "./LinksSkeleton";

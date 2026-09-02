@@ -1,15 +1,15 @@
-import { createRouter, RouterProvider } from '@tanstack/react-router';
-import { StrictMode } from 'react';
-import ReactDOM from 'react-dom/client';
-import './assets/index.css';
-import { auth } from './utils/auth';
+import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { StrictMode } from "react";
+import ReactDOM from "react-dom/client";
+import "./assets/index.css";
+import { auth } from "./utils/auth";
 
-import { MantineProvider } from '@mantine/core';
-import { Notifications } from '@mantine/notifications';
+import { MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { routeTree } from './routeTree.gen';
-import { theme } from './theme/mantineTheme';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { routeTree } from "./routeTree.gen";
+import { theme } from "./theme/mantineTheme";
 
 const queryClient = new QueryClient();
 // Create a new router instance
@@ -21,13 +21,13 @@ const router = createRouter({
 });
 
 // Register the router instance for type safety
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
   }
 }
 
-const rootElement = document.getElementById('root')!;
+const rootElement = document.getElementById("root")!;
 
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
@@ -39,6 +39,6 @@ if (!rootElement.innerHTML) {
           <RouterProvider context={{ auth }} router={router} />
         </MantineProvider>
       </QueryClientProvider>
-    </StrictMode>
+    </StrictMode>,
   );
 }

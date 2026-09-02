@@ -1,17 +1,17 @@
-import { Button, Flex, Text } from '@mantine/core';
-import { COLLAPSE_DURATION, routeVariants, SIDEBAR_WIDTH } from './config';
+import { Button, Flex, Text } from "@mantine/core";
+import { COLLAPSE_DURATION, routeVariants, SIDEBAR_WIDTH } from "./config";
 
-import { Icon, IconLogout, IconSearch } from '@tabler/icons-react';
-import { motion } from 'motion/react';
-import { FC, ReactElement, ReactNode, useState } from 'react';
+import { Icon, IconLogout, IconSearch } from "@tabler/icons-react";
+import { motion } from "motion/react";
+import { FC, ReactElement, ReactNode, useState } from "react";
 
-import { auth } from '../../utils/auth';
-import { SearchGameInput } from '../SearchGameInput';
-import styles from './AppLayout.module.scss';
-import { LinkOption } from './components/LinkOption';
-import { LinksSkeleton } from './components/LinksSkeleton';
-import { TitleSection } from './components/TitleSection';
-import { ToggleSection } from './components/ToggleSection';
+import { auth } from "../../utils/auth";
+import { SearchGameInput } from "../SearchGameInput";
+import styles from "./AppLayout.module.scss";
+import { LinkOption } from "./components/LinkOption";
+import { LinksSkeleton } from "./components/LinksSkeleton";
+import { TitleSection } from "./components/TitleSection";
+import { ToggleSection } from "./components/ToggleSection";
 
 export type IconType = Icon;
 
@@ -33,11 +33,11 @@ interface SidebarProps {
 
 export const DashboardLayout: FC<LayoutProps> = ({ children, linkItems }) => {
   const [open, setIsOpen] = useState<boolean>(
-    JSON.parse(localStorage.getItem('sidebar') ?? 'true')
+    JSON.parse(localStorage.getItem("sidebar") ?? "true"),
   );
 
   const toggleSidebar = (value: boolean) => {
-    localStorage.setItem('sidebar', value.toString());
+    localStorage.setItem("sidebar", value.toString());
     setIsOpen(value);
   };
 
@@ -58,10 +58,10 @@ const Sidebar = ({ open, setOpen, linkItems }: SidebarProps) => {
       layout
       transition={{ duration: COLLAPSE_DURATION }}
       className={styles.Sidebar}
-      style={{ width: open ? SIDEBAR_WIDTH : 'fit-content' }}
+      style={{ width: open ? SIDEBAR_WIDTH : "fit-content" }}
     >
       <Flex direction="column" h="100%" justify="space-between">
-        <motion.div layout style={{ height: '100%' }}>
+        <motion.div layout style={{ height: "100%" }}>
           <TitleSection open={open} />
           {open ? (
             <SearchGameInput />
@@ -74,7 +74,7 @@ const Sidebar = ({ open, setOpen, linkItems }: SidebarProps) => {
           )}
           <div className={styles.NavigationWrapper}>
             <motion.div
-              animate={'visible'}
+              animate={"visible"}
               variants={routeVariants}
               initial="visible"
               className={styles.OptionsContainer}

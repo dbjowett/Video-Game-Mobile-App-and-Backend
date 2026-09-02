@@ -1,5 +1,5 @@
-import { Flex, Skeleton } from '@mantine/core';
-import { Fragment } from 'react/jsx-runtime';
+import { Flex, Skeleton } from "@mantine/core";
+import { Fragment } from "react/jsx-runtime";
 
 interface Props {
   count?: number;

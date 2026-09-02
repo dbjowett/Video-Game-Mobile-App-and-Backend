@@ -1,7 +1,7 @@
-import { IconLayoutSidebarRightCollapse } from '@tabler/icons-react';
-import { motion } from 'motion/react';
-import { COLLAPSE_DURATION } from '../../config/index';
-import styles from './ToggleSection.module.scss';
+import { IconLayoutSidebarRightCollapse } from "@tabler/icons-react";
+import { motion } from "motion/react";
+import { COLLAPSE_DURATION } from "../../config/index";
+import styles from "./ToggleSection.module.scss";
 
 interface ToggleSectionProps {
   open: boolean;

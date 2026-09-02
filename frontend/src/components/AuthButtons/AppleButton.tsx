@@ -1,4 +1,4 @@
-import { Button, ButtonProps } from '@mantine/core';
+import { Button, ButtonProps } from "@mantine/core";
 
 const AppleSvg = ({ size }: { size: number }) => (
   <svg
@@ -13,6 +13,6 @@ const AppleSvg = ({ size }: { size: number }) => (
   </svg>
 );
 
-export function TwitterButton(props: ButtonProps & React.ComponentPropsWithoutRef<'button'>) {
+export function TwitterButton(props: ButtonProps & React.ComponentPropsWithoutRef<"button">) {
   return <Button leftSection={<AppleSvg size={18} />} variant="default" {...props} />;
 }
