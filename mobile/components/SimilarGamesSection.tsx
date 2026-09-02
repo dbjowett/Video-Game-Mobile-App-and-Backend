@@ -1,4 +1,4 @@
-import { SimilarGame } from '@/api/types/game';
+import { SimilarGame } from '@vg/types';
 import GameCard from '@/components/GameCard';
 import { useTheme } from '@/theme/theme-context';
 import { mapSimilarGameToCard } from '@/utils/gameCard';

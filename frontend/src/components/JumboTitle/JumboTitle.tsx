@@ -1,6 +1,6 @@
-import { type MantineFontSize, Title, type TitleProps } from "@mantine/core";
-import clsx from "clsx";
-import classes from "./JumboTitle.module.css";
+import { type MantineFontSize, Title, type TitleProps } from '@mantine/core';
+import clsx from 'clsx';
+import classes from './JumboTitle.module.css';
 
 export type JumboTitleOrder = 1 | 2 | 3 | 4 | 5;
 
@@ -12,12 +12,12 @@ const FONT_WEIGHT_MAP: Record<MantineFontSize, number> = {
   xs: 500,
 };
 
-type Props = Omit<TitleProps, "order"> & {
+type Props = Omit<TitleProps, 'order'> & {
   order?: JumboTitleOrder;
   fz?: MantineFontSize;
 };
 
-export const JumboTitle = ({ className, children, order = 1, fz = "xl", ...otherProps }: Props) => (
+export const JumboTitle = ({ className, children, order = 1, fz = 'xl', ...otherProps }: Props) => (
   <Title
     fw={FONT_WEIGHT_MAP[fz]}
     className={clsx(classes[fz], className)}

@@ -1,5 +1,5 @@
 import { useGetListsGames } from '@/api/hooks/useGetListsGames';
-import { GameListItem } from '@/api/types/game-list';
+import { GameListItem } from '@vg/types';
 import GameCard from '@/components/GameCard';
 import { AppText } from '@/components/Themed';
 import { radius } from '@/theme/constants/radius';

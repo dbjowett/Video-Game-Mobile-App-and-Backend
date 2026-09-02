@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { GameList } from '../types/game-list';
+import { GameList } from '@vg/types';
 import { api } from '../utils/api';
 
 type UpdateListOrderObject = {

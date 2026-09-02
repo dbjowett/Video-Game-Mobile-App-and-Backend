@@ -1,5 +1,5 @@
 import { useGameSearch } from '@/api/hooks/useGameSearch';
-import { ListGame } from '@/api/types/game';
+import { ListGame } from '@vg/types';
 import GameCard from '@/components/GameCard';
 import { AppText, View } from '@/components/Themed';
 import { useAddToList } from '@/providers/AddToListProvider';

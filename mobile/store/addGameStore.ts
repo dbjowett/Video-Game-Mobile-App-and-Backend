@@ -1,4 +1,4 @@
-import { DetailedGame, ListGame } from '@/api/types/game';
+import { DetailedGame, ListGame } from '@vg/types';
 import { createStore } from 'zustand';
 
 type Game = DetailedGame | ListGame;

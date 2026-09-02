@@ -1,8 +1,8 @@
-import { Combobox, Flex, Image, InputBase, Loader, Text, useCombobox } from "@mantine/core";
-import { useDebouncedValue } from "@mantine/hooks";
-import { useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { useGameSearch } from "../../hooks/useGameSearch";
+import { Combobox, Flex, Image, InputBase, Loader, Text, useCombobox } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
+import { useNavigate } from '@tanstack/react-router';
+import { useState } from 'react';
+import { useGameSearch } from '../../hooks/useGameSearch';
 
 interface Item {
   image: string;
@@ -32,7 +32,7 @@ export function SearchGameInput() {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [debouncedQuery] = useDebouncedValue(query, 300);
 
   const { data, isLoading, isFetching } = useGameSearch(debouncedQuery);
@@ -59,7 +59,7 @@ export function SearchGameInput() {
     >
       <Combobox.Target>
         <InputBase
-          radius={"md"}
+          radius={'md'}
           p="md"
           placeholder="Search for a game..."
           value={query}

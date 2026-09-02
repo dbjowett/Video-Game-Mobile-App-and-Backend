@@ -1,1 +1,1 @@
-export * from "./JumboTitle";
+export * from './JumboTitle';

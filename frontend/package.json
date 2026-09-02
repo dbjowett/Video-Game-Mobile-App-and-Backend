@@ -8,8 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "fmt": "oxfmt",
-    "fmt:check": "oxfmt --check",
+    "fmt": "oxfmt -c ../.oxfmtrc.json",
+    "fmt:check": "oxfmt --check -c ../.oxfmtrc.json",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -20,6 +20,7 @@
     "@tabler/icons-react": "^3.46.0",
     "@tanstack/react-query": "^5.102.8",
     "@tanstack/react-router": "^1.170.32",
+    "@vg/types": "workspace:*",
     "clsx": "^2.1.1",
     "ky": "^2.1.0",
     "motion": "^13.1.1",
@@ -31,6 +32,7 @@
     "@tanstack/router-plugin": "^1.168.35",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
+    "@vg/config": "workspace:*",
     "@vitejs/plugin-react": "^6.1.1",
     "oxfmt": "^0.65.0",
     "oxlint": "^1.80.0",

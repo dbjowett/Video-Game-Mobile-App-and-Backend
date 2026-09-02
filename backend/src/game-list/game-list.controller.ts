@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { GameList, GameListItem } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { UserPayload } from 'src/auth/types';
@@ -17,11 +9,7 @@ import {
   RemoveGameFromListDto,
   UpdateListOrderDto,
 } from './dto';
-import {
-  GameListGame,
-  GameListService,
-  GameListWithCovers,
-} from './game-list.service';
+import { GameListGame, GameListService, GameListWithCovers } from './game-list.service';
 
 @UseGuards(JwtAuthGuard)
 @Controller('gamelist')
@@ -50,26 +38,17 @@ export class GameListController {
   }
 
   @Post('add-to-list')
-  async addGameToList(
-    @User() user: UserPayload,
-    @Body() body: AddGameToListDto,
-  ) {
+  async addGameToList(@User() user: UserPayload, @Body() body: AddGameToListDto) {
     return await this.gameListService.addGameToGameList(user, body);
   }
 
   @Delete('remove-from-list')
-  async removeGameFromList(
-    @User() user: UserPayload,
-    @Body() body: RemoveGameFromListDto,
-  ) {
+  async removeGameFromList(@User() user: UserPayload, @Body() body: RemoveGameFromListDto) {
     return await this.gameListService.removeGameFromList(user, body);
   }
 
   @Post('update-order')
-  async updateListOrder(
-    @User() user: UserPayload,
-    @Body() body: UpdateListOrderDto,
-  ) {
+  async updateListOrder(@User() user: UserPayload, @Body() body: UpdateListOrderDto) {
     return await this.gameListService.updateListOrder(user, body);
   }
 

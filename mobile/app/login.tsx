@@ -1,5 +1,5 @@
 import { useFetchHero } from '@/api/hooks/useGetPopular';
-import { Tokens, Values } from '@/api/types/auth';
+import { Tokens, AuthCredentials } from '@vg/types';
 import { apiNoAuth } from '@/api/utils/api';
 import { useSession } from '@/components/AuthContext';
 import { GoogleIcon } from '@/components/GoogleIcon';
@@ -37,7 +37,7 @@ const Page = () => {
   const { data } = useFetchHero();
   const { signIn } = useSession();
 
-  const signUpMutation = useMutation<Tokens, Error, Values>({
+  const signUpMutation = useMutation<Tokens, Error, AuthCredentials>({
     mutationFn: async (data) => {
       return await apiNoAuth.post('api/signup', { json: data }).json<Tokens>();
     },
@@ -47,8 +47,8 @@ const Page = () => {
     },
   });
 
-  const signInMutation = useMutation<Tokens, Error, Values>({
-    mutationFn: async (data: Values): Promise<Tokens> => {
+  const signInMutation = useMutation<Tokens, Error, AuthCredentials>({
+    mutationFn: async (data: AuthCredentials): Promise<Tokens> => {
       try {
         return await apiNoAuth.post('auth/signin', { json: data }).json<Tokens>();
       } catch {

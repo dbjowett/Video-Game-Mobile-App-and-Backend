@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { GameListWithCovers } from '../types/game-list';
+import { GameListWithCovers } from '@vg/types';
 import { api } from '../utils/api';
 
 const getUsersLists = async (): Promise<GameListWithCovers[]> => {

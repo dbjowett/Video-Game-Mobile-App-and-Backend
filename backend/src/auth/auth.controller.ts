@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Query,
-  Req,
-  Request,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req, Request, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
@@ -25,10 +15,7 @@ export class AuthController {
   @Post('signin')
   @UseGuards(LocalAuthGuard)
   async signIn(@Request() req: AuthenticatedRequest, @Res() res: Response) {
-    const { access_token, refresh_token } = await this.authService.signIn(
-      req.user,
-      res,
-    );
+    const { access_token, refresh_token } = await this.authService.signIn(req.user, res);
 
     return res.status(200).json({ access_token, refresh_token });
   }
@@ -66,10 +53,7 @@ export class AuthController {
     @Res() res: Response,
     @Query('state') state: string,
   ) {
-    const { access_token, refresh_token } = await this.authService.signIn(
-      req.user,
-      res,
-    );
+    const { access_token, refresh_token } = await this.authService.signIn(req.user, res);
 
     if (state === 'mobile') {
       res.redirect(

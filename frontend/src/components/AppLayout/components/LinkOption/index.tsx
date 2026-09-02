@@ -1,1 +1,1 @@
-export { LinkOption } from "./LinkOption";
+export { LinkOption } from './LinkOption';

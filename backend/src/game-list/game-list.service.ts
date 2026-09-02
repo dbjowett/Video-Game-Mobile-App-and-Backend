@@ -1,19 +1,11 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { GameList, GameListItem, Prisma } from '@prisma/client';
 import { UserPayload } from 'src/auth/types';
 import { DatabaseService } from 'src/database/database.service';
 import { GamesService } from 'src/games/games.service';
-import { ListGame } from 'src/games/types';
+import { ListGame } from '@vg/types';
 import { BatchPayload } from 'src/types';
-import {
-  AddGameToListDto,
-  CreateGameListDto,
-  RemoveGameFromListDto,
-} from './dto';
+import { AddGameToListDto, CreateGameListDto, RemoveGameFromListDto } from './dto';
 
 export type GameListWithCovers = Prisma.GameListGetPayload<{
   include: {
@@ -67,10 +59,7 @@ export class GameListService {
     return gameLists;
   }
 
-  async getGameListGames(
-    user: UserPayload,
-    id: string,
-  ): Promise<GameListGame[]> {
+  async getGameListGames(user: UserPayload, id: string): Promise<GameListGame[]> {
     let games: GameListItem[] = [];
     try {
       games = await this.databaseService.gameListItem.findMany({
@@ -87,12 +76,8 @@ export class GameListService {
       return [];
     }
 
-    const gameDetails = await this.gamesService.getListGames(
-      games.map((game) => game.gameId),
-    );
-    const titlesById = new Map<number, ListGame>(
-      gameDetails.map((game) => [game.id, game]),
-    );
+    const gameDetails = await this.gamesService.getListGames(games.map((game) => game.gameId));
+    const titlesById = new Map<number, ListGame>(gameDetails.map((game) => [game.id, game]));
 
     return games.map((game) => ({
       ...game,
@@ -155,9 +140,7 @@ export class GameListService {
       throw new Error('Failed to create game list: ' + error.message);
     }
     if (gameListItems.count === 0) {
-      throw new Error(
-        'No game IDs provided or all game IDs already exist in the list',
-      );
+      throw new Error('No game IDs provided or all game IDs already exist in the list');
     }
 
     return {
@@ -176,8 +159,7 @@ export class GameListService {
       },
     });
 
-    if (doesExist)
-      throw new ConflictException('This game already exists in the list');
+    if (doesExist) throw new ConflictException('This game already exists in the list');
 
     const maxPosition = await this.databaseService.gameListItem.aggregate({
       _max: {

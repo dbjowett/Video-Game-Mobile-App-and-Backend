@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { User } from '../types/auth';
+import { User } from '@vg/types';
 import { api } from '../utils/api';
 
 // ** Add any field allowed to update inside the Pick<>

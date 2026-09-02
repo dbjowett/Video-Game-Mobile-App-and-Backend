@@ -1,12 +1,12 @@
-import { useDisclosure } from "@mantine/hooks";
-import { createFileRoute } from "@tanstack/react-router";
-import { useRef } from "react";
-import { AuthModal } from "../components/AuthModal";
-import { Features } from "../components/Features";
-import { Hero } from "../components/Hero";
-import { useOAuthTokenHandler } from "../hooks/useOAuthHandler";
-import { api } from "../utils/api";
-import { useUser } from "../utils/auth";
+import { useDisclosure } from '@mantine/hooks';
+import { createFileRoute } from '@tanstack/react-router';
+import { useRef } from 'react';
+import { AuthModal } from '../components/AuthModal';
+import { Features } from '../components/Features';
+import { Hero } from '../components/Hero';
+import { useOAuthTokenHandler } from '../hooks/useOAuthHandler';
+import { api } from '../utils/api';
+import { useUser } from '../utils/auth';
 
 interface GameDetails {
   id: number;
@@ -24,7 +24,7 @@ const GRID_ITEMS_PER_ROW = 3;
 
 const createImageGridItems = (data: GameDetails[]) => {
   const gridItems = data.map((item: GameDetails) => ({
-    src: item.cover.url.replace("t_thumb", "t_cover_big"),
+    src: item.cover.url.replace('t_thumb', 't_cover_big'),
     alt: item.name,
   }));
 
@@ -37,11 +37,11 @@ const createImageGridItems = (data: GameDetails[]) => {
 };
 
 const fetchHeroImages = async (): Promise<GameDetails[]> => {
-  const res = await api("games/popular");
-  if (!res.ok) throw new Error("Failed to fetch posts");
+  const res = await api('games/popular');
+  if (!res.ok) throw new Error('Failed to fetch posts');
   return res.json();
 };
-export const Route = createFileRoute("/login")({
+export const Route = createFileRoute('/login')({
   component: RouteComponent,
   loader: async () => fetchHeroImages(),
 });
@@ -58,12 +58,12 @@ function RouteComponent() {
   const imageGridItems = createImageGridItems(data);
 
   const handleScrollToFeatures = () => {
-    featuresRef.current?.scrollIntoView({ behavior: "smooth" });
+    featuresRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleSignUpClick = () => {
     if (isLoggedIn) {
-      window.location.href = "/";
+      window.location.href = '/';
     } else {
       toggleModal();
     }

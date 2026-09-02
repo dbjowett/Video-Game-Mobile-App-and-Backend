@@ -1,12 +1,12 @@
-import { Popover, Text } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { motion } from "motion/react";
-import { JSX } from "react";
-import { COLLAPSE_DURATION } from "../../config/index";
+import { Popover, Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { motion } from 'motion/react';
+import { JSX } from 'react';
+import { COLLAPSE_DURATION } from '../../config/index';
 
-import { Link } from "@tanstack/react-router";
-import { IconType } from "../../AppLayout";
-import styles from "./LinkOption.module.scss";
+import { Link } from '@tanstack/react-router';
+import { IconType } from '../../AppLayout';
+import styles from './LinkOption.module.scss';
 
 interface OptionProps {
   Icon?: IconType;
@@ -23,7 +23,7 @@ export const LinkOption = ({ Icon, title, open, path, onClick }: OptionProps) =>
   return (
     <Link
       to={path}
-      style={{ width: "100%" }}
+      style={{ width: '100%' }}
       // className={({ isActive }) =>
       //   classNames({ [styles.Selected]: isActive, [styles.Category]: isCategory })
       // }

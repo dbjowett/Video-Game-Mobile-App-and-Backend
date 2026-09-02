@@ -1,12 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  ArrayNotEmpty,
-  IsArray,
-  IsBoolean,
-  IsInt,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { ArrayNotEmpty, IsArray, IsBoolean, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class CreateGameListDto {
   @IsString({ message: 'Title must be included' })

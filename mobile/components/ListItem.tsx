@@ -1,4 +1,4 @@
-import { GameListWithCovers } from '@/api/types/game-list';
+import { GameListWithCovers } from '@vg/types';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';

@@ -1,7 +1,7 @@
 import { ActivityIndicator, FlatList, ListRenderItem, ScrollView, StyleSheet } from 'react-native';
 
 import { usePopularGames } from '@/api';
-import { ListGame, PopKey } from '@/api/types/game';
+import { ListGame, PopKey } from '@vg/types';
 import LandingHeader from '@/components/CategoryHeader';
 import GameCard from '@/components/GameCard';
 import { AppText, View } from '@/components/Themed';

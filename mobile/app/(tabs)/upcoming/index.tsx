@@ -1,4 +1,4 @@
-import { ListGame } from '@/api/types/game';
+import { ListGame } from '@vg/types';
 import { api } from '@/api/utils/api';
 import GameCard from '@/components/GameCard';
 import { spacing } from '@/theme/constants/spacing';

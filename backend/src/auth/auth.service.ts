@@ -2,9 +2,10 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import argon2 from 'argon2';
+import { Tokens } from '@vg/types';
 import { Response } from 'express';
 import { UsersService } from '../users/users.service';
-import { Tokens, UserPayload } from './types';
+import { UserPayload } from './types';
 
 @Injectable()
 export class AuthService {
@@ -43,10 +44,7 @@ export class AuthService {
     return { access_token, refresh_token };
   }
 
-  async validateUser(
-    email: string,
-    password: string,
-  ): Promise<Omit<User, 'password'> | null> {
+  async validateUser(email: string, password: string): Promise<Omit<User, 'password'> | null> {
     const user = await this.usersService.findByEmail(email);
     if (user && (await this.verifyData(user.password, password))) {
       const { password, ...safeUser } = user;
@@ -64,18 +62,10 @@ export class AuthService {
     return { access_token, refresh_token };
   }
 
-  async signUp(
-    email: string,
-    password: string,
-    username: string,
-  ): Promise<Tokens> {
+  async signUp(email: string, password: string, username: string): Promise<Tokens> {
     try {
       const hashedPassword = await this.hashData(password);
-      const user = await this.usersService.create(
-        email,
-        hashedPassword,
-        username,
-      );
+      const user = await this.usersService.create(email, hashedPassword, username);
       const { access_token, refresh_token } = await this.getTokens(user);
       await this.usersService.updateRefreshToken(user.id, refresh_token);
 

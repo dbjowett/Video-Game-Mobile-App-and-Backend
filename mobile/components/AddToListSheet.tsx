@@ -1,5 +1,5 @@
 import { useGetLists } from '@/api/hooks/useGetLists';
-import { AddableGame } from '@/api/types/game';
+import { AddableGame } from '@vg/types';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';

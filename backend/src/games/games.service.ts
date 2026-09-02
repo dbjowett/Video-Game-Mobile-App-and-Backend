@@ -4,18 +4,18 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
+import { DetailedGame, ListGame, PopGameResults, PopKey } from '@vg/types';
 import { IgdbService } from 'src/igdb/igdb.service';
 import { SearchGamesDto } from './games.dto';
 import { POPULARITY_MULTI_QUERY } from './queries';
-import {
-  DetailedGame,
-  ListGame,
-  PopGameResults,
-  PopularityMultiQuery,
-} from './types';
 
 const platformIds = [6, 167, 169, 130, 48, 49]; // PC, PS5, Xbox Series X, Switch, PS4, Xbox One
 const allowedTypes = [0, 1, 2, 4, 8, 9]; // Game, DLC, Expansion, Bundle, Standalone Expansion, Remake
+
+interface PopularityMultiQuery {
+  name: PopKey;
+  result: { id: number; game_id: number; popularity_type: number }[];
+}
 
 // ** Must match `ListGame` interface in `mobile/api/types/game.ts` and frontend type
 const LIST_GAME_FIELDS_QUERY = `
@@ -42,10 +42,7 @@ export class GamesService {
   }
 
   async getPopularGamesMultiQuery() {
-    return this.igdbService.request<PopularityMultiQuery[]>(
-      'multiquery',
-      POPULARITY_MULTI_QUERY,
-    );
+    return this.igdbService.request<PopularityMultiQuery[]>('multiquery', POPULARITY_MULTI_QUERY);
   }
 
   async getPopularGames(): Promise<PopGameResults> {
@@ -113,10 +110,7 @@ export class GamesService {
       where id = ${id};
     `;
 
-    const data = await this.igdbService.request<DetailedGame[]>(
-      'games',
-      igdbQuery,
-    );
+    const data = await this.igdbService.request<DetailedGame[]>('games', igdbQuery);
     if (data.length < 1) throw new Error('No game found for this id');
     return data[0];
   }
@@ -141,10 +135,7 @@ export class GamesService {
       where id = ${id};
     `;
 
-    const data = await this.igdbService.request<DetailedGame[]>(
-      'games',
-      igdbQuery,
-    );
+    const data = await this.igdbService.request<DetailedGame[]>('games', igdbQuery);
     if (data.length < 1) throw new Error('No game found for this id');
     return data[0];
   }
@@ -160,9 +151,7 @@ export class GamesService {
 
   async getReleasesByMonth(month: string) {
     if (!month) {
-      throw new BadRequestException(
-        'Month query param is required in YYYY-MM format.',
-      );
+      throw new BadRequestException('Month query param is required in YYYY-MM format.');
     }
 
     const [year, monthNum] = month.split('-').map(Number);

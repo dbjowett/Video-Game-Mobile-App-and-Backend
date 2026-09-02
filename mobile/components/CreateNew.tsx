@@ -1,7 +1,7 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 
 import { useCreateGameList } from '@/api/hooks/useCreateGameList';
-import { AddableGame } from '@/api/types/game';
+import { AddableGame } from '@vg/types';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
 import { useForm } from '@tanstack/react-form';

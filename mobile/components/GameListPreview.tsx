@@ -1,6 +1,5 @@
 import { useAddGameToList } from '@/api/hooks/useAddGameToList';
-import { AddableGame } from '@/api/types/game';
-import { GameListWithCovers } from '@/api/types/game-list';
+import { AddableGame, GameListWithCovers } from '@vg/types';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';

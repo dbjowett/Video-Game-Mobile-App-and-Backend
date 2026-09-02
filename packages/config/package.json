@@ -1,0 +1,15 @@
+{
+  "name": "@vg/config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./oxlint.base.ts",
+  "types": "./oxlint.base.ts",
+  "exports": {
+    ".": "./oxlint.base.ts",
+    "./oxlint.base": "./oxlint.base.ts"
+  },
+  "devDependencies": {
+    "oxlint": "^1.80.0"
+  }
+}

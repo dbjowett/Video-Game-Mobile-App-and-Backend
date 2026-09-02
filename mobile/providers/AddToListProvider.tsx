@@ -1,4 +1,4 @@
-import { DetailedGame, ListGame } from '@/api/types/game';
+import { DetailedGame, ListGame } from '@vg/types';
 import AddToListSheet from '@/components/AddToListSheet';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { createContext, useContext, useRef, useState } from 'react';

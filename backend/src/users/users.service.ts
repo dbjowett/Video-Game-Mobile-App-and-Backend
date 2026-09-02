@@ -17,10 +17,7 @@ export class UsersService {
     });
   }
 
-  async updateRefreshToken(
-    userId: string,
-    refreshToken: string,
-  ): Promise<void> {
+  async updateRefreshToken(userId: string, refreshToken: string): Promise<void> {
     await this.databaseService.refreshToken.upsert({
       where: { userId },
       update: { token: refreshToken },
@@ -34,11 +31,7 @@ export class UsersService {
     });
   }
 
-  async create(
-    email: string,
-    password: string,
-    username: string,
-  ): Promise<User> {
+  async create(email: string, password: string, username: string): Promise<User> {
     return this.databaseService.user.create({
       data: { email, password, username },
     });

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Alert } from 'react-native';
-import { FaveGame } from '../types/game';
+import { FaveGame } from '@vg/types';
 import { api } from '../utils/api';
 
 const removeFromFavourites = async (gameId: string) =>

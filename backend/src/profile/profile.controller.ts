@@ -5,7 +5,6 @@ import { UserPayload } from 'src/auth/types';
 import { User } from 'src/common/utils/user.decorator';
 import { UpdateProfileDto } from './dto';
 import { ProfileService } from './profile.service';
-import { User as UserType } from './types';
 
 @UseGuards(JwtAuthGuard)
 @Controller('profile')
@@ -13,15 +12,12 @@ export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
   @Get()
-  async getUserProfile(@User() user: UserPayload): Promise<Partial<UserType>> {
+  async getUserProfile(@User() user: UserPayload) {
     return await this.profileService.getUserProfile(user.id);
   }
 
   @Patch()
-  async updateUserProfile(
-    @User() user: UserPayload,
-    @Body() body: UpdateProfileDto,
-  ): Promise<Partial<UserType>> {
+  async updateUserProfile(@User() user: UserPayload, @Body() body: UpdateProfileDto) {
     return await this.profileService.updateUserProfile(user.id, body.user);
   }
 
