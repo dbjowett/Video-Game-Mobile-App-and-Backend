@@ -5,7 +5,7 @@ import ky from 'ky';
 import { Tokens } from '@vg/types';
 
 export const apiNoAuth = ky.create({
-  prefixUrl: process.env.EXPO_PUBLIC_API_URL,
+  prefix: process.env.EXPO_PUBLIC_API_URL,
   credentials: 'include',
   retry: { limit: 0 },
   headers: {
@@ -21,13 +21,13 @@ export const api = apiNoAuth.extend({
   },
   hooks: {
     beforeRequest: [
-      async (request) => {
+      async ({ request }) => {
         const accessToken = await SecureStore.getItemAsync('accessToken');
         if (accessToken) request.headers.set('Authorization', `Bearer ${accessToken}`);
       },
     ],
     afterResponse: [
-      async (_, __, response) => {
+      async ({ response }) => {
         if (response.status === 401) {
           try {
             const newTokens = await refreshToken();

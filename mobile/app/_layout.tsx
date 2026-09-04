@@ -3,7 +3,7 @@ import AddToListProvider from '@/providers/AddToListProvider';
 import { useAppTheme } from '@/theme/hooks/useAppTheme';
 import { useToastConfig } from '@/theme/hooks/useToastConfig';
 import { ThemeProvider as CustomAppThemeProvider, useTheme } from '@/theme/theme-context';
-import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
+import { ThemeProvider as NavigationThemeProvider } from 'expo-router/react-navigation';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import React from 'react';

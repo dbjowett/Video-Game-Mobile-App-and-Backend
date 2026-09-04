@@ -7,7 +7,7 @@ import { useSearchStore } from '@/store/searchStore';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
 import { mapListGameToCard } from '@/utils/gameCard';
-import { useHeaderHeight } from '@react-navigation/elements';
+import { useHeaderHeight } from 'expo-router/react-navigation';
 import { router } from 'expo-router';
 import { ListPlus, XIcon } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';

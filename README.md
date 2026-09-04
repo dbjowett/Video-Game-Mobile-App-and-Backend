@@ -30,12 +30,16 @@ A full-stack video game tracking app where users can keep track of games they've
 
 ## 📦 Project Structure
 
+This repo is a pnpm workspace monorepo:
+
 ```
 
 /
-mobile/       → React Native + Expo app
-frontend/     → Vite + React app (Web)
-backend/      → NestJS REST API
+mobile/           → React Native + Expo app
+frontend/         → Vite + React app (Web)
+backend/          → NestJS REST API
+packages/config/  → Shared configs (oxc)
+packages/types/   → Shared TypeScript types
 
 ```
 
@@ -52,72 +56,49 @@ cd gametracker
 
 ### 2. Install dependencies
 
+One install at the repo root covers all three apps and both shared packages:
+
 ```bash
-# Frontend
-cd /frontend
-pnpm install
-
-# Mobile
-cd /mobile
-pnpm install
-
-# Backend
-cd /backend
 pnpm install
 ```
 
 ### 3. Run locally
 
 ```bash
-
-# Frontend
-cd /frontend
-pnpm run dev
-
-# Mobile (requires Expo CLI)
-cd /mobile
-pnpm run start
-
 # Dev Database
-cd /
 docker compose up
 
+# Frontend
+pnpm --filter frontend run dev
+
+# Mobile (requires Expo CLI)
+pnpm --filter mobile run start
+
 # Backend (Start and Make migrations)
-cd /backend
-pnpm prisma migrate dev
-pnpm run start:dev
+pnpm --filter backend exec prisma migrate dev
+pnpm --filter backend run start:dev
+```
+
+Useful root-level scripts (run across every project at once):
+
+```bash
+pnpm run lint        # oxlint everywhere
+pnpm run fmt:check   # oxfmt --check everywhere
 ```
 
 ---
 
 ## 🛠 Environment Variables
 
-Create a `.env` file in each app folder and add required variables like API URLs, database credentials, and third-party keys.
+Each app has its own `.env` (gitignored) — copy the matching `.env.example` to get started:
 
-Example for `monorepo/apps/backend/.env`:
-
+```bash
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+cp mobile/.env.example mobile/.env
 ```
-# IGDB
-IGDB_CLIENT_ID=
-IGDB_CLIENT_SECRET=
 
-# JWT
-JWT_SECRET=
-JWT_REFRESH_SECRET=
-
-# GOOGLE
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-GOOGLE_CALLBACK_URL="http://localhost:3000/auth/google/redirect"
-
-# PRISMA
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/vg?schema=public"
-
-
-#FE
-FE_URL='http://localhost:5173/'
-
-```
+Then fill in the real values (API keys, JWT secrets, AWS credentials, etc.) — see `backend/.env.example` for the full list backend expects.
 
 ---
 

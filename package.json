@@ -4,9 +4,13 @@
   "private": true,
   "packageManager": "pnpm@11.24.0",
   "scripts": {
+    "dev": "./scripts/dev.sh",
     "lint": "pnpm -r --if-present run lint",
     "lint:fix": "pnpm -r --if-present run lint:fix",
     "fmt": "pnpm -r --if-present run fmt",
     "fmt:check": "pnpm -r --if-present run fmt:check"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5"
   }
 }

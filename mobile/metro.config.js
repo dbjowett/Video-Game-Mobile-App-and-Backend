@@ -1,17 +1,8 @@
 const { getDefaultConfig } = require('expo/metro-config');
-const path = require('path');
 
-const projectRoot = __dirname;
-const workspaceRoot = path.resolve(projectRoot, '..');
-
-const config = getDefaultConfig(projectRoot);
-
-config.watchFolders = [workspaceRoot];
-
-config.resolver.nodeModulesPaths = [
-  path.resolve(projectRoot, 'node_modules'),
-  path.resolve(workspaceRoot, 'node_modules'),
-];
-config.resolver.unstable_enableSymlinks = true;
+// Expo's default config auto-detects the pnpm workspace and sets
+// per-package watchFolders; only symlink resolution needs an explicit
+// override for pnpm's node_modules layout.
+const config = getDefaultConfig(__dirname);
 
 module.exports = config;

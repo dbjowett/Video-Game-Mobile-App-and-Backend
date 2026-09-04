@@ -10,6 +10,7 @@ import { AppText } from '@/components/Themed';
 import { VideosSection } from '@/components/VideosSection';
 import { defaultStyles } from '@/constants/Styles';
 import { useAddToList } from '@/providers/AddToListProvider';
+import { tailwindColors } from '@/theme/constants/tailwindColors';
 import { useTheme } from '@/theme/theme-context';
 import { imageLoader } from '@/utils';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
@@ -33,7 +34,6 @@ import Animated, {
   useScrollViewOffset,
   withTiming,
 } from 'react-native-reanimated';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 const IMG_HEIGHT = 500;
 const { width } = Dimensions.get('window');
 
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     fontSize: 16,
     lineHeight: 24,
-    color: Colors.grey,
+    color: tailwindColors.neutral['700'],
   },
 
   image: {
@@ -285,10 +285,10 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     opacity: 0.7,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: Colors.grey,
+    borderColor: tailwindColors.neutral['700'],
     alignItems: 'center',
     justifyContent: 'center',
-    color: Colors.primary,
+    color: tailwindColors.blue['600'],
   },
 
   headerTitle: {

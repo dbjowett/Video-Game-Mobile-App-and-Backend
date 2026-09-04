@@ -1,5 +1,5 @@
 import { useGetLists } from '@/api/hooks/useGetLists';
-import { AddableGame } from '@vg/types';
+import { AddableGame, GameListWithCovers } from '@vg/types';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
@@ -128,10 +128,10 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(({ game }, re
               keyboardShouldPersistTaps="handled"
               style={{ flex: 1 }}
               data={gameLists}
-              renderItem={({ item }) => (
+              renderItem={({ item }: { item: GameListWithCovers }) => (
                 <GameListPreview list={item} game={game} handleClose={handleClose} />
               )}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item: GameListWithCovers) => item.id}
               numColumns={2}
               columnWrapperStyle={styles.row}
               contentContainerStyle={{ paddingBottom: spacing.md }}

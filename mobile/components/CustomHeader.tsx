@@ -1,5 +1,5 @@
 import { useTheme } from '@/theme/theme-context';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
+import { useNavigation } from 'expo-router/react-navigation'; // Import useNavigation hook
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 

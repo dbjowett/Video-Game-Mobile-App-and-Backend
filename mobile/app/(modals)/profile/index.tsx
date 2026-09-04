@@ -5,7 +5,7 @@ import { AppText, View } from '@/components/Themed';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
-import { useHeaderHeight } from '@react-navigation/elements';
+import { useHeaderHeight } from 'expo-router/react-navigation';
 import { Mail, ShieldCheck, UserRound } from 'lucide-react-native';
 import React from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet } from 'react-native';

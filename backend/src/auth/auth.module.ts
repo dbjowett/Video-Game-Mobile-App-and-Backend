@@ -10,15 +10,19 @@ import { JwtRefreshTokenStrategy } from './strategies/jwt-refresh.strategy';
 import { JwtAccessStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 
-const JWT_CONFIG = {
-  global: true,
-  secret: process.env.JWT_SECRET,
-  signOptions: { expiresIn: '60s' as const },
-};
-
 @Global()
 @Module({
-  imports: [JwtModule.register(JWT_CONFIG), UsersModule, PassportModule.register({})],
+  imports: [
+    JwtModule.registerAsync({
+      global: true,
+      useFactory: () => ({
+        secret: process.env.JWT_SECRET,
+        signOptions: { expiresIn: '60s' as const },
+      }),
+    }),
+    UsersModule,
+    PassportModule.register({}),
+  ],
   providers: [
     AuthService,
     LocalStrategy,
