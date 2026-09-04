@@ -1,5 +1,6 @@
-import { spacing } from '@/theme/constants/spacing';
 import { StyleProp, ViewStyle } from 'react-native';
+
+import { spacing } from '@/theme/constants/spacing';
 
 const pad = spacing.xs / 2;
 

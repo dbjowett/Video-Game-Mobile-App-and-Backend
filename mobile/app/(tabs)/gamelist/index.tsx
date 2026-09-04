@@ -1,13 +1,11 @@
 import React from 'react';
-
-import { AppText } from '@/components/Themed';
-
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import ReorderableList, { ReorderableListReorderEvent } from 'react-native-reorderable-list';
 
 import { useGetLists } from '@/api/hooks/useGetLists';
 import { useUpdateListOrder } from '@/api/hooks/useUpdateListOrder';
 import { ListItem } from '@/components/ListItem';
-import ReorderableList, { ReorderableListReorderEvent } from 'react-native-reorderable-list';
+import { AppText } from '@/components/Themed';
 
 const Page = () => {
   const { data: lists, isLoading } = useGetLists();

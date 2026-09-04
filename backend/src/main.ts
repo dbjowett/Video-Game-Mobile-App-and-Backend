@@ -2,6 +2,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import { NextFunction, Request, Response } from 'express';
+
 import { AppModule } from './app.module';
 import { LoggerMiddleware } from './common/middleware';
 

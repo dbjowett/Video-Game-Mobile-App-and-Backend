@@ -3,6 +3,7 @@ import { GameList, GameListItem } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { UserPayload } from 'src/auth/types';
 import { User } from 'src/common/utils/user.decorator';
+
 import {
   AddGameToListDto,
   CreateGameListDto,

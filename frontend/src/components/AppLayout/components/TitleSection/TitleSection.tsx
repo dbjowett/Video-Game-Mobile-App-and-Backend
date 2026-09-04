@@ -1,6 +1,8 @@
 import { IconDeviceGamepad2 } from '@tabler/icons-react';
 import { motion } from 'motion/react';
+
 import { COLLAPSE_DURATION } from '../../config';
+
 import styles from './TitleSection.module.scss';
 
 interface TitleSectionProps {

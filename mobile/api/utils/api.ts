@@ -1,8 +1,9 @@
-import { deleteTokensFromStore, storeTokens } from '@/components/AuthContext';
+import { Tokens } from '@vg/types';
 import { router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import ky from 'ky';
-import { Tokens } from '@vg/types';
+
+import { deleteTokensFromStore, storeTokens } from '@/components/AuthContext';
 
 export const apiNoAuth = ky.create({
   prefix: process.env.EXPO_PUBLIC_API_URL,

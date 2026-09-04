@@ -1,13 +1,15 @@
 import { GameListWithCovers } from '@vg/types';
-import { radius } from '@/theme/constants/radius';
-import { spacing } from '@/theme/constants/spacing';
-import { useTheme } from '@/theme/theme-context';
-import { getImageWrapStyle } from '@/utils/getImageGrid';
 import { useRouter } from 'expo-router';
 import { GripVertical } from 'lucide-react-native';
 import { FC } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useReorderableDrag } from 'react-native-reorderable-list';
+
+import { radius } from '@/theme/constants/radius';
+import { spacing } from '@/theme/constants/spacing';
+import { useTheme } from '@/theme/theme-context';
+import { getImageWrapStyle } from '@/utils/getImageGrid';
+
 import { IgdbImage } from './IgdbImage';
 import { AppText } from './Themed';
 

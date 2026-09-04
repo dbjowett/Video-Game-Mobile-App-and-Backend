@@ -1,15 +1,15 @@
-import { ActivityIndicator, FlatList, ListRenderItem, ScrollView, StyleSheet } from 'react-native';
-
-import { usePopularGames } from '@/api';
 import { ListGame, PopKey } from '@vg/types';
+import { Stack, router } from 'expo-router';
+import React, { FC } from 'react';
+import { ActivityIndicator, FlatList, ListRenderItem, ScrollView, StyleSheet } from 'react-native';
+import Animated, { FadeInRight, FadeOutLeft } from 'react-native-reanimated';
+
+import { usePopularGames, useUpcomingGames } from '@/api';
 import LandingHeader from '@/components/CategoryHeader';
 import GameCard from '@/components/GameCard';
 import { AppText, View } from '@/components/Themed';
 import { spacing } from '@/theme/constants/spacing';
 import { mapListGameToCard } from '@/utils/gameCard';
-import { Stack, router } from 'expo-router';
-import React, { FC } from 'react';
-import Animated, { FadeInRight, FadeOutLeft } from 'react-native-reanimated';
 
 const popTypeTitleMap: Record<PopKey, string> = {
   visits: '🎯 Most Visited',
@@ -22,8 +22,29 @@ const popTypeTitleMap: Record<PopKey, string> = {
   totalReviews: '📊 Total Reviews',
 };
 
+const visibleCategoryKeys: PopKey[] = ['visits', 'playing'];
+
 export default function Page() {
-  const { data: popularGames, isError, isPending } = usePopularGames();
+  const {
+    data: popularGames,
+    isError: isPopularError,
+    isPending: isPopularPending,
+  } = usePopularGames();
+  const {
+    data: upcomingGames,
+    isError: isUpcomingError,
+    isPending: isUpcomingPending,
+  } = useUpcomingGames();
+
+  const UpcomingGame: ListRenderItem<ListGame> = ({ item }) => {
+    const card = mapListGameToCard(item);
+
+    return (
+      <Animated.View style={styles.itemContainer} entering={FadeInRight} exiting={FadeOutLeft}>
+        <GameCard game={card} variant="feature" onPress={() => router.push(`/games/${item.id}`)} />
+      </Animated.View>
+    );
+  };
 
   const SingleGame: ListRenderItem<ListGame> = ({ item }) => {
     const card = mapListGameToCard(item, {
@@ -44,6 +65,10 @@ export default function Page() {
     </View>
   );
 
+  const isError = isPopularError || isUpcomingError;
+  const isPending = isPopularPending || isUpcomingPending;
+  const [heroGame, ...restUpcoming] = upcomingGames ?? [];
+
   return (
     <View style={styles.pageContainer}>
       <Stack.Screen
@@ -61,10 +86,36 @@ export default function Page() {
         </View>
       ) : (
         <ScrollView style={{ paddingTop: spacing.md }}>
+          {heroGame ? (
+            <View>
+              <AppText style={styles.categoryTitle}>🔥 Top Upcoming This Month</AppText>
+              <View style={styles.heroWrapper}>
+                <GameCard
+                  game={mapListGameToCard(heroGame, {
+                    meta: heroGame.platforms?.map((p) => p.name).join(', ') || 'Unknown Platform',
+                  })}
+                  variant="feature"
+                  onPress={() => router.push(`/games/${heroGame.id}`)}
+                  style={styles.heroCard}
+                />
+              </View>
+              {restUpcoming.length > 0 ? (
+                <FlatList
+                  horizontal
+                  style={styles.listContainer}
+                  data={restUpcoming}
+                  renderItem={UpcomingGame}
+                />
+              ) : null}
+            </View>
+          ) : null}
+
           {popularGames
-            ? Object.entries(popularGames).map(([title, games]) => (
-                <GameList key={title} title={title as PopKey} games={games} />
-              ))
+            ? visibleCategoryKeys.map((key) =>
+                popularGames[key]?.length ? (
+                  <GameList key={key} title={key} games={popularGames[key]} />
+                ) : null,
+              )
             : null}
         </ScrollView>
       )}
@@ -91,5 +142,12 @@ const styles = StyleSheet.create({
   itemContainer: {
     width: 200,
     marginHorizontal: 8,
+  },
+  heroWrapper: {
+    paddingHorizontal: spacing.md,
+    marginBottom: spacing.md,
+  },
+  heroCard: {
+    width: '100%',
   },
 });

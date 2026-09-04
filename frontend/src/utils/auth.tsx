@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import type { User } from '@vg/types';
+
 import { api, apiNoAuth } from './api';
 
 export type AuthStatus = 'loggedOut' | 'loggedIn' | 'loading';

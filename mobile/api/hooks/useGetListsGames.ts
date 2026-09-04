@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { GameListItem } from '@vg/types';
+
 import { api } from '../utils/api';
 
 const getListsGames = async (id: string) => {

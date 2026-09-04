@@ -1,6 +1,7 @@
 import { useDisclosure } from '@mantine/hooks';
 import { createFileRoute } from '@tanstack/react-router';
 import { useRef } from 'react';
+
 import { AuthModal } from '../components/AuthModal';
 import { Features } from '../components/Features';
 import { Hero } from '../components/Hero';

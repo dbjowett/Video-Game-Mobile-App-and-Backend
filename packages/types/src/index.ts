@@ -64,6 +64,7 @@ export interface ListGame {
   total_rating: number;
   platforms?: Array<{ id: number; name: string }>;
   screenshots?: Array<{ id: number; url: string }>;
+  popularity?: number;
 }
 
 export interface SimilarGame {
@@ -82,6 +83,7 @@ export interface DetailedGame {
   videos: Array<{ id: number; name: string; video_id: string }>;
   game_modes: Array<{ id: number; slug: string; name: string }>;
   similar_games: Array<SimilarGame>;
+  storefronts?: Array<{ name: string; url: string }>;
 }
 
 export type AddableGame = Pick<ListGame, 'id' | 'name'> | Pick<DetailedGame, 'id' | 'name'>;

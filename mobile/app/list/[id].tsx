@@ -1,14 +1,15 @@
-import { useGetListsGames } from '@/api/hooks/useGetListsGames';
 import { GameListItem } from '@vg/types';
+import { router, useLocalSearchParams } from 'expo-router';
+import React from 'react';
+import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
+
+import { useGetListsGames } from '@/api/hooks/useGetListsGames';
 import GameCard from '@/components/GameCard';
 import { AppText } from '@/components/Themed';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
 import { mapGameListItemToCard } from '@/utils/gameCard';
-import { router, useLocalSearchParams } from 'expo-router';
-import React from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 
 const formatDate = (value: string) => {
   const date = new Date(value);

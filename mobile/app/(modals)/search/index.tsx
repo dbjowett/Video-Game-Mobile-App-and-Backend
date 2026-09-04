@@ -1,5 +1,11 @@
-import { useGameSearch } from '@/api/hooks/useGameSearch';
 import { ListGame } from '@vg/types';
+import { router } from 'expo-router';
+import { useHeaderHeight } from 'expo-router/react-navigation';
+import { ListPlus, XIcon } from 'lucide-react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+
+import { useGameSearch } from '@/api/hooks/useGameSearch';
 import GameCard from '@/components/GameCard';
 import { AppText, View } from '@/components/Themed';
 import { useAddToList } from '@/providers/AddToListProvider';
@@ -7,11 +13,6 @@ import { useSearchStore } from '@/store/searchStore';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
 import { mapListGameToCard } from '@/utils/gameCard';
-import { useHeaderHeight } from 'expo-router/react-navigation';
-import { router } from 'expo-router';
-import { ListPlus, XIcon } from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
 const GameItem = ({
   item,

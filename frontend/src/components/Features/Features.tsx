@@ -11,7 +11,9 @@ import {
 } from '@tabler/icons-react';
 import { motion } from 'motion/react';
 import { ReactNode, RefObject } from 'react';
+
 import { JumboTitle } from '../JumboTitle';
+
 import classes from './Features.module.css';
 
 type Feature = {

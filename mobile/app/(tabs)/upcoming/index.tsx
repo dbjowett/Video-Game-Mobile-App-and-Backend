@@ -1,327 +1,332 @@
+import { useQuery } from '@tanstack/react-query';
 import { ListGame } from '@vg/types';
+import { router } from 'expo-router';
+import { Calendar as CalendarIcon } from 'lucide-react-native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, SectionList, StyleSheet, TouchableOpacity } from 'react-native';
+import { CalendarProvider, ExpandableCalendar } from 'react-native-calendars';
+import { Theme } from 'react-native-calendars/src/types';
+
 import { api } from '@/api/utils/api';
 import GameCard from '@/components/GameCard';
+import { AppText, View } from '@/components/Themed';
+import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
 import { mapListGameToCard } from '@/utils/gameCard';
-import { useQuery } from '@tanstack/react-query';
-import { router } from 'expo-router';
-import { Calendar, ChevronDown } from 'lucide-react-native';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { Animated, Easing, StyleSheet, TouchableOpacity } from 'react-native';
-
-import { AppText, View } from '@/components/Themed';
-
-import {
-  AgendaList,
-  CalendarProvider,
-  ExpandableCalendar,
-  WeekCalendar,
-} from 'react-native-calendars';
-import { Theme } from 'react-native-calendars/src/types';
-
-interface Props {
-  weekView?: boolean;
-}
 
 const fetchReleasesByMonth = async (month: string) =>
   await api.get(`games/releases?month=${month}`).json<ListGame[]>();
 
-const date = new Date();
+const fetchReleasesByRange = async (start: string, end: string) =>
+  await api.get(`games/releases?start=${start}&end=${end}`).json<ListGame[]>();
 
-const initialDate = new Date(date.getFullYear(), date.getMonth(), 2).toISOString().split('T')[0]; // "YYYY-MM-DD"
-
-const todayDate = new Date();
-todayDate.setHours(0, 0, 0, 0);
-const todayDateString = todayDate.toISOString().split('T')[0];
-
-const initialMonth = new Date().toISOString().slice(0, 7); // "YYYY-MM"
-
-const getMonthLabel = (value: string) => {
-  const [year, month] = value.split('-').map(Number);
-  const date = new Date(Date.UTC(year, (month || 1) - 1, 1));
-
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'long',
-    year: 'numeric',
-  }).format(date);
+const toLocalDateString = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
 
-const ExpandableCalendarScreen = ({ weekView }: Props) => {
-  const listRef = useRef<React.LegacyRef<unknown>>(null);
-  const calendarRef = useRef<{ toggleCalendarPosition: () => boolean }>(null);
-  const rotation = useRef(new Animated.Value(0));
-  const { colors, isDarkMode } = useTheme();
+const addDays = (dateStr: string, days: number): string => {
+  const date = new Date(`${dateStr}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().split('T')[0];
+};
+
+const groupByDate = (games: ListGame[] | undefined): Record<string, ListGame[]> => {
+  const grouped: Record<string, ListGame[]> = {};
+  if (!games) return grouped;
+
+  games.forEach((game) => {
+    if (!game.first_release_date) return;
+    const dateStr = toLocalDateString(new Date(game.first_release_date * 1000));
+
+    if (!grouped[dateStr]) grouped[dateStr] = [];
+    grouped[dateStr].push(game);
+  });
+
+  return grouped;
+};
+
+const todayDateString = toLocalDateString(new Date());
+
+const initialMonth = todayDateString.slice(0, 7);
+const WINDOW_DAYS_BACK = 2;
+const WINDOW_DAYS_FORWARD = 7;
+
+const initialWindow = {
+  start: addDays(todayDateString, -WINDOW_DAYS_BACK),
+  end: addDays(todayDateString, WINDOW_DAYS_FORWARD),
+};
+
+const sortByPopularity = (games: ListGame[] | undefined): ListGame[] =>
+  (games ?? []).slice().sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0));
+
+const ReleaseCard = ({ game }: { game: ListGame }) => (
+  <GameCard
+    game={mapListGameToCard(game, {
+      meta: game.platforms?.map((p) => p.name).join(', ') || 'Unknown Platform',
+    })}
+    variant="compact"
+    onPress={() => router.navigate(`/games/${game.id}`)}
+    style={styles.card}
+  />
+);
+
+const SKELETON_COUNT = 5;
+
+const GameCardSkeleton = () => {
+  const { colors } = useTheme();
+  const opacity = useRef(new Animated.Value(0.4)).current;
+
+  useEffect(() => {
+    const pulse = Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, { toValue: 1, duration: 700, useNativeDriver: true }),
+        Animated.timing(opacity, { toValue: 0.4, duration: 700, useNativeDriver: true }),
+      ]),
+    );
+    pulse.start();
+    return () => pulse.stop();
+  }, [opacity]);
+
+  return (
+    <Animated.View
+      style={[
+        styles.skeletonCard,
+        { backgroundColor: colors.card, borderColor: colors.border, opacity },
+      ]}
+    >
+      <View style={[styles.skeletonImage, { backgroundColor: colors.border }]} />
+      <View style={styles.skeletonLines}>
+        <View
+          style={[
+            styles.skeletonLine,
+            styles.skeletonLineTitle,
+            { backgroundColor: colors.border },
+          ]}
+        />
+        <View
+          style={[
+            styles.skeletonLine,
+            styles.skeletonLineSubtitle,
+            { backgroundColor: colors.border },
+          ]}
+        />
+      </View>
+    </Animated.View>
+  );
+};
+
+const GameListSkeleton = () => (
+  <View style={styles.list}>
+    {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
+      <GameCardSkeleton key={index} />
+    ))}
+  </View>
+);
+
+const UpcomingReleasesScreen = () => {
+  const { colors } = useTheme();
 
   const [selectedDate, setSelectedDate] = useState<string>(todayDateString);
   const [visibleMonth, setVisibleMonth] = useState<string>(initialMonth);
-  const [shouldShowPast, setShouldShowPast] = useState<boolean>(true);
+  const [fetchWindow, setFetchWindow] = useState(initialWindow);
 
-  // TODO: Move this to a custom hook
-  const {
-    data: games,
-    isLoading,
-    isPending,
-    isError,
-  } = useQuery({
+  const { data: monthGames } = useQuery({
     queryKey: ['game-releases', visibleMonth],
     queryFn: () => fetchReleasesByMonth(visibleMonth),
   });
 
-  const transformedItems = useMemo(() => {
-    if (!games) return [];
+  const {
+    data: windowGames,
+    isLoading,
+    isPending,
+    isError,
+  } = useQuery({
+    queryKey: ['game-releases-window', fetchWindow.start, fetchWindow.end],
+    queryFn: () => fetchReleasesByRange(fetchWindow.start, fetchWindow.end),
+  });
 
-    const grouped: Record<string, ListGame[]> = {};
-
-    games.forEach((game: ListGame) => {
-      if (!game.first_release_date) return; // Skip if no release date
-      const releaseDate = new Date(game.first_release_date * 1000);
-      releaseDate.setHours(0, 0, 0, 0);
-      if (releaseDate < todayDate && !shouldShowPast && visibleMonth === initialMonth) {
-        return;
-      }
-      const dateStr = releaseDate.toISOString().split('T')[0]; // YYYY-MM-DD
-
-      if (!grouped[dateStr]) grouped[dateStr] = [];
-
-      grouped[dateStr].push(game);
-    });
-
-    return Object.entries(grouped)
-      .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
-      .map(([date, data]) => ({
-        title: date,
-        data,
-      }));
-  }, [games, shouldShowPast, visibleMonth]);
+  const gamesByDateForMonth = useMemo(() => groupByDate(monthGames), [monthGames]);
+  const gamesByDateForWindow = useMemo(() => groupByDate(windowGames), [windowGames]);
 
   const marked = useMemo(() => {
-    if (!games) return {};
-
-    return games.reduce((acc: any, game: any) => {
-      if (!game.first_release_date) return acc;
-
-      const dateStr = new Date(game.first_release_date * 1000).toISOString().split('T')[0];
-      acc[dateStr] = {
-        marked: true,
-        selected: dateStr === selectedDate,
-        selectedColor: dateStr === selectedDate ? colors.primary : undefined,
-      };
-      return acc;
-    }, {});
-  }, [colors.primary, games, selectedDate]);
-
-  const AgendaItem = ({ item }: { item: ListGame }) => {
-    const card = mapListGameToCard(item, {
-      meta: item.platforms?.map((p) => p.name).join(', ') || 'Unknown Platform',
+    const acc: Record<string, object> = {};
+    Object.keys(gamesByDateForMonth).forEach((dateStr) => {
+      acc[dateStr] = { marked: true };
     });
-
-    return (
-      <GameCard
-        game={card}
-        variant="compact"
-        onPress={() => router.navigate(`/games/${item.id}`)}
-        style={styles.agendaCard}
-      />
-    );
-  };
-
-  const toggleCalendarExpansion = useCallback(() => {
-    const isOpen = calendarRef.current?.toggleCalendarPosition();
-    Animated.timing(rotation.current, {
-      toValue: isOpen ? 1 : 0,
-      duration: 200,
-      useNativeDriver: true,
-      easing: Easing.out(Easing.ease),
-    }).start();
-  }, []);
-
-  const renderHeader = useCallback(
-    (date?: any) => {
-      const rotationInDegrees = rotation.current.interpolate({
-        inputRange: [0, 1],
-        outputRange: ['0deg', '-180deg'],
-      });
-
-      return (
-        <TouchableOpacity style={styles.header} onPress={toggleCalendarExpansion}>
-          <AppText style={styles.headerTitle}>{date?.toString?.('MMMM yyyy') ?? ''}</AppText>
-          <Animated.View style={{ transform: [{ rotate: rotationInDegrees }] }}>
-            <ChevronDown size={18} />
-          </Animated.View>
-        </TouchableOpacity>
-      );
-    },
-    [isDarkMode],
-  );
-
-  const onCalendarToggled = useCallback((isOpen: boolean) => {
-    rotation.current.setValue(isOpen ? 1 : 0);
-  }, []);
-
-  const onMonthChange = (dateObj: any) => {
-    const newMonth = dateObj.dateString.slice(0, 7); // "YYYY-MM"
-    setVisibleMonth(newMonth);
-  };
+    acc[selectedDate] = {
+      ...acc[selectedDate],
+      selected: true,
+      selectedColor: colors.primary,
+    };
+    return acc;
+  }, [colors.primary, gamesByDateForMonth, selectedDate]);
 
   const theme: Theme = {
     monthTextColor: colors.primary,
     backgroundColor: colors.background,
     todayBackgroundColor: colors.surface,
     selectedDayBackgroundColor: colors.primary,
-
     arrowColor: colors.primary,
-    todayButtonTextColor: colors.primary,
-    agendaTodayColor: colors.primary,
     todayTextColor: colors.primary,
-    indicatorColor: colors.primary,
+    dotColor: colors.primary,
     calendarBackground: colors.background,
   };
 
+  const selectDate = useCallback((date: string) => {
+    setSelectedDate(date);
+    setFetchWindow((current) => {
+      if (date >= current.start && date <= current.end) return current;
+      return { start: addDays(date, -WINDOW_DAYS_BACK), end: addDays(date, WINDOW_DAYS_FORWARD) };
+    });
+  }, []);
+
+  const goToToday = useCallback(() => {
+    setSelectedDate(todayDateString);
+    setVisibleMonth(initialMonth);
+    setFetchWindow(initialWindow);
+  }, []);
+
   const isLoadingData = isPending || isLoading;
-  const noGamesFound = !isLoadingData && transformedItems.length === 0;
-  const monthLabel = useMemo(() => getMonthLabel(visibleMonth), [visibleMonth]);
-
-  const NoGames = () => (
-    <View style={{ padding: 20, alignItems: 'center' }}>
-      <AppText>{isError ? 'Error loading games' : `No releases found for ${monthLabel}`}</AppText>
-    </View>
+  const dayGames = gamesByDateForWindow[selectedDate];
+  const popularGames = useMemo(
+    () => sortByPopularity(dayGames?.filter((g) => (g.popularity ?? 0) > 0)),
+    [dayGames],
   );
+  const releasingGames = useMemo(
+    () => sortByPopularity(dayGames?.filter((g) => !(g.popularity ?? 0))),
+    [dayGames],
+  );
+  const sections = useMemo(() => {
+    const result: { title: string; data: ListGame[] }[] = [];
+    if (popularGames.length) result.push({ title: '🔥 Popular', data: popularGames });
+    if (releasingGames.length) result.push({ title: '🎮 Other Releases', data: releasingGames });
+    return result;
+  }, [popularGames, releasingGames]);
 
-  const TodayButton = () => {
-    return (
-      <TouchableOpacity
-        onPress={() => {
-          setSelectedDate(todayDateString);
-          setVisibleMonth(initialMonth);
-        }}
-        style={styles.floatingButton}
-      >
-        <Calendar size={18} color={colors.primary} />
-        <AppText style={{ color: colors.primary }}>Today</AppText>
-      </TouchableOpacity>
-    );
-  };
-
-  const ShowPastButton = () => {
-    return (
-      <TouchableOpacity
-        onPress={() => setShouldShowPast((prev) => !prev)}
-        style={styles.floatingButton}
-      >
-        <Calendar size={18} color={colors.primary} />
-        <AppText style={{ color: colors.primary }}>{shouldShowPast ? 'Hide' : 'Show'} Past</AppText>
-      </TouchableOpacity>
-    );
-  };
+  const renderItem = useCallback(({ item }: { item: ListGame }) => <ReleaseCard game={item} />, []);
 
   return (
     <CalendarProvider
       date={selectedDate}
-      onDateChanged={(e, src) => {
-        setSelectedDate(e);
-      }}
+      onDateChanged={selectDate}
+      style={{ flex: 1, backgroundColor: colors.background }}
     >
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: colors.background,
-          position: 'relative',
-        }}
-      >
-        <View style={styles.buttonWrapper}>
-          <ShowPastButton />
-          <TodayButton />
-        </View>
+      <ExpandableCalendar
+        initialPosition={ExpandableCalendar.positions.CLOSED}
+        allowShadow
+        closeOnDayPress={false}
+        current={`${visibleMonth}-01`}
+        markedDates={marked}
+        theme={theme}
+        firstDay={1}
+        onDayPress={(day) => selectDate(day.dateString)}
+        onMonthChange={(month) => setVisibleMonth(month.dateString.slice(0, 7))}
+      />
 
-        {weekView ? (
-          <WeekCalendar
-            displayLoadingIndicator={isLoadingData}
-            theme={theme}
-            onDayPress={(day) => setSelectedDate(day.dateString)}
-            onMonthChange={onMonthChange}
-            firstDay={1}
-            markedDates={marked}
-          />
+      <View style={styles.actionRow}>
+        <TouchableOpacity onPress={goToToday} style={styles.todayButton}>
+          <CalendarIcon size={16} color={colors.primary} />
+          <AppText style={{ color: colors.primary }}>Today</AppText>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.dayList}>
+        {isError ? (
+          <View style={styles.emptyState}>
+            <AppText>Error loading games</AppText>
+          </View>
+        ) : isLoadingData ? (
+          <GameListSkeleton />
+        ) : popularGames.length + releasingGames.length === 0 ? (
+          <View style={styles.emptyState}>
+            <AppText>No games found releasing this day</AppText>
+          </View>
         ) : (
-          <ExpandableCalendar
-            allowShadow
-            displayLoadingIndicator={isLoadingData}
-            theme={theme}
-            onDayPress={(day) => setSelectedDate(day.dateString)}
-            onMonthChange={onMonthChange}
-            renderHeader={renderHeader}
-            ref={calendarRef}
-            onCalendarToggled={onCalendarToggled}
-            firstDay={1}
-            markedDates={marked}
+          <SectionList
+            sections={sections}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItem}
+            renderSectionHeader={({ section }) => (
+              <AppText style={[styles.sectionHeader, { backgroundColor: colors.background }]}>
+                {section.title}
+              </AppText>
+            )}
+            contentContainerStyle={styles.list}
           />
         )}
-        <View style={styles.bottomContainer}>
-          <AgendaList
-            markToday
-            ref={listRef}
-            sections={transformedItems}
-            renderItem={({ item }: { item: ListGame }) => <AgendaItem item={item} />}
-            sectionStyle={styles.agendaItemList}
-          />
-
-          {noGamesFound ? <NoGames /> : null}
-        </View>
       </View>
     </CalendarProvider>
   );
 };
 
-export default ExpandableCalendarScreen;
+export default UpcomingReleasesScreen;
 
 const styles = StyleSheet.create({
-  header: {
+  actionRow: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
-    marginVertical: 10,
-  },
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginRight: 10,
-  },
-
-  bottomContainer: {
-    flex: 1,
-    justifyContent: 'flex-start',
-  },
-
-  agendaItemList: {
     paddingHorizontal: spacing.md,
-    marginBottom: spacing.sm,
+    marginTop: spacing.sm,
   },
-  agendaCard: {
-    width: '100%',
-  },
-  buttonWrapper: {
-    zIndex: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    position: 'absolute',
-    bottom: 10,
-    right: 10,
-  },
-
-  floatingButton: {
+  todayButton: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: '#fff',
-    padding: 10,
-    borderRadius: 20,
+  },
+  dayList: {
+    flex: 1,
+    marginTop: spacing.sm,
+  },
+  list: {
+    paddingHorizontal: spacing.md,
+    paddingBottom: spacing.md,
+  },
+  card: {
+    width: '100%',
+    marginBottom: spacing.sm,
+  },
+  sectionHeader: {
+    fontSize: 16,
+    fontWeight: '700',
+    paddingVertical: spacing.sm,
+  },
+  skeletonCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    padding: spacing.sm,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderRadius: radius.lg,
+    marginBottom: spacing.sm,
+  },
+  skeletonImage: {
+    width: 52,
+    height: 52,
+    borderRadius: radius.round,
+  },
+  skeletonLines: {
+    flex: 1,
+    gap: spacing.sm,
+  },
+  skeletonLine: {
+    height: 12,
+    borderRadius: radius.xs,
+  },
+  skeletonLineTitle: {
+    width: '60%',
+  },
+  skeletonLineSubtitle: {
+    width: '40%',
+  },
+  emptyState: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: spacing.xl,
   },
 });

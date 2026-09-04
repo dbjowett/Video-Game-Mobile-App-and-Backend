@@ -1,11 +1,12 @@
-import { AppText } from '@/components/Themed';
+import React, { ReactNode } from 'react';
+import { ImageStyle, Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+
 import { IgdbImage } from '@/components/IgdbImage';
+import { AppText } from '@/components/Themed';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
 import { GameCardModel, GameCardVariant } from '@/utils/gameCard';
-import React, { ReactNode } from 'react';
-import { ImageStyle, Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
 interface GameCardProps {
   game: GameCardModel;

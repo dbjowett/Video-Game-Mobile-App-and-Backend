@@ -1,5 +1,6 @@
-import { useTheme } from '@/theme/theme-context';
 import { Stack } from 'expo-router';
+
+import { useTheme } from '@/theme/theme-context';
 
 const Layout = () => {
   const { colors } = useTheme();

@@ -1,5 +1,6 @@
 import { IconVideo } from '@tabler/icons-react';
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
+
 import { DashboardLayout } from '../components/AppLayout/AppLayout';
 
 export const Route = createFileRoute('/_auth')({

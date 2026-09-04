@@ -1,6 +1,7 @@
 import { PlayIcon } from 'lucide-react-native';
 import { Linking, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Animated from 'react-native-reanimated';
+
 import { AppText } from './Themed';
 
 type Props = {

@@ -1,9 +1,11 @@
 import { SimilarGame } from '@vg/types';
+import { router } from 'expo-router';
+import { ScrollView, StyleSheet, View } from 'react-native';
+
 import GameCard from '@/components/GameCard';
 import { useTheme } from '@/theme/theme-context';
 import { mapSimilarGameToCard } from '@/utils/gameCard';
-import { router } from 'expo-router';
-import { ScrollView, StyleSheet, View } from 'react-native';
+
 import { AppText } from './Themed';
 
 type Props = {

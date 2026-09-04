@@ -1,10 +1,11 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { GameList, GameListItem, Prisma } from '@prisma/client';
+import { ListGame } from '@vg/types';
 import { UserPayload } from 'src/auth/types';
 import { DatabaseService } from 'src/database/database.service';
 import { GamesService } from 'src/games/games.service';
-import { ListGame } from '@vg/types';
 import { BatchPayload } from 'src/types';
+
 import { AddGameToListDto, CreateGameListDto, RemoveGameFromListDto } from './dto';
 
 export type GameListWithCovers = Prisma.GameListGetPayload<{

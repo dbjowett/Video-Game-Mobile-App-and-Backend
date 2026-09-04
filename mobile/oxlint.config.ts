@@ -1,5 +1,5 @@
-import { defineConfig } from 'oxlint';
 import { baseOxlintConfig } from '@vg/config/oxlint.base';
+import { defineConfig } from 'oxlint';
 
 export default defineConfig({
   extends: [baseOxlintConfig],
@@ -10,5 +10,7 @@ export default defineConfig({
     'react/no-children-prop': 'off',
     // Flags LucideIcons[iconName] dynamic icon lookup, which cant be statically validated
     'import/namespace': 'off',
+    'react/capitalized-calls': 'off',
+    'react/refs': 'off',
   },
 });

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { IgdbService } from './igdb.service';
 
 @Module({

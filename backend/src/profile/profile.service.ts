@@ -1,10 +1,9 @@
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { omitFields } from 'src/common/utils';
 import { DatabaseService } from 'src/database/database.service';
-
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const OMMITED_FIELDS = ['password', 'updatedAt', 'googleId'] as const satisfies (keyof User)[];
 

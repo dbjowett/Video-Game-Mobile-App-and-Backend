@@ -1,12 +1,6 @@
-import { useFetchHero } from '@/api/hooks/useGetPopular';
-import { Tokens, AuthCredentials } from '@vg/types';
-import { apiNoAuth } from '@/api/utils/api';
-import { useSession } from '@/components/AuthContext';
-import { GoogleIcon } from '@/components/GoogleIcon';
-import { imageLoader } from '@/utils';
-import { sleep } from '@/utils/sleep';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
+import { Tokens, AuthCredentials } from '@vg/types';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
@@ -20,9 +14,15 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-
-import { AppText } from '@/components/Themed';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
+import { useFetchHero } from '@/api/hooks/useGetPopular';
+import { apiNoAuth } from '@/api/utils/api';
+import { useSession } from '@/components/AuthContext';
+import { GoogleIcon } from '@/components/GoogleIcon';
+import { AppText } from '@/components/Themed';
+import { imageLoader } from '@/utils';
+import { sleep } from '@/utils/sleep';
 
 const BANNER_HEIGHT = 300;
 

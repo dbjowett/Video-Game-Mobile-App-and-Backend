@@ -1,4 +1,5 @@
 import { DetailedGame, GameListItem, ListGame, SimilarGame } from '@vg/types';
+
 import { getHumanDate } from '@/utils';
 
 export type GameCardVariant = 'default' | 'compact' | 'feature';

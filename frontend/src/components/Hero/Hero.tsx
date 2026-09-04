@@ -11,12 +11,12 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
-
-import { motion } from 'motion/react';
-
 import { IconArrowRight } from '@tabler/icons-react';
 import { Link } from '@tanstack/react-router';
+import { motion } from 'motion/react';
+
 import { JumboTitle } from '../JumboTitle';
+
 import classes from './Hero.module.css';
 
 type ImageItem = { src: string; alt: string };

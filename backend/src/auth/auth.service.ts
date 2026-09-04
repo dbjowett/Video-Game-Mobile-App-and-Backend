@@ -1,9 +1,10 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
-import argon2 from 'argon2';
 import { Tokens } from '@vg/types';
+import argon2 from 'argon2';
 import { Response } from 'express';
+
 import { UsersService } from '../users/users.service';
 import { UserPayload } from './types';
 

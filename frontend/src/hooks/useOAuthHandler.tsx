@@ -1,6 +1,7 @@
 import { notifications } from '@mantine/notifications';
 import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
+
 import { auth } from '../utils/auth';
 
 export const useOAuthTokenHandler = () => {

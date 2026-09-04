@@ -1,9 +1,5 @@
-import { useGetLists } from '@/api/hooks/useGetLists';
-import { AddableGame, GameListWithCovers } from '@vg/types';
-import { radius } from '@/theme/constants/radius';
-import { spacing } from '@/theme/constants/spacing';
-import { useTheme } from '@/theme/theme-context';
 import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
+import { AddableGame, GameListWithCovers } from '@vg/types';
 import React, { forwardRef, useEffect, useState } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
 import Animated, {
@@ -12,6 +8,12 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+
+import { useGetLists } from '@/api/hooks/useGetLists';
+import { radius } from '@/theme/constants/radius';
+import { spacing } from '@/theme/constants/spacing';
+import { useTheme } from '@/theme/theme-context';
+
 import AppButton from './AppButton';
 import CreateNewForm from './CreateNew';
 import GameListPreview from './GameListPreview';

@@ -1,11 +1,12 @@
 import { Popover, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { Link } from '@tanstack/react-router';
 import { motion } from 'motion/react';
 import { JSX } from 'react';
+
+import { IconType } from '../../AppLayout';
 import { COLLAPSE_DURATION } from '../../config/index';
 
-import { Link } from '@tanstack/react-router';
-import { IconType } from '../../AppLayout';
 import styles from './LinkOption.module.scss';
 
 interface OptionProps {

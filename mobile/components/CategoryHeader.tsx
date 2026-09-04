@@ -1,12 +1,12 @@
-import { useUser } from '@/api/hooks/useUser';
-import { useTheme } from '@/theme/theme-context';
 import { Link } from 'expo-router';
-
+import { Search } from 'lucide-react-native';
 import { Image, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { useUser } from '@/api/hooks/useUser';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
-import { Search } from 'lucide-react-native';
+import { useTheme } from '@/theme/theme-context';
+
 import { AppText } from './Themed';
 
 const LandingHeader = () => {

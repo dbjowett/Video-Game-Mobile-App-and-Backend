@@ -1,6 +1,8 @@
-import { imageLoader } from '@/utils';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Animated from 'react-native-reanimated';
+
+import { imageLoader } from '@/utils';
+
 import { AppText } from './Themed';
 
 type Props = {

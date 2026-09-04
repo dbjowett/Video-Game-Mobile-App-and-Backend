@@ -1,11 +1,13 @@
-import { useAddGameToList } from '@/api/hooks/useAddGameToList';
 import { AddableGame, GameListWithCovers } from '@vg/types';
+import React from 'react';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
+
+import { useAddGameToList } from '@/api/hooks/useAddGameToList';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/theme-context';
 import { getImageWrapStyle } from '@/utils/getImageGrid';
-import React from 'react';
-import { StyleSheet, useWindowDimensions, View } from 'react-native';
+
 import AppButton from './AppButton';
 import { IgdbImage } from './IgdbImage';
 import { AppText } from './Themed';

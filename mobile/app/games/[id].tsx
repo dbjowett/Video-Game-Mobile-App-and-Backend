@@ -1,18 +1,3 @@
-import { useAddFavouriteGame } from '@/api/hooks/useAddFavouriteGame';
-import { useGameDetails } from '@/api/hooks/useGameDetails';
-import { useGetFavouriteGames } from '@/api/hooks/useGetFavGames';
-import { useRemoveFavouriteGame } from '@/api/hooks/useRemoveFavouriteGame';
-import AppButton from '@/components/AppButton';
-import { MoreText } from '@/components/MoreText';
-import { ScreenshotsSection } from '@/components/ScreenshotsSection';
-import { SimilarGamesSection } from '@/components/SimilarGamesSection';
-import { AppText } from '@/components/Themed';
-import { VideosSection } from '@/components/VideosSection';
-import { defaultStyles } from '@/constants/Styles';
-import { useAddToList } from '@/providers/AddToListProvider';
-import { tailwindColors } from '@/theme/constants/tailwindColors';
-import { useTheme } from '@/theme/theme-context';
-import { imageLoader } from '@/utils';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { ChevronLeft, Share as ShareIcon } from 'lucide-react-native';
 import React, { useLayoutEffect, useState } from 'react';
@@ -34,6 +19,23 @@ import Animated, {
   useScrollViewOffset,
   withTiming,
 } from 'react-native-reanimated';
+
+import { useAddFavouriteGame } from '@/api/hooks/useAddFavouriteGame';
+import { useGameDetails } from '@/api/hooks/useGameDetails';
+import { useGetFavouriteGames } from '@/api/hooks/useGetFavGames';
+import { useRemoveFavouriteGame } from '@/api/hooks/useRemoveFavouriteGame';
+import AppButton from '@/components/AppButton';
+import { MoreText } from '@/components/MoreText';
+import { ScreenshotsSection } from '@/components/ScreenshotsSection';
+import { SimilarGamesSection } from '@/components/SimilarGamesSection';
+import { StorefrontLinksSection } from '@/components/StorefrontLinksSection';
+import { AppText } from '@/components/Themed';
+import { VideosSection } from '@/components/VideosSection';
+import { defaultStyles } from '@/constants/Styles';
+import { useAddToList } from '@/providers/AddToListProvider';
+import { tailwindColors } from '@/theme/constants/tailwindColors';
+import { useTheme } from '@/theme/theme-context';
+import { imageLoader } from '@/utils';
 const IMG_HEIGHT = 500;
 const { width } = Dimensions.get('window');
 
@@ -199,6 +201,9 @@ const Page = () => {
             }}
           />
           <VideosSection videos={game.videos} />
+          {game.storefronts && game.storefronts.length > 0 ? (
+            <StorefrontLinksSection storefronts={game.storefronts} />
+          ) : null}
         </View>
 
         {/* Similar games game.similar_games */}

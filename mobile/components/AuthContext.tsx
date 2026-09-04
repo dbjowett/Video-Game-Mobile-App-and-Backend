@@ -1,7 +1,8 @@
-import { api } from '@/api/utils/api';
 import { useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+
+import { api } from '@/api/utils/api';
 
 type AuthContextType = {
   signIn: ({

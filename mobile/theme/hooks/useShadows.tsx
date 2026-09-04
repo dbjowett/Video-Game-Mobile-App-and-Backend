@@ -1,4 +1,5 @@
 import { ColorSchemeName, ViewStyle } from 'react-native';
+
 import { darkColors, lightColors } from '../theme';
 
 export type ShadowLevel = 'xs' | 'sm' | 'md' | 'lg' | 'xl';

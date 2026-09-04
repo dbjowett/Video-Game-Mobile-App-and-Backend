@@ -5,12 +5,57 @@ import {
   Logger,
 } from '@nestjs/common';
 import { DetailedGame, ListGame, PopGameResults, PopKey } from '@vg/types';
+import { IgdbGameType, IgdbPlatform } from 'src/igdb/igdb.enums';
 import { IgdbService } from 'src/igdb/igdb.service';
-import { SearchGamesDto } from './games.dto';
-import { POPULARITY_MULTI_QUERY } from './queries';
 
-const platformIds = [6, 167, 169, 130, 48, 49]; // PC, PS5, Xbox Series X, Switch, PS4, Xbox One
-const allowedTypes = [0, 1, 2, 4, 8, 9]; // Game, DLC, Expansion, Bundle, Standalone Expansion, Remake
+import { SearchGamesDto } from './games.dto';
+import { buildPopularityByIdsQuery, POPULARITY_MULTI_QUERY } from './queries';
+
+const platformIds = [
+  IgdbPlatform.PC,
+  IgdbPlatform.PS5,
+  IgdbPlatform.XboxSeriesX,
+  IgdbPlatform.Switch,
+  IgdbPlatform.PS4,
+  IgdbPlatform.XboxOne,
+];
+const allowedTypes = [
+  IgdbGameType.MainGame,
+  IgdbGameType.DlcAddon,
+  IgdbGameType.Expansion,
+  IgdbGameType.Bundle,
+  IgdbGameType.StandaloneExpansion,
+  IgdbGameType.Remake,
+];
+
+const STOREFRONT_HOSTNAMES: Record<string, string> = {
+  'store.steampowered.com': 'Steam',
+  'gog.com': 'GOG',
+  'store.playstation.com': 'PlayStation Store',
+  'xbox.com': 'Xbox',
+  'nintendo.com': 'Nintendo eShop',
+  'apps.apple.com': 'App Store',
+  'play.google.com': 'Google Play',
+  'store.epicgames.com': 'Epic Games Store',
+  'itch.io': 'itch.io',
+};
+
+const getStorefrontLinks = (externalGames: { url?: string }[]): { name: string; url: string }[] => {
+  const seen = new Set<string>();
+  const result: { name: string; url: string }[] = [];
+
+  for (const { url } of externalGames) {
+    if (!url) continue;
+    const hostname = new URL(url).hostname.replace(/^www\./, '');
+    const name = STOREFRONT_HOSTNAMES[hostname];
+    if (name && !seen.has(name)) {
+      seen.add(name);
+      result.push({ name, url });
+    }
+  }
+
+  return result;
+};
 
 interface PopularityMultiQuery {
   name: PopKey;
@@ -39,6 +84,17 @@ export class GamesService {
   async getListGames(gameIds: number[]): Promise<ListGame[]> {
     const query = `${LIST_GAME_FIELDS_QUERY}; limit 12; where id = (${gameIds.join(',')});`;
     return this.igdbService.request<ListGame[]>('games', query);
+  }
+
+  async getPopularityForGames(gameIds: number[]): Promise<Map<number, number>> {
+    if (gameIds.length === 0) return new Map();
+
+    const results = await this.igdbService.request<{ game_id: number; value: number }[]>(
+      'popularity_primitives',
+      buildPopularityByIdsQuery(gameIds),
+    );
+
+    return new Map(results.map((r) => [r.game_id, r.value]));
   }
 
   async getPopularGamesMultiQuery() {
@@ -119,25 +175,29 @@ export class GamesService {
     if (isNaN(Number(id))) throw new Error('Invalid game ID');
 
     const igdbQuery = `
-      fields 
-      name, 
-      summary, 
-      cover.url, 
-      screenshots.url, 
+      fields
+      name,
+      summary,
+      cover.url,
+      screenshots.url,
       videos.video_id,
       videos.name,
       game_modes.slug,
       game_modes.name,
       similar_games.name,
       similar_games.cover.url,
+      external_games.url,
       total_rating;
 
       where id = ${id};
     `;
 
-    const data = await this.igdbService.request<DetailedGame[]>('games', igdbQuery);
+    const data = await this.igdbService.request<
+      (DetailedGame & { external_games?: { url?: string }[] })[]
+    >('games', igdbQuery);
     if (data.length < 1) throw new Error('No game found for this id');
-    return data[0];
+
+    return { ...data[0], storefronts: getStorefrontLinks(data[0].external_games ?? []) };
   }
 
   async searchGames(queryParams: SearchGamesDto) {
@@ -149,25 +209,10 @@ export class GamesService {
     return this.igdbService.request<ListGame[]>('games', igdbQuery);
   }
 
-  async getReleasesByMonth(month: string) {
-    if (!month) {
-      throw new BadRequestException('Month query param is required in YYYY-MM format.');
-    }
-
-    const [year, monthNum] = month.split('-').map(Number);
-    if (!year || !monthNum || monthNum < 1 || monthNum > 12) {
-      throw new Error('Invalid month format. Use YYYY-MM.');
-    }
-
-    const start = new Date(Date.UTC(year, monthNum - 1, 1));
-    const end = new Date(Date.UTC(year, monthNum, 1));
-
-    const startUnix = Math.floor(start.getTime() / 1000);
-    const endUnix = Math.floor(end.getTime() / 1000);
-
+  private async getReleasesInRange(startUnix: number, endUnix: number): Promise<ListGame[]> {
     const igdbQuery = `
     ${LIST_GAME_FIELDS_QUERY};
-     where 
+     where
       first_release_date >= ${startUnix} &
       first_release_date < ${endUnix} &
       platforms = (${platformIds.join(',')}) &
@@ -176,7 +221,71 @@ export class GamesService {
       limit 500;
     `;
 
-    return this.igdbService.request<ListGame[]>('games', igdbQuery);
+    const games = await this.igdbService.request<ListGame[]>('games', igdbQuery);
+    const popularityByGameId = await this.getPopularityForGames(games.map((g) => g.id));
+
+    return games.map((game) => ({
+      ...game,
+      popularity: popularityByGameId.get(game.id) ?? 0,
+    }));
+  }
+
+  async getReleasesByMonth(month: string) {
+    if (!month) {
+      throw new BadRequestException('Month query param is required in YYYY-MM format.');
+    }
+
+    const [year, monthNum] = month.split('-').map(Number);
+    if (!year || !monthNum || monthNum < 1 || monthNum > 12) {
+      throw new BadRequestException('Invalid month format. Use YYYY-MM.');
+    }
+
+    const start = new Date(Date.UTC(year, monthNum - 1, 1));
+    const end = new Date(Date.UTC(year, monthNum, 1));
+
+    return this.getReleasesInRange(
+      Math.floor(start.getTime() / 1000),
+      Math.floor(end.getTime() / 1000),
+    );
+  }
+
+  async getReleasesByDateRange(start: string, end: string) {
+    const dateFormat = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateFormat.test(start) || !dateFormat.test(end)) {
+      throw new BadRequestException(
+        'start and end query params are required in YYYY-MM-DD format.',
+      );
+    }
+
+    const startDate = new Date(`${start}T00:00:00Z`);
+    const endDate = new Date(`${end}T00:00:00Z`);
+    if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+      throw new BadRequestException('Invalid date format. Use YYYY-MM-DD.');
+    }
+
+    endDate.setUTCDate(endDate.getUTCDate() + 1);
+
+    return this.getReleasesInRange(
+      Math.floor(startDate.getTime() / 1000),
+      Math.floor(endDate.getTime() / 1000),
+    );
+  }
+
+  async getPopularUpcomingGames(days = 30, limit = 10): Promise<ListGame[]> {
+    const start = new Date();
+    start.setUTCHours(0, 0, 0, 0);
+    const end = new Date(start);
+    end.setUTCDate(end.getUTCDate() + days);
+
+    const games = await this.getReleasesInRange(
+      Math.floor(start.getTime() / 1000),
+      Math.floor(end.getTime() / 1000),
+    );
+
+    return games
+      .slice()
+      .sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0))
+      .slice(0, limit);
   }
 
   // @Cron(CronExpression.EVERY_DAY_AT_10AM)

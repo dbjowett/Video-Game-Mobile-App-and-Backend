@@ -1,6 +1,7 @@
-import { imageLoader, LoaderProps } from '@/utils';
 import { Image, ImageProps } from 'react-native';
 import Animated from 'react-native-reanimated';
+
+import { imageLoader, LoaderProps } from '@/utils';
 
 interface IgdbImageProps extends ImageProps, LoaderProps {}
 

@@ -1,17 +1,17 @@
 import { Button, Flex, Text } from '@mantine/core';
-import { COLLAPSE_DURATION, routeVariants, SIDEBAR_WIDTH } from './config';
-
 import { Icon, IconLogout, IconSearch } from '@tabler/icons-react';
 import { motion } from 'motion/react';
 import { FC, ReactElement, ReactNode, useState } from 'react';
 
 import { auth } from '../../utils/auth';
 import { SearchGameInput } from '../SearchGameInput';
-import styles from './AppLayout.module.scss';
 import { LinkOption } from './components/LinkOption';
 import { LinksSkeleton } from './components/LinksSkeleton';
 import { TitleSection } from './components/TitleSection';
 import { ToggleSection } from './components/ToggleSection';
+import { COLLAPSE_DURATION, routeVariants, SIDEBAR_WIDTH } from './config';
+
+import styles from './AppLayout.module.scss';
 
 export type IconType = Icon;
 

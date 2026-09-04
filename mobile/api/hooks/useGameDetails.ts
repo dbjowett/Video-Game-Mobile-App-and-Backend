@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { DetailedGame } from '@vg/types';
+
 import { api } from '../utils/api';
 
 const getGameDetails = async (id: string) => {

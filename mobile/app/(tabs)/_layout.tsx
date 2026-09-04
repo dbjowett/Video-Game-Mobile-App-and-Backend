@@ -1,10 +1,10 @@
 import { Redirect, Tabs } from 'expo-router';
+import { CalendarClock, List, Search } from 'lucide-react-native';
 import React from 'react';
 
 import { useSession } from '@/components/AuthContext';
 import { AppText } from '@/components/Themed';
 import { useTheme } from '@/theme/theme-context';
-import { CalendarClock, List, Search } from 'lucide-react-native';
 
 interface IconProps {
   color: string;

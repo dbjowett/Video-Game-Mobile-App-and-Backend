@@ -1,7 +1,8 @@
-import { DetailedGame, ListGame } from '@vg/types';
-import AddToListSheet from '@/components/AddToListSheet';
 import BottomSheet from '@gorhom/bottom-sheet';
+import { DetailedGame, ListGame } from '@vg/types';
 import { createContext, useContext, useRef, useState } from 'react';
+
+import AddToListSheet from '@/components/AddToListSheet';
 
 interface AddToListContextType {
   openAddToListSheet: (game: DetailedGame | ListGame) => void;

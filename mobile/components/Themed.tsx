@@ -3,8 +3,9 @@
  * https://docs.expo.io/guides/color-schemes/
  */
 
-import { useTheme } from '@/theme/theme-context';
 import { Text as DefaultText, View as DefaultView } from 'react-native';
+
+import { useTheme } from '@/theme/theme-context';
 
 type ThemeProps = {
   lightColour?: string;

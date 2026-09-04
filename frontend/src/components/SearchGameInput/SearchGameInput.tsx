@@ -2,6 +2,7 @@ import { Combobox, Flex, Image, InputBase, Loader, Text, useCombobox } from '@ma
 import { useDebouncedValue } from '@mantine/hooks';
 import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
+
 import { useGameSearch } from '../../hooks/useGameSearch';
 
 interface Item {
