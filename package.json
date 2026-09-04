@@ -8,9 +8,11 @@
     "lint": "pnpm -r --if-present run lint",
     "lint:fix": "pnpm -r --if-present run lint:fix",
     "fmt": "pnpm -r --if-present run fmt",
-    "fmt:check": "pnpm -r --if-present run fmt:check"
+    "fmt:check": "pnpm -r --if-present run fmt:check",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "concurrently": "^10.0.5"
+    "concurrently": "^10.0.5",
+    "husky": "^9.1.7"
   }
 }
