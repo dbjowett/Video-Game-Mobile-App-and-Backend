@@ -72,11 +72,9 @@ export class AuthService {
 
       return { access_token, refresh_token };
     } catch (error) {
-      if (error.code === 'P2002') {
-        throw new ConflictException('Email already in use');
-      } else {
-        throw new Error('Unknown error occured creating user');
-      }
+      throw error.code === 'P2002'
+        ? new ConflictException('Email already in use')
+        : new Error('Unknown error occured creating user');
     }
   }
 
@@ -108,7 +106,7 @@ export class AuthService {
       });
 
       res.status(200).json({ message: 'Logged out successfully' });
-    } catch (err) {
+    } catch {
       res.status(401).json({ message: 'Invalid or expired refresh token' });
     }
   }

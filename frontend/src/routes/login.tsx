@@ -64,7 +64,7 @@ function RouteComponent() {
 
   const handleSignUpClick = () => {
     if (isLoggedIn) {
-      window.location.href = '/';
+      globalThis.location.href = '/';
     } else {
       toggleModal();
     }

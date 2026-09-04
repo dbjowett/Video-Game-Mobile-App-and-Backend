@@ -68,17 +68,17 @@ const Page = () => {
         title: game?.name || '',
         url: game?.cover?.url || '',
       });
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
     }
   };
 
   const handleFavourite = async () => {
-    if (!isFaved) {
-      await addGameAsync(id);
+    if (isFaved) {
+      await removeGameAsync(id);
       Vibration.vibrate(50);
     } else {
-      await removeGameAsync(id);
+      await addGameAsync(id);
       Vibration.vibrate(50);
     }
   };

@@ -9,9 +9,9 @@ export const omitFields = <T extends Record<string, any>, K extends keyof T>(
 ): Omit<T, K> => {
   const copy = { ...object };
 
-  fieldsToRemove.forEach((field) => {
+  for (const field of fieldsToRemove) {
     delete copy[field];
-  });
+  }
 
   return copy;
 };

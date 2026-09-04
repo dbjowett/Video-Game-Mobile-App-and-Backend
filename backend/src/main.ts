@@ -14,7 +14,7 @@ async function bootstrap() {
   app.use((req: Request, res: Response, next: NextFunction) =>
     new LoggerMiddleware().use(req, res, next),
   );
-  await app.listen(parseInt(process.env.PORT) || 3000);
+  await app.listen(Number.parseInt(process.env.PORT) || 3000);
 }
 bootstrap();
 

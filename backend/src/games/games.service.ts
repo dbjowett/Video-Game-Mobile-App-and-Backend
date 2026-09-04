@@ -123,14 +123,14 @@ export class GamesService {
         totalReviews: [],
       };
 
-      results.forEach((result) => {
+      for (const result of results) {
         if (result.name in popGames) {
           popGames[result.name] = result.gameInfo;
         }
-      });
+      }
 
       return popGames;
-    } catch (error) {
+    } catch {
       throw new InternalServerErrorException('Failed to fetch popular games');
     }
   }
@@ -157,7 +157,7 @@ export class GamesService {
   }
 
   async getGameCover(id: string) {
-    if (isNaN(Number(id))) throw new Error('Invalid game ID');
+    if (Number.isNaN(Number(id))) throw new Error('Invalid game ID');
 
     const igdbQuery = `
       fields 
@@ -167,12 +167,12 @@ export class GamesService {
     `;
 
     const data = await this.igdbService.request<DetailedGame[]>('games', igdbQuery);
-    if (data.length < 1) throw new Error('No game found for this id');
+    if (data.length === 0) throw new Error('No game found for this id');
     return data[0];
   }
 
   async getGameDetails(id: string) {
-    if (isNaN(Number(id))) throw new Error('Invalid game ID');
+    if (Number.isNaN(Number(id))) throw new Error('Invalid game ID');
 
     const igdbQuery = `
       fields
@@ -195,7 +195,7 @@ export class GamesService {
     const data = await this.igdbService.request<
       (DetailedGame & { external_games?: { url?: string }[] })[]
     >('games', igdbQuery);
-    if (data.length < 1) throw new Error('No game found for this id');
+    if (data.length === 0) throw new Error('No game found for this id');
 
     return { ...data[0], storefronts: getStorefrontLinks(data[0].external_games ?? []) };
   }
@@ -282,10 +282,7 @@ export class GamesService {
       Math.floor(end.getTime() / 1000),
     );
 
-    return games
-      .slice()
-      .sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0))
-      .slice(0, limit);
+    return [...games].sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0)).slice(0, limit);
   }
 
   // @Cron(CronExpression.EVERY_DAY_AT_10AM)

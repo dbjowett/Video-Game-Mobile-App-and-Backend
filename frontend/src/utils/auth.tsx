@@ -16,8 +16,8 @@ export class Auth {
       const user = await api.get('profile').json<User>();
       this.user = user;
       this.status = 'loggedIn';
-    } catch (err) {
-      console.warn('Failed to load user:', err);
+    } catch (error) {
+      console.warn('Failed to load user:', error);
       this.user = null;
       this.status = 'loggedOut';
     }
@@ -26,15 +26,15 @@ export class Auth {
   async logout(): Promise<void> {
     try {
       await api.post('auth/logout');
-    } catch (err) {
-      console.error('Logout failed on server:', err);
+    } catch (error) {
+      console.error('Logout failed on server:', error);
     }
 
     localStorage.removeItem('token');
     this.user = null;
     this.status = 'loggedOut';
 
-    window.location.href = '/login';
+    globalThis.location.href = '/login';
   }
 }
 

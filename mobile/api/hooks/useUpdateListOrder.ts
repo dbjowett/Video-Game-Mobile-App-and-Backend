@@ -27,16 +27,11 @@ export function useUpdateListOrder() {
         if (list.id === id) {
           return { ...list, position: to };
         }
-        if (to > from) {
-          // ** item moved down
-          if (list.position >= from && list.position <= to) {
-            return { ...list, position: list.position - 1 };
-          }
-        } else if (to < from) {
-          // ** item moved up
-          if (list.position <= from && list.position >= to) {
-            return { ...list, position: list.position + 1 };
-          }
+        if (to > from && list.position >= from && list.position <= to) {
+          return { ...list, position: list.position - 1 };
+        }
+        if (to < from && list.position <= from && list.position >= to) {
+          return { ...list, position: list.position + 1 };
         }
         return list;
       });

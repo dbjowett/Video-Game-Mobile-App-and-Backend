@@ -45,11 +45,11 @@ export const api = apiNoAuth.extend({
             } else {
               throw new Error('No access token received from refresh');
             }
-          } catch (err) {
-            console.error('Token refresh failed:', err);
+          } catch (error) {
+            console.error('Token refresh failed:', error);
             await deleteTokensFromStore();
             router.navigate('/login');
-            throw err;
+            throw error;
           }
         }
       },

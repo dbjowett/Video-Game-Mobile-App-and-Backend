@@ -26,6 +26,12 @@ type SocialProvider = 'google' | 'apple';
 
 const sleep = (time: number) => new Promise((resolve) => setTimeout(resolve, time));
 
+const toCapitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+
+const handleSocialLogin = (provider: SocialProvider) => {
+  if (provider === 'google') globalThis.location.href = 'http://localhost:3000/auth/google';
+};
+
 export const AuthModal = ({
   opened,
   toggleModal,
@@ -50,14 +56,6 @@ export const AuthModal = ({
     },
   });
 
-  const toCapitalize = (str: string) => {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  };
-
-  const handleSocialLogin = (provider: SocialProvider) => {
-    if (provider === 'google') window.location.href = 'http://localhost:3000/auth/google';
-  };
-
   const handleAuth = async (type: 'login' | 'register') => {
     const endpoint = type === 'login' ? 'auth/signin' : 'auth/signup';
     try {
@@ -81,8 +79,8 @@ export const AuthModal = ({
       } else {
         throw new Error('No access token received');
       }
-    } catch (err) {
-      console.error(`${type} error`, err);
+    } catch (error) {
+      console.error(`${type} error`, error);
       notifications.show({
         title: 'Error',
         message: 'Invalid credentials or server error',

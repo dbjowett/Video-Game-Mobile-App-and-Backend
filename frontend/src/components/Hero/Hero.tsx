@@ -94,7 +94,7 @@ export const Hero = ({
         <Stack maw="var(--mantine-breakpoint-sm)" gap="lg" style={{ zIndex: 10 }}>
           {badge && (
             <motion.div
-              initial={{ opacity: 0.0 }}
+              initial={{ opacity: 0 }}
               transition={{ duration: 0.8, ease: 'easeInOut' }}
               viewport={{ once: true }}
               whileInView={{ opacity: 1 }}
@@ -105,7 +105,7 @@ export const Hero = ({
             </motion.div>
           )}
           <motion.div
-            initial={{ opacity: 0.0, y: 40 }}
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: 'easeInOut' }}
             viewport={{ once: true }}
@@ -115,7 +115,7 @@ export const Hero = ({
             </JumboTitle>
           </motion.div>
           <motion.div
-            initial={{ opacity: 0.0 }}
+            initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.4, ease: 'easeInOut' }}
             viewport={{ once: true }}
@@ -126,7 +126,7 @@ export const Hero = ({
           </motion.div>
           <Group mt="lg">
             <motion.div
-              initial={{ opacity: 0.0 }}
+              initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.6, ease: 'easeInOut' }}
               viewport={{ once: true }}
@@ -145,7 +145,7 @@ export const Hero = ({
               </motion.div>
             </motion.div>
             <motion.div
-              initial={{ opacity: 0.0 }}
+              initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.6, ease: 'easeInOut' }}
               viewport={{ once: true }}

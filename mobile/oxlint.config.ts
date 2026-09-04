@@ -12,5 +12,13 @@ export default defineConfig({
     'import/namespace': 'off',
     'react/capitalized-calls': 'off',
     'react/refs': 'off',
+    'unicorn/filename-case': [
+      'warn',
+      { cases: { camelCase: true, pascalCase: true }, ignore: [String.raw`^\+not-found\.tsx$`] },
+    ],
+    // Array#toSorted() crashes on Hermes at runtime; confirmed via an actual device crash.
+    'unicorn/no-array-sort': 'off',
+    // metro.config.js is loaded via require() before any ESM pipeline exists; must stay CommonJS.
+    'unicorn/prefer-module': 'off',
   },
 });

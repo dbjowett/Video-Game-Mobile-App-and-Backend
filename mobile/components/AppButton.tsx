@@ -102,7 +102,7 @@ const AppButton: React.FC<AppButtonProps> = ({
     let variantIconColor: string = colors.textPrimary;
 
     switch (variant) {
-      case 'default':
+      case 'default': {
         variantButton = {
           backgroundColor: colors.buttonPrimaryBackground,
         };
@@ -111,7 +111,8 @@ const AppButton: React.FC<AppButtonProps> = ({
         };
         variantIconColor = colors.buttonPrimaryText;
         break;
-      case 'dark':
+      }
+      case 'dark': {
         variantButton = {
           backgroundColor: colors.buttonContrastBackground,
         };
@@ -120,7 +121,8 @@ const AppButton: React.FC<AppButtonProps> = ({
         };
         variantIconColor = colors.buttonContrastText;
         break;
-      case 'outline':
+      }
+      case 'outline': {
         variantButton = {
           backgroundColor: 'transparent',
           borderWidth: 1,
@@ -131,7 +133,8 @@ const AppButton: React.FC<AppButtonProps> = ({
         };
         variantIconColor = colors.primary;
         break;
-      case 'subtle':
+      }
+      case 'subtle': {
         variantButton = {
           backgroundColor: isDarkMode ? colors.surface : colors.background, // Lighter background for subtle
           opacity: 0.9, // Slightly transparent
@@ -141,7 +144,8 @@ const AppButton: React.FC<AppButtonProps> = ({
         };
         variantIconColor = colors.textPrimary;
         break;
-      case 'destructive':
+      }
+      case 'destructive': {
         variantButton = {
           backgroundColor: colors.errorRed,
         };
@@ -150,6 +154,7 @@ const AppButton: React.FC<AppButtonProps> = ({
         };
         variantIconColor = colors.textOnError;
         break;
+      }
     }
 
     // Disabled state overrides

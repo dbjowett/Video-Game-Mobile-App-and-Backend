@@ -20,9 +20,9 @@ export interface LoaderProps {
 
 export const imageLoader = ({ imgSrc, quality, maxSize }: LoaderProps) => {
   if (!imgSrc) return;
-  const finalSize = quality ? quality : 6;
+  const finalSize = quality || 6;
   const qualityObj = sizes.find((size) => size.quality === finalSize);
-  const name = qualityObj?.name.concat(maxSize ? '_2x' : '');
+  const name = qualityObj ? qualityObj.name + (maxSize ? '_2x' : '') : undefined;
   return `https:` + imgSrc.replace(/(t_)\w+/, `t_${name}`);
 };
 

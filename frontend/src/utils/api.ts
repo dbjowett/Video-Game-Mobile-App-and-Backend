@@ -33,11 +33,11 @@ export const api: KyInstance = ky.create({
             } else {
               throw new Error('No access token received from refresh');
             }
-          } catch (err) {
-            console.error('Token refresh failed:', err);
+          } catch (error) {
+            console.error('Token refresh failed:', error);
             localStorage.removeItem('token');
             location.assign('/login');
-            throw err;
+            throw error;
           }
         }
       },

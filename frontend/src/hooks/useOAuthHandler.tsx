@@ -8,13 +8,13 @@ export const useOAuthTokenHandler = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const url = new URL(window.location.href);
+    const url = new URL(globalThis.location.href);
     const token = url.searchParams.get('token');
 
     if (token) {
       localStorage.setItem('token', token);
       url.searchParams.delete('token');
-      window.history.replaceState({}, document.title, url.pathname);
+      globalThis.history.replaceState({}, document.title, url.pathname);
 
       auth.loadUser().then(() => {
         notifications.show({

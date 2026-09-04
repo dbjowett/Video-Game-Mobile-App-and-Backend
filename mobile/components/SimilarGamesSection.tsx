@@ -12,12 +12,13 @@ type Props = {
   similarGames: SimilarGame[];
 };
 
+const navigateToGameDetails = (gameId: string) => {
+  router.navigate(`/games/${gameId}`);
+};
+
 export const SimilarGamesSection = ({ similarGames }: Props) => {
   const { colors } = useTheme();
 
-  const navigateToGameDetails = (gameId: string) => {
-    router.navigate(`/games/${gameId}`);
-  };
   return (
     <View style={{ marginTop: 20 }}>
       <AppText style={styles.subtitle}>Similar Games</AppText>

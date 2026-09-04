@@ -31,6 +31,11 @@ const DEFAULT_VALUES = {
   password: '',
 };
 
+const validateEmail = (value: string) => {
+  if (!value) return 'Please enter an email';
+  return value.includes('@') ? undefined : 'Please enter a valid email';
+};
+
 const Page = () => {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const router = useRouter();
@@ -184,12 +189,7 @@ const Page = () => {
                 <form.Field
                   name="email"
                   validators={{
-                    onSubmit: ({ value }) =>
-                      !value
-                        ? 'Please enter an email'
-                        : !value.includes('@')
-                          ? 'Please enter a valid email'
-                          : undefined,
+                    onSubmit: ({ value }) => validateEmail(value),
                   }}
                   children={(field) => (
                     <>

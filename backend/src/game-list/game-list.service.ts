@@ -53,7 +53,7 @@ export class GameListService {
         },
         orderBy: { position: 'asc' },
       });
-    } catch (error) {
+    } catch {
       throw new NotFoundException('Cannot find any lists for this user');
     }
 
@@ -69,7 +69,7 @@ export class GameListService {
         },
         orderBy: { position: 'asc' },
       });
-    } catch (error) {
+    } catch {
       throw new NotFoundException('No games found with ID: ' + id);
     }
 

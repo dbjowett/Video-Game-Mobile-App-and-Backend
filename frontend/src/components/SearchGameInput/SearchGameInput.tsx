@@ -79,7 +79,7 @@ export function SearchGameInput() {
           </Flex>
         ) : (
           <Combobox.Options>
-            {options.length ? (
+            {options.length > 0 ? (
               options
             ) : (
               <Text fz="sm" p="4px">

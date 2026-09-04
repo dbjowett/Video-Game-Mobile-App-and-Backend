@@ -38,13 +38,13 @@ const groupByDate = (games: ListGame[] | undefined): Record<string, ListGame[]> 
   const grouped: Record<string, ListGame[]> = {};
   if (!games) return grouped;
 
-  games.forEach((game) => {
-    if (!game.first_release_date) return;
+  for (const game of games) {
+    if (!game.first_release_date) continue;
     const dateStr = toLocalDateString(new Date(game.first_release_date * 1000));
 
     if (!grouped[dateStr]) grouped[dateStr] = [];
     grouped[dateStr].push(game);
-  });
+  }
 
   return grouped;
 };
@@ -61,7 +61,7 @@ const initialWindow = {
 };
 
 const sortByPopularity = (games: ListGame[] | undefined): ListGame[] =>
-  (games ?? []).slice().sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0));
+  [...(games ?? [])].sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0));
 
 const ReleaseCard = ({ game }: { game: ListGame }) => (
   <GameCard
@@ -154,9 +154,9 @@ const UpcomingReleasesScreen = () => {
 
   const marked = useMemo(() => {
     const acc: Record<string, object> = {};
-    Object.keys(gamesByDateForMonth).forEach((dateStr) => {
+    for (const dateStr of Object.keys(gamesByDateForMonth)) {
       acc[dateStr] = { marked: true };
-    });
+    }
     acc[selectedDate] = {
       ...acc[selectedDate],
       selected: true,
@@ -202,12 +202,44 @@ const UpcomingReleasesScreen = () => {
   );
   const sections = useMemo(() => {
     const result: { title: string; data: ListGame[] }[] = [];
-    if (popularGames.length) result.push({ title: '🔥 Popular', data: popularGames });
-    if (releasingGames.length) result.push({ title: '🎮 Other Releases', data: releasingGames });
+    if (popularGames.length > 0) result.push({ title: '🔥 Popular', data: popularGames });
+    if (releasingGames.length > 0)
+      result.push({ title: '🎮 Other Releases', data: releasingGames });
     return result;
   }, [popularGames, releasingGames]);
 
   const renderItem = useCallback(({ item }: { item: ListGame }) => <ReleaseCard game={item} />, []);
+
+  let dayListContent: React.ReactNode;
+  if (isError) {
+    dayListContent = (
+      <View style={styles.emptyState}>
+        <AppText>Error loading games</AppText>
+      </View>
+    );
+  } else if (isLoadingData) {
+    dayListContent = <GameListSkeleton />;
+  } else if (popularGames.length + releasingGames.length === 0) {
+    dayListContent = (
+      <View style={styles.emptyState}>
+        <AppText>No games found releasing this day</AppText>
+      </View>
+    );
+  } else {
+    dayListContent = (
+      <SectionList
+        sections={sections}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderItem}
+        renderSectionHeader={({ section }) => (
+          <AppText style={[styles.sectionHeader, { backgroundColor: colors.background }]}>
+            {section.title}
+          </AppText>
+        )}
+        contentContainerStyle={styles.list}
+      />
+    );
+  }
 
   return (
     <CalendarProvider
@@ -234,31 +266,7 @@ const UpcomingReleasesScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.dayList}>
-        {isError ? (
-          <View style={styles.emptyState}>
-            <AppText>Error loading games</AppText>
-          </View>
-        ) : isLoadingData ? (
-          <GameListSkeleton />
-        ) : popularGames.length + releasingGames.length === 0 ? (
-          <View style={styles.emptyState}>
-            <AppText>No games found releasing this day</AppText>
-          </View>
-        ) : (
-          <SectionList
-            sections={sections}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItem}
-            renderSectionHeader={({ section }) => (
-              <AppText style={[styles.sectionHeader, { backgroundColor: colors.background }]}>
-                {section.title}
-              </AppText>
-            )}
-            contentContainerStyle={styles.list}
-          />
-        )}
-      </View>
+      <View style={styles.dayList}>{dayListContent}</View>
     </CalendarProvider>
   );
 };

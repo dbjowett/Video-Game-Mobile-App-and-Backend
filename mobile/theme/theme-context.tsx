@@ -52,8 +52,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         } else {
           setThemeMode(systemColorScheme || 'light');
         }
-      } catch (e) {
-        console.error('Failed to load theme preference:', e);
+      } catch (error) {
+        console.error('Failed to load theme preference:', error);
         setThemeMode(systemColorScheme || 'light'); // Fallback
       }
     };
@@ -81,8 +81,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           await AsyncStorage.removeItem(THEME_STORAGE_KEY);
           setThemeMode(systemColorScheme || 'light');
         }
-      } catch (e) {
-        console.error('Failed to save theme preference:', e);
+      } catch (error) {
+        console.error('Failed to save theme preference:', error);
       }
     },
     [systemColorScheme],

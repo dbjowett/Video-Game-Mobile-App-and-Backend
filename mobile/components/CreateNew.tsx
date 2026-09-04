@@ -39,7 +39,7 @@ const CreateNewForm = ({ game }: { game: AddableGame }) => {
         <form.Field
           name="title"
           validators={{
-            onSubmit: ({ value }) => (!value ? 'Please enter a title' : undefined),
+            onSubmit: ({ value }) => (value ? undefined : 'Please enter a title'),
           }}
           children={(field) => (
             <>
@@ -68,7 +68,7 @@ const CreateNewForm = ({ game }: { game: AddableGame }) => {
         <form.Field
           name="description"
           validators={{
-            onSubmit: ({ value }) => (!value ? 'Please enter a description' : undefined),
+            onSubmit: ({ value }) => (value ? undefined : 'Please enter a description'),
           }}
           children={(field) => (
             <>
