@@ -5,7 +5,7 @@ import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useAddGameToList } from '@/api/hooks/useAddGameToList';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
-import { useTheme } from '@/theme/theme-context';
+import { useTheme } from '@/theme/ThemeContext';
 import { getImageWrapStyle } from '@/utils/getImageGrid';
 
 import AppButton from './AppButton';

@@ -1,14 +1,15 @@
 import { Redirect, Tabs } from 'expo-router';
 import { CalendarClock, List, Search } from 'lucide-react-native';
 import React from 'react';
+import { ColorValue } from 'react-native';
 
 import { useSession } from '@/components/AuthContext';
 import { AppText } from '@/components/Themed';
-import { useTheme } from '@/theme/theme-context';
+import { useTheme } from '@/theme/ThemeContext';
 
 interface IconProps {
-  color: string;
-  size: string;
+  color: ColorValue;
+  size: number;
 }
 
 export default function TabLayout() {

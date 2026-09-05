@@ -19,7 +19,8 @@ export interface LoaderProps {
 }
 
 export const imageLoader = ({ imgSrc, quality, maxSize }: LoaderProps) => {
-  if (!imgSrc) return;
+  // oxlint-disable-next-line unicorn/no-useless-undefined -- keeps consistent-return happy
+  if (!imgSrc) return undefined;
   const finalSize = quality || 6;
   const qualityObj = sizes.find((size) => size.quality === finalSize);
   const name = qualityObj ? qualityObj.name + (maxSize ? '_2x' : '') : undefined;

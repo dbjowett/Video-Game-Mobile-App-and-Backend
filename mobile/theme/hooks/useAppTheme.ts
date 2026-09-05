@@ -2,7 +2,7 @@
 import { DarkTheme, DefaultTheme } from 'expo-router/react-navigation';
 import { useMemo } from 'react';
 
-import { useTheme } from '../theme-context';
+import { useTheme } from '../ThemeContext';
 
 export const useAppTheme = () => {
   const { colors, isDarkMode } = useTheme();

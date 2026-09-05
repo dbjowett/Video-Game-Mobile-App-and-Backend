@@ -10,7 +10,7 @@ import {
 
 import { Radius, radius } from '@/theme/constants/radius'; // Border radius constants
 import { spacing } from '@/theme/constants/spacing'; // Spacing constants
-import { useTheme } from '@/theme/theme-context'; // Your custom theme hook
+import { useTheme } from '@/theme/ThemeContext'; // Your custom theme hook
 import IconRenderer, { LucideIconName } from '@/utils/IconRenderer'; // Icon utility
 
 // --- Type Definitions ---

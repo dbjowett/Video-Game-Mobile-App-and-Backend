@@ -9,6 +9,7 @@ export class LoggerMiddleware implements NestMiddleware {
     const url = req.originalUrl;
     const timestamp = new Date().toISOString();
 
+    // oxlint-disable-next-line no-console -- intentional request logging
     console.log(`[${timestamp}] ${method} ${url}`);
     next();
   }

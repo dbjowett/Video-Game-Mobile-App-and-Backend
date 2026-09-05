@@ -158,7 +158,7 @@ export const Hero = ({
         </Stack>
       </Flex>
       <Grid
-        gutter="lg"
+        gap="lg"
         w={imageGridItemSize.width * 3 + 60}
         pos="absolute"
         top={0}

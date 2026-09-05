@@ -5,7 +5,7 @@ import { IgdbImage } from '@/components/IgdbImage';
 import { AppText } from '@/components/Themed';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
-import { useTheme } from '@/theme/theme-context';
+import { useTheme } from '@/theme/ThemeContext';
 import { GameCardModel, GameCardVariant } from '@/utils/gameCard';
 
 interface GameCardProps {
@@ -30,6 +30,7 @@ export default function GameCard({
   const { colors, shadows } = useTheme();
   const isFeature = variant === 'feature';
   const isCompact = variant === 'compact';
+  const sizeImage = isCompact ? styles.compactImage : styles.defaultImage;
 
   return (
     <Pressable
@@ -53,7 +54,7 @@ export default function GameCard({
           quality={isCompact ? 2 : 6}
           style={[
             styles.imageBase,
-            isFeature ? styles.featureImage : isCompact ? styles.compactImage : styles.defaultImage,
+            isFeature ? styles.featureImage : sizeImage,
             { borderColor: colors.borderStrong },
             imageStyle,
           ]}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Text, TextLayoutLine, TextProps } from 'react-native';
 
-import { useTheme } from '@/theme/theme-context';
+import { useTheme } from '@/theme/ThemeContext';
 
 interface ReadMoreTextProps extends TextProps {
   text: string;

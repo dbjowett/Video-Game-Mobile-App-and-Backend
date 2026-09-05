@@ -28,7 +28,7 @@ export const mapDetailedGameToCard = (
   game: DetailedGame,
   overrides?: CardOverrides,
 ): GameCardModel => ({
-  id: game.id.toString(),
+  id: game.id,
   title: game.name,
   imageUrl: game.cover?.url,
   subtitle: overrides?.subtitle,

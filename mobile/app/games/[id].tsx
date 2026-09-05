@@ -34,7 +34,7 @@ import { VideosSection } from '@/components/VideosSection';
 import { defaultStyles } from '@/constants/Styles';
 import { useAddToList } from '@/providers/AddToListProvider';
 import { tailwindColors } from '@/theme/constants/tailwindColors';
-import { useTheme } from '@/theme/theme-context';
+import { useTheme } from '@/theme/ThemeContext';
 import { imageLoader } from '@/utils';
 const IMG_HEIGHT = 500;
 const { width } = Dimensions.get('window');
@@ -56,7 +56,7 @@ const Page = () => {
   const { mutateAsync: addGameAsync } = useAddFavouriteGame();
   const { mutateAsync: removeGameAsync } = useRemoveFavouriteGame();
 
-  const isFaved = favouriteGames?.some((game) => game.gameId.toString() === id);
+  const isFaved = favouriteGames?.some((fave) => fave.gameId === id);
 
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef.current ? scrollRef : null);
@@ -68,11 +68,12 @@ const Page = () => {
         title: game?.name || '',
         url: game?.cover?.url || '',
       });
-    } catch (error) {
-      console.log(error);
+    } catch {
+      // Ignore share failures; user simply doesn't see a share sheet.
     }
   };
 
+  // oxlint-disable-next-line no-unused-vars
   const handleFavourite = async () => {
     if (isFaved) {
       await removeGameAsync(id);
@@ -141,7 +142,7 @@ const Page = () => {
       headerRight: () => (
         <TouchableOpacity
           style={[styles.roundButton, { backgroundColor: colors.background }]}
-          onPress={shareListing}
+          onPress={() => void shareListing()}
         >
           <ShareIcon size={22} color={colors.textPrimary} />
         </TouchableOpacity>
@@ -155,6 +156,7 @@ const Page = () => {
         </TouchableOpacity>
       ),
     });
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [isFaved, game]);
 
   if (isLoading) {

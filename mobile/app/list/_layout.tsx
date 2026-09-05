@@ -2,7 +2,7 @@ import { router, Stack } from 'expo-router';
 import { ChevronLeft } from 'lucide-react-native';
 import { TouchableOpacity } from 'react-native';
 
-import { useTheme } from '@/theme/theme-context';
+import { useTheme } from '@/theme/ThemeContext';
 
 export default function Layout() {
   const { colors } = useTheme();

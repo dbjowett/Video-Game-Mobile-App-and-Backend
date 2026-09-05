@@ -38,6 +38,7 @@ export class IgdbService implements OnModuleInit {
         method: 'POST',
       });
 
+      // oxlint-disable-next-line no-unsafe-type-assertion -- unvalidated external response
       const data = (await response.json()) as IGDBResponse;
 
       this.accessToken = data.access_token;
@@ -45,7 +46,7 @@ export class IgdbService implements OnModuleInit {
       this.logger.log('IGDB API token refreshed successfully.');
     } catch (error) {
       this.logger.error('Failed to refresh IGDB API token', error);
-      throw new Error('Failed to authenticate with IGDB.');
+      throw new Error('Failed to authenticate with IGDB.', { cause: error });
     }
   }
 
@@ -68,10 +69,11 @@ export class IgdbService implements OnModuleInit {
         body: query,
       });
 
+      // oxlint-disable-next-line no-unsafe-type-assertion -- unvalidated external response
       return (await response.json()) as T;
     } catch (error) {
       this.logger.error(`IGDB API request failed: ${endpoint}`, error);
-      throw new Error('IGDB API request failed.');
+      throw new Error('IGDB API request failed.', { cause: error });
     }
   }
 }

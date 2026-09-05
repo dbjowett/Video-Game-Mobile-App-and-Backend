@@ -32,7 +32,9 @@ const layouts: Record<LayoutKey, Array<ViewStyle>> = {
   ],
 };
 
+const validLayoutKeys: LayoutKey[] = [1, 2, 3, 4];
+
 export const getImageWrapStyle = (count: number, index: number): StyleProp<ViewStyle> => {
-  const layoutKey: LayoutKey = count <= 4 ? (count as LayoutKey) : 4;
+  const layoutKey = validLayoutKeys.find((key) => key === count) ?? 4;
   return layouts[layoutKey][index] ?? {};
 };

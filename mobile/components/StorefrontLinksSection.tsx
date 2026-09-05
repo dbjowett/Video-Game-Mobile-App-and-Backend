@@ -1,7 +1,7 @@
 import { ExternalLink } from 'lucide-react-native';
 import { Linking, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 
-import { useTheme } from '@/theme/theme-context';
+import { useTheme } from '@/theme/ThemeContext';
 
 import { AppText } from './Themed';
 
@@ -22,7 +22,7 @@ export const StorefrontLinksSection = ({ storefronts }: Props) => {
         <TouchableOpacity
           key={storefront.name}
           style={[styles.pill, { borderColor: colors.border, backgroundColor: colors.surface }]}
-          onPress={() => Linking.openURL(storefront.url)}
+          onPress={() => void Linking.openURL(storefront.url)}
         >
           <ExternalLink size={16} color={colors.textPrimary} />
           <AppText style={styles.label}>{storefront.name}</AppText>

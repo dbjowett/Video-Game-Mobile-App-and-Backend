@@ -22,8 +22,9 @@ const fetchGames = async (query: string) => {
       rating: game?.total_rating,
       description: `Game ID: ${game.id}`,
     }));
-  } catch (error) {
-    console.error('An error occurred:', error);
+  } catch {
+    // oxlint-disable-next-line unicorn/no-useless-undefined -- keeps consistent-return happy
+    return undefined;
   }
 };
 

@@ -43,27 +43,27 @@ const Page = () => {
   const { signIn } = useSession();
 
   const signUpMutation = useMutation<Tokens, Error, AuthCredentials>({
-    mutationFn: async (data) => {
-      return await apiNoAuth.post('api/signup', { json: data }).json<Tokens>();
+    mutationFn: async (credentials) => {
+      return await apiNoAuth.post('api/signup', { json: credentials }).json<Tokens>();
     },
     onSuccess: async ({ access_token, refresh_token }) => signIn({ access_token, refresh_token }),
-    onError: (error) => {
+    onError: () => {
       Alert.alert('Something went wrong. Please try again later.');
     },
   });
 
   const signInMutation = useMutation<Tokens, Error, AuthCredentials>({
-    mutationFn: async (data: AuthCredentials): Promise<Tokens> => {
+    mutationFn: async (credentials: AuthCredentials): Promise<Tokens> => {
       try {
-        return await apiNoAuth.post('auth/signin', { json: data }).json<Tokens>();
+        return await apiNoAuth.post('auth/signin', { json: credentials }).json<Tokens>();
       } catch {
         throw new Error('Error logging in');
       }
     },
     onSuccess: async ({ access_token, refresh_token }) => {
-      signIn({ access_token, refresh_token });
+      void signIn({ access_token, refresh_token });
     },
-    onError: (error) => {
+    onError: () => {
       Alert.alert('Please check your credentials or make an account');
     },
   });
@@ -72,15 +72,13 @@ const Page = () => {
     defaultValues: DEFAULT_VALUES,
     // TODO: Implement validation
     validators: {
-      onSubmit: (vals) => {
-        console.log('Vals:', vals);
-      },
+      onSubmit: () => {},
     },
     onSubmit: async ({ value }) => {
       if (isSignUp) {
-        signUpMutation.mutateAsync(value);
+        void signUpMutation.mutateAsync(value);
       } else {
-        signInMutation.mutateAsync(value);
+        void signInMutation.mutateAsync(value);
       }
     },
   });
@@ -106,33 +104,6 @@ const Page = () => {
   // TODO: maybe this can be stored in useTheme() (and maybe theme dark vs light can be returned from there )
   const gradientColorArr = useColorScheme() === 'dark' ? darkModeColors : lightModeColors;
 
-  const GameLayout = () => {
-    return (
-      <View
-        style={{
-          height: BANNER_HEIGHT,
-        }}
-      >
-        <LinearGradient colors={gradientColorArr} style={styles.gradient} />
-        <View style={styles.grid}>
-          {data?.map((item) => (
-            <View key={item.id} style={styles.gridItem}>
-              <Image
-                source={{
-                  uri: imageLoader({
-                    imgSrc: item.cover?.url,
-                    quality: 3,
-                  }),
-                }}
-                style={{ width: 100, height: 160, borderRadius: 8 }}
-              />
-            </View>
-          ))}
-        </View>
-      </View>
-    );
-  };
-
   const handleGoogleLogin = async () => {
     const redirectUri = 'vg-app://login';
     const authUrl = `${process.env.EXPO_PUBLIC_API_URL}/auth/google?platform=mobile`;
@@ -140,23 +111,19 @@ const Page = () => {
     try {
       const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
 
-      if (result.type === 'success' && result.url) {
-        if (result.url.includes('vg-app://login')) {
-          const params = new URL(result.url).searchParams;
-          const access_token = params.get('token');
-          const refresh_token = params.get('refresh');
+      if (result.type === 'success' && result.url && result.url.includes('vg-app://login')) {
+        const params = new URL(result.url).searchParams;
+        const access_token = params.get('token');
+        const refresh_token = params.get('refresh');
 
-          if (access_token && refresh_token) {
-            signIn({ access_token, refresh_token });
-            await sleep(300);
-            router.replace('/(tabs)');
-          }
+        if (access_token && refresh_token) {
+          void signIn({ access_token, refresh_token });
+          await sleep(300);
+          router.replace('/(tabs)');
         }
-      } else if (result.type === 'dismiss') {
-        console.log('User dismissed the login');
       }
-    } catch (error) {
-      console.error('Error during Google login:', error);
+    } catch {
+      // Ignore Google login failures; user simply stays on the login screen.
     }
   };
 
@@ -169,7 +136,28 @@ const Page = () => {
       >
         <>
           <View style={styles.upperContainer}>
-            <GameLayout />
+            <View
+              style={{
+                height: BANNER_HEIGHT,
+              }}
+            >
+              <LinearGradient colors={gradientColorArr} style={styles.gradient} />
+              <View style={styles.grid}>
+                {data?.map((item) => (
+                  <View key={item.id} style={styles.gridItem}>
+                    <Image
+                      source={{
+                        uri: imageLoader({
+                          imgSrc: item.cover?.url,
+                          quality: 3,
+                        }),
+                      }}
+                      style={{ width: 100, height: 160, borderRadius: 8 }}
+                    />
+                  </View>
+                ))}
+              </View>
+            </View>
           </View>
 
           <View style={styles.lowerContainer}>
@@ -178,7 +166,10 @@ const Page = () => {
               <AppText style={styles.header}>{isSignUp ? 'Sign Up' : 'Sign In'}</AppText>
 
               {/* Google Sign in */}
-              <TouchableOpacity style={styles.googleButton} onPress={handleGoogleLogin}>
+              <TouchableOpacity
+                style={styles.googleButton}
+                onPress={() => void handleGoogleLogin()}
+              >
                 <GoogleIcon />
                 <AppText style={styles.buttonText}>Continue with Google</AppText>
               </TouchableOpacity>
@@ -235,7 +226,7 @@ const Page = () => {
                   )}
                 />
 
-                <TouchableOpacity style={styles.signUpBtn} onPress={form.handleSubmit}>
+                <TouchableOpacity style={styles.signUpBtn} onPress={() => void form.handleSubmit()}>
                   <AppText style={styles.signUpBtnText}>{isSignUp ? 'Sign Up' : 'Sign In'}</AppText>
                 </TouchableOpacity>
 

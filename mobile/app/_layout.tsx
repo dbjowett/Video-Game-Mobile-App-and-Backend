@@ -10,9 +10,10 @@ import { SessionProvider } from '@/components/AuthContext';
 import AddToListProvider from '@/providers/AddToListProvider';
 import { useAppTheme } from '@/theme/hooks/useAppTheme';
 import { useToastConfig } from '@/theme/hooks/useToastConfig';
+// oxlint-disable-next-line import/no-unassigned-import -- reanimated needs this side effect
 import 'react-native-reanimated';
 
-import { ThemeProvider as CustomAppThemeProvider, useTheme } from '@/theme/theme-context';
+import { ThemeProvider as CustomAppThemeProvider, useTheme } from '@/theme/ThemeContext';
 export { ErrorBoundary } from 'expo-router';
 export const unstable_settings = { initialRouteName: '(tabs)' };
 

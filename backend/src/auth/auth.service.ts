@@ -1,6 +1,6 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { Tokens } from '@vg/types';
 import argon2 from 'argon2';
 import { Response } from 'express';
@@ -48,7 +48,7 @@ export class AuthService {
   async validateUser(email: string, password: string): Promise<Omit<User, 'password'> | null> {
     const user = await this.usersService.findByEmail(email);
     if (user && (await this.verifyData(user.password, password))) {
-      const { password, ...safeUser } = user;
+      const { password: _password, ...safeUser } = user;
       return safeUser;
     }
     return null;
@@ -72,7 +72,7 @@ export class AuthService {
 
       return { access_token, refresh_token };
     } catch (error) {
-      throw error.code === 'P2002'
+      throw error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002'
         ? new ConflictException('Email already in use')
         : new Error('Unknown error occured creating user');
     }
@@ -133,7 +133,7 @@ export class AuthService {
       });
     }
 
-    const { password, ...result } = user;
+    const { password: _password, ...result } = user;
     return result;
   }
 }

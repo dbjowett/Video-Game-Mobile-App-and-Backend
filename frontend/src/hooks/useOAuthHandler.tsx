@@ -16,12 +16,12 @@ export const useOAuthTokenHandler = () => {
       url.searchParams.delete('token');
       globalThis.history.replaceState({}, document.title, url.pathname);
 
-      auth.loadUser().then(() => {
+      void auth.loadUser().then(() => {
         notifications.show({
           title: 'Successfully logged in!',
           message: '',
         });
-        navigate({ to: '/' });
+        void navigate({ to: '/' });
       });
     }
   }, [navigate]);

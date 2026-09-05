@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import ky from 'ky';
 
-import { deleteTokensFromStore, storeTokens } from '@/components/AuthContext';
+import { deleteTokensFromStore, storeTokens } from '@/api/utils/tokenStorage';
 
 export const apiNoAuth = ky.create({
   prefix: process.env.EXPO_PUBLIC_API_URL,
@@ -46,7 +46,6 @@ export const api = apiNoAuth.extend({
               throw new Error('No access token received from refresh');
             }
           } catch (error) {
-            console.error('Token refresh failed:', error);
             await deleteTokensFromStore();
             router.navigate('/login');
             throw error;
@@ -58,16 +57,16 @@ export const api = apiNoAuth.extend({
 });
 
 async function refreshToken() {
-  const refreshToken = await SecureStore.getItemAsync('refreshToken');
+  const storedRefreshToken = await SecureStore.getItemAsync('refreshToken');
 
-  if (!refreshToken) {
+  if (!storedRefreshToken) {
     await deleteTokensFromStore();
     router.navigate('/login');
     return null;
   }
 
   const headers: Record<string, string> = {
-    Authorization: `Bearer ${refreshToken}`,
+    Authorization: `Bearer ${storedRefreshToken}`,
   };
 
   const data = await apiNoAuth.post('auth/refresh', { headers }).json<Tokens>();

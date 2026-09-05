@@ -2,6 +2,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { GameList, GameListItem, Prisma } from '@prisma/client';
 import { ListGame } from '@vg/types';
 import { UserPayload } from 'src/auth/types';
+import { getErrorMessage } from 'src/common/utils';
 import { DatabaseService } from 'src/database/database.service';
 import { GamesService } from 'src/games/games.service';
 import { BatchPayload } from 'src/types';
@@ -117,7 +118,7 @@ export class GameListService {
           userId: user.id,
           title,
           description,
-          isPublic: Boolean(isPublic),
+          isPublic,
           position: nextPosition,
         },
       });
@@ -138,7 +139,7 @@ export class GameListService {
         skipDuplicates: true,
       });
     } catch (error) {
-      throw new Error('Failed to create game list: ' + error.message);
+      throw new Error('Failed to create game list: ' + getErrorMessage(error), { cause: error });
     }
     if (gameListItems.count === 0) {
       throw new Error('No game IDs provided or all game IDs already exist in the list');
@@ -184,7 +185,7 @@ export class GameListService {
         },
       });
     } catch (error) {
-      throw new Error('Failed to add game to list: ' + error.message);
+      throw new Error('Failed to add game to list: ' + getErrorMessage(error), { cause: error });
     }
 
     return gameListItem;
@@ -230,7 +231,9 @@ export class GameListService {
 
       return gameListItem;
     } catch (error) {
-      throw new Error('Failed to remove game from list: ' + error.message);
+      throw new Error('Failed to remove game from list: ' + getErrorMessage(error), {
+        cause: error,
+      });
     }
   }
 
@@ -268,7 +271,7 @@ export class GameListService {
         });
       });
     } catch (error) {
-      throw new Error('Failed to update list order: ' + error.message);
+      throw new Error('Failed to update list order: ' + getErrorMessage(error), { cause: error });
     }
   }
 }

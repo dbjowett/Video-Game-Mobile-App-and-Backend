@@ -39,7 +39,7 @@ export const AuthModal = ({
   opened: boolean;
   toggleModal: () => void;
 }) => {
-  const [type, toggle] = useToggle(['login', 'register']);
+  const [type, toggle] = useToggle<'login' | 'register'>(['login', 'register']);
   const navigate = useNavigate({ from: '/login' });
 
   const form = useForm({
@@ -56,8 +56,8 @@ export const AuthModal = ({
     },
   });
 
-  const handleAuth = async (type: 'login' | 'register') => {
-    const endpoint = type === 'login' ? 'auth/signin' : 'auth/signup';
+  const handleAuth = async (authType: 'login' | 'register') => {
+    const endpoint = authType === 'login' ? 'auth/signin' : 'auth/signup';
     try {
       const data = await api
         .post(endpoint, {
@@ -75,12 +75,11 @@ export const AuthModal = ({
         });
 
         await sleep(1000);
-        navigate({ to: '/' });
+        void navigate({ to: '/' });
       } else {
         throw new Error('No access token received');
       }
-    } catch (error) {
-      console.error(`${type} error`, error);
+    } catch {
       notifications.show({
         title: 'Error',
         message: 'Invalid credentials or server error',
@@ -114,7 +113,7 @@ export const AuthModal = ({
 
         <Divider label="Or continue with email" labelPosition="center" my="lg" />
 
-        <form onSubmit={form.onSubmit(() => handleAuth(type as 'login' | 'register'))}>
+        <form onSubmit={form.onSubmit(() => handleAuth(type))}>
           <Stack>
             {type === 'register' && (
               <TextInput

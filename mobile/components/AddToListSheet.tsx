@@ -12,7 +12,7 @@ import Animated, {
 import { useGetLists } from '@/api/hooks/useGetLists';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
-import { useTheme } from '@/theme/theme-context';
+import { useTheme } from '@/theme/ThemeContext';
 
 import AppButton from './AppButton';
 import CreateNewForm from './CreateNew';
@@ -29,7 +29,7 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(({ game }, re
   const { width } = Dimensions.get('window');
   const { colors } = useTheme();
 
-  const { data: gameLists, isLoading } = useGetLists();
+  const { data: gameLists } = useGetLists();
   const offset = useSharedValue(0);
   const [isCreatingNew, setIsCreatingNew] = useState<boolean>(false);
 
@@ -40,7 +40,10 @@ const AddToListSheet = forwardRef<BottomSheet, CreateNewFormProps>(({ game }, re
   };
 
   useEffect(() => {
+    // Reanimated shared values are mutated directly; not real React state.
+    // oxlint-disable-next-line react/immutability
     offset.value = isCreatingNew ? 0 : 1;
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [isCreatingNew]);
 
   const createNewStyle = useAnimatedStyle(() => {

@@ -42,7 +42,7 @@ export function SearchGameInput() {
 
   const options = (data || []).map((item) => (
     <Combobox.Option
-      onClick={() => navigate({ to: `/game/${item.id}` })}
+      onClick={() => void navigate({ to: `/game/${item.id}` })}
       value={item.value}
       key={item.id}
     >

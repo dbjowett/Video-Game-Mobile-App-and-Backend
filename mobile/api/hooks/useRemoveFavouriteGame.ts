@@ -20,19 +20,18 @@ export const useRemoveFavouriteGame = () => {
       await queryClient.cancelQueries({
         queryKey: ['favouriteGames'],
       });
-      const prevFaves = queryClient.getQueryData(['favouriteGames']) as FaveGame[];
+      const prevFaves = queryClient.getQueryData<FaveGame[]>(['favouriteGames']);
       queryClient.setQueryData(['favouriteGames'], (prev: FaveGame[]) =>
         prev.filter((fave) => fave.gameId !== gameId),
       );
       return { prevFaves };
     },
-    onError: (error) => {
+    onError: () => {
       Alert.alert(
         'Error',
         'An error occurred while delete the game from your favourites. Please try again later.',
         [{ text: 'OK' }],
       );
-      console.error('Error adding game to favourites:', error);
     },
   });
 };

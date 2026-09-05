@@ -4,8 +4,8 @@ import { Link } from '@tanstack/react-router';
 import { motion } from 'motion/react';
 import { JSX } from 'react';
 
-import { IconType } from '../../AppLayout';
 import { COLLAPSE_DURATION } from '../../config/index';
+import { IconType } from '../../types';
 
 import styles from './LinkOption.module.scss';
 

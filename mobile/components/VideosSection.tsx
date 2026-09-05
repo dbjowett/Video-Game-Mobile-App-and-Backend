@@ -34,7 +34,9 @@ export const VideosSection = ({ videos }: Props) => {
               }}
             >
               <TouchableOpacity
-                onPress={() => Linking.openURL(`https://www.youtube.com/watch?v=${video.video_id}`)}
+                onPress={() =>
+                  void Linking.openURL(`https://www.youtube.com/watch?v=${video.video_id}`)
+                }
               >
                 <Animated.Image
                   source={{
@@ -65,7 +67,7 @@ export const VideosSection = ({ videos }: Props) => {
                   fill="#fff"
                   style={{}}
                   onPress={() =>
-                    Linking.openURL(`https://www.youtube.com/watch?v=${video.video_id}`)
+                    void Linking.openURL(`https://www.youtube.com/watch?v=${video.video_id}`)
                   }
                 />
               </View>

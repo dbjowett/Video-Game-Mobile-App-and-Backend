@@ -3,7 +3,9 @@ import { LucideProps } from 'lucide-react-native';
 import React from 'react';
 import { ViewStyle } from 'react-native';
 
-type LucideIconComponent = React.ForwardRefExoticComponent<LucideProps & React.RefAttributes<any>>;
+type LucideIconComponent = React.ForwardRefExoticComponent<
+  LucideProps & React.RefAttributes<SVGSVGElement>
+>;
 
 export type LucideIconName = keyof typeof LucideIcons;
 
@@ -15,10 +17,10 @@ interface IconRendererProps {
 }
 
 const IconRenderer: React.FC<IconRendererProps> = ({ name, size = 20, color, style }) => {
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- dynamic icon lookup
   const IconComponent = LucideIcons[name] as LucideIconComponent | undefined;
 
   if (!IconComponent) {
-    console.warn(`Lucide icon '${name}' not found or is not a valid icon component.`);
     return null;
   }
 

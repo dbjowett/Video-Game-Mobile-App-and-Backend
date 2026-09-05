@@ -20,7 +20,7 @@ import { darkColors, lightColors, ThemeColors } from './theme';
 interface ThemeContextType {
   themeMode: ColorSchemeName; // 'light', 'dark', or null
   colors: ThemeColors;
-  setTheme: (mode: ColorSchemeName) => void;
+  setTheme: (mode: ColorSchemeName) => Promise<void>;
   shadows: ShadowScale;
   isDarkMode: boolean;
   statusBarStyle: StatusBarStyle;
@@ -52,16 +52,16 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         } else {
           setThemeMode(systemColorScheme || 'light');
         }
-      } catch (error) {
-        console.error('Failed to load theme preference:', error);
+      } catch {
         setThemeMode(systemColorScheme || 'light'); // Fallback
       }
     };
-    loadThemePreference();
+    void loadThemePreference();
   }, [systemColorScheme]);
 
   useEffect(() => {
     if (themeMode === 'system') {
+      // oxlint-disable-next-line react/set-state-in-effect
       setThemeMode(systemColorScheme || 'light');
     }
   }, [systemColorScheme, themeMode]);
@@ -81,8 +81,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           await AsyncStorage.removeItem(THEME_STORAGE_KEY);
           setThemeMode(systemColorScheme || 'light');
         }
-      } catch (error) {
-        console.error('Failed to save theme preference:', error);
+      } catch {
+        // Ignore write failures; theme falls back to the in-memory state until next successful save.
       }
     },
     [systemColorScheme],

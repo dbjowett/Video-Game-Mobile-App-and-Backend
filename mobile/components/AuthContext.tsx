@@ -3,6 +3,7 @@ import * as SecureStore from 'expo-secure-store';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 import { api } from '@/api/utils/api';
+import { deleteTokensFromStore, storeTokens } from '@/api/utils/tokenStorage';
 
 type AuthContextType = {
   signIn: ({
@@ -32,22 +33,6 @@ export function useSession() {
   return value;
 }
 
-export const storeTokens = async ({
-  access_token,
-  refresh_token,
-}: {
-  access_token: string;
-  refresh_token: string;
-}) => {
-  await SecureStore.setItemAsync('accessToken', access_token);
-  await SecureStore.setItemAsync('refreshToken', refresh_token);
-};
-
-export const deleteTokensFromStore = async () => {
-  await SecureStore.deleteItemAsync('accessToken');
-  await SecureStore.deleteItemAsync('refreshToken');
-};
-
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -63,7 +48,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
     };
 
-    loadSession();
+    void loadSession();
   }, []);
 
   const signIn = async ({
@@ -84,8 +69,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     try {
       await api.post('auth/logout');
-    } catch (error) {
-      console.error('Error during logout:', error);
+    } catch {
+      // Ignore server-side logout failures; local session is cleared below regardless.
     }
     await deleteTokensFromStore();
     setIsLoggedIn(false);

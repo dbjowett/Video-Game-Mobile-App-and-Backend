@@ -1,5 +1,5 @@
 import { Button, Flex, Text } from '@mantine/core';
-import { Icon, IconLogout, IconSearch } from '@tabler/icons-react';
+import { IconLogout, IconSearch } from '@tabler/icons-react';
 import { motion } from 'motion/react';
 import { FC, ReactElement, ReactNode, useState } from 'react';
 
@@ -10,10 +10,9 @@ import { LinksSkeleton } from './components/LinksSkeleton';
 import { TitleSection } from './components/TitleSection';
 import { ToggleSection } from './components/ToggleSection';
 import { COLLAPSE_DURATION, routeVariants, SIDEBAR_WIDTH } from './config';
+import { IconType } from './types';
 
 import styles from './AppLayout.module.scss';
-
-export type IconType = Icon;
 
 interface ILinkItem {
   path: string;
@@ -32,9 +31,7 @@ interface SidebarProps {
 }
 
 export const DashboardLayout: FC<LayoutProps> = ({ children, linkItems }) => {
-  const [open, setIsOpen] = useState<boolean>(
-    JSON.parse(localStorage.getItem('sidebar') ?? 'true'),
-  );
+  const [open, setIsOpen] = useState<boolean>(localStorage.getItem('sidebar') !== 'false');
 
   const toggleSidebar = (value: boolean) => {
     localStorage.setItem('sidebar', value.toString());
@@ -104,7 +101,7 @@ const Sidebar = ({ open, setOpen, linkItems }: SidebarProps) => {
         <motion.div layout>
           <Flex>
             <Text>Logout</Text>
-            <Button variant="subtle" onClick={() => auth.logout()}>
+            <Button variant="subtle" onClick={() => void auth.logout()}>
               <IconLogout />
             </Button>
           </Flex>

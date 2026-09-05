@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
 import GameCard from '@/components/GameCard';
-import { useTheme } from '@/theme/theme-context';
+import { useTheme } from '@/theme/ThemeContext';
 import { mapSimilarGameToCard } from '@/utils/gameCard';
 
 import { AppText } from './Themed';

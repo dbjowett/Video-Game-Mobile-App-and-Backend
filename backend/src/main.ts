@@ -16,7 +16,7 @@ async function bootstrap() {
   );
   await app.listen(Number.parseInt(process.env.PORT) || 3000);
 }
-bootstrap();
+void bootstrap();
 
 const corsConfig = {
   origin: ['http://localhost:5173', 'http://localhost:8081'],

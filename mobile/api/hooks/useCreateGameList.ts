@@ -23,10 +23,9 @@ export function useCreateGameList() {
         text1: 'Success',
         text2: `${title} was created successfully!`,
       });
-      qc.invalidateQueries({ queryKey: ['game-lists'] });
+      void qc.invalidateQueries({ queryKey: ['game-lists'] });
     },
     onError: (e) => {
-      console.error('Error:', e);
       Alert.alert('Something went wrong', e.message);
     },
   });

@@ -7,7 +7,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { useCreateGameList } from '@/api/hooks/useCreateGameList';
 import { spacing } from '@/theme/constants/spacing';
-import { useTheme } from '@/theme/theme-context';
+import { useTheme } from '@/theme/ThemeContext';
 
 import AppButton from './AppButton';
 import { AppText } from './Themed';
@@ -127,7 +127,7 @@ const CreateNewForm = ({ game }: { game: AddableGame }) => {
         leftIcon="FilePlus2"
         variant="dark"
         title="Create List"
-        onPress={form.handleSubmit}
+        onPress={() => void form.handleSubmit()}
       />
     </View>
   );

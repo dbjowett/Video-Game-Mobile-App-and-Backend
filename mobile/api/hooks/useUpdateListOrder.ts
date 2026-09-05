@@ -13,16 +13,12 @@ export function useUpdateListOrder() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (formData: UpdateListOrderObject) => {
-      try {
-        await api.post(`gamelist/update-order`, { json: formData });
-      } catch (error) {
-        console.log('updateListOrder error', error);
-      }
+      await api.post(`gamelist/update-order`, { json: formData });
     },
     onMutate: async (formData: UpdateListOrderObject) => {
       const { id, from, to } = formData;
       await qc.cancelQueries({ queryKey: ['game-lists'] });
-      const prevLists = qc.getQueryData(['game-lists']) as GameList[];
+      const prevLists = qc.getQueryData<GameList[]>(['game-lists']) ?? [];
       const updatedLists = prevLists.map((list) => {
         if (list.id === id) {
           return { ...list, position: to };
@@ -39,15 +35,13 @@ export function useUpdateListOrder() {
       updatedLists.sort((a, b) => a.position - b.position);
       qc.setQueryData(['game-lists'], updatedLists);
 
-      return { updatedLists };
+      return { prevLists };
     },
     onSuccess: () => {
-      console.log('updateListOrder success');
-      qc.invalidateQueries({ queryKey: ['game-lists'] });
+      void qc.invalidateQueries({ queryKey: ['game-lists'] });
     },
-    onError: (error, formData, context: any) => {
-      qc.setQueryData(['game-lists'], context.prevLists);
-      console.log('updateListOrder error', error);
+    onError: (_error, formData, context) => {
+      if (context) qc.setQueryData(['game-lists'], context.prevLists);
     },
   });
 }

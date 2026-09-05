@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
-import { GameList, GameListItem } from '@prisma/client';
+import { GameList } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { UserPayload } from 'src/auth/types';
 import { User } from 'src/common/utils/user.decorator';

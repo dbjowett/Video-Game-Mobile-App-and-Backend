@@ -2,7 +2,7 @@ import { useNavigation } from 'expo-router/react-navigation'; // Import useNavig
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { useTheme } from '@/theme/theme-context';
+import { useTheme } from '@/theme/ThemeContext';
 
 export const CustomHeader = ({ title }: { title: string }) => {
   const navigation = useNavigation(); // Get navigation object

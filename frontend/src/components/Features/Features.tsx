@@ -127,7 +127,7 @@ export const Features = ({
       </JumboTitle>
     </Container>
     <Container size="lg" p={0} mt="xl">
-      <Grid gutter="xl">
+      <Grid gap="xl">
         {features.map((feature, index) => (
           <Grid.Col key={feature.title} span={{ base: 12, xs: 6, md: 4 }} mih="100%">
             <FeaturesCell

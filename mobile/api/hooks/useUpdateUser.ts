@@ -13,7 +13,7 @@ export function useUpdateUser() {
     mutationFn: async (user: PartialUser) =>
       await api.patch('profile', { json: { user } }).json<User>(),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['profile'] });
+      void qc.invalidateQueries({ queryKey: ['profile'] });
     },
   });
 }

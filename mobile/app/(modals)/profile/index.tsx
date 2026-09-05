@@ -9,7 +9,7 @@ import { useSession } from '@/components/AuthContext';
 import { AppText, View } from '@/components/Themed';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
-import { useTheme } from '@/theme/theme-context';
+import { useTheme } from '@/theme/ThemeContext';
 
 const formatDate = (value?: string) => {
   if (!value) return '';
@@ -167,7 +167,7 @@ export default function Page() {
 
       <AppButton
         title="Sign Out"
-        onPress={signOut}
+        onPress={() => void signOut()}
         variant="dark"
         rightIcon="LogOut"
         style={styles.signOutButton}

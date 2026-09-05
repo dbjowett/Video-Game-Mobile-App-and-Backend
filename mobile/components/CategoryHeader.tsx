@@ -5,7 +5,7 @@ import { Image, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-n
 import { useUser } from '@/api/hooks/useUser';
 import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
-import { useTheme } from '@/theme/theme-context';
+import { useTheme } from '@/theme/ThemeContext';
 
 import { AppText } from './Themed';
 
@@ -30,7 +30,10 @@ const LandingHeader = () => {
           </Link>
           <Link href={'/(modals)/profile'} asChild>
             <TouchableOpacity>
-              <Image source={{ uri: user?.profileImage }} style={styles.profileImage} />
+              <Image
+                source={{ uri: user?.profileImage ?? undefined }}
+                style={styles.profileImage}
+              />
             </TouchableOpacity>
           </Link>
         </View>

@@ -3,11 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "main": "./oxlint.base.ts",
-  "types": "./oxlint.base.ts",
+  "main": "./oxlint.core.ts",
+  "types": "./oxlint.core.ts",
   "exports": {
-    ".": "./oxlint.base.ts",
-    "./oxlint.base": "./oxlint.base.ts"
+    ".": "./oxlint.core.ts",
+    "./oxlint.core": "./oxlint.core.ts",
+    "./oxlint.unicorn": "./oxlint.unicorn.ts",
+    "./oxlint.typescript": "./oxlint.typescript.ts"
   },
   "devDependencies": {
     "oxlint": "^1.80.0"

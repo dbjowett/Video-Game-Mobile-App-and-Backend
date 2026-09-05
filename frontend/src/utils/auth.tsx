@@ -16,8 +16,7 @@ export class Auth {
       const user = await api.get('profile').json<User>();
       this.user = user;
       this.status = 'loggedIn';
-    } catch (error) {
-      console.warn('Failed to load user:', error);
+    } catch {
       this.user = null;
       this.status = 'loggedOut';
     }
@@ -26,8 +25,8 @@ export class Auth {
   async logout(): Promise<void> {
     try {
       await api.post('auth/logout');
-    } catch (error) {
-      console.error('Logout failed on server:', error);
+    } catch {
+      // Ignore server-side logout failures; local session is cleared below regardless.
     }
 
     localStorage.removeItem('token');

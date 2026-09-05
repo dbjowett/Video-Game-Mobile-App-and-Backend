@@ -6,9 +6,8 @@ import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 import { useGetListsGames } from '@/api/hooks/useGetListsGames';
 import GameCard from '@/components/GameCard';
 import { AppText } from '@/components/Themed';
-import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
-import { useTheme } from '@/theme/theme-context';
+import { useTheme } from '@/theme/ThemeContext';
 import { mapGameListItemToCard } from '@/utils/gameCard';
 
 const formatDate = (value: string) => {

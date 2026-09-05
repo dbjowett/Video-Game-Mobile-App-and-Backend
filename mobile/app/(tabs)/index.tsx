@@ -24,6 +24,35 @@ const popTypeTitleMap: Record<PopKey, string> = {
 
 const visibleCategoryKeys: PopKey[] = ['visits', 'playing'];
 
+const UpcomingGame: ListRenderItem<ListGame> = ({ item }) => {
+  const card = mapListGameToCard(item);
+
+  return (
+    <Animated.View style={styles.itemContainer} entering={FadeInRight} exiting={FadeOutLeft}>
+      <GameCard game={card} variant="feature" onPress={() => router.push(`/games/${item.id}`)} />
+    </Animated.View>
+  );
+};
+
+const SingleGame: ListRenderItem<ListGame> = ({ item }) => {
+  const card = mapListGameToCard(item, {
+    badge: `${Math.trunc(item.total_rating)}%`,
+  });
+
+  return (
+    <Animated.View style={styles.itemContainer} entering={FadeInRight} exiting={FadeOutLeft}>
+      <GameCard game={card} variant="feature" onPress={() => router.push(`/games/${item.id}`)} />
+    </Animated.View>
+  );
+};
+
+const GameList: FC<{ title: PopKey; games: ListGame[] }> = ({ title, games }) => (
+  <View>
+    <AppText style={styles.categoryTitle}>{popTypeTitleMap[title]}</AppText>
+    <FlatList horizontal style={styles.listContainer} data={games} renderItem={SingleGame} />
+  </View>
+);
+
 export default function Page() {
   const {
     data: popularGames,
@@ -35,35 +64,6 @@ export default function Page() {
     isError: isUpcomingError,
     isPending: isUpcomingPending,
   } = useUpcomingGames();
-
-  const UpcomingGame: ListRenderItem<ListGame> = ({ item }) => {
-    const card = mapListGameToCard(item);
-
-    return (
-      <Animated.View style={styles.itemContainer} entering={FadeInRight} exiting={FadeOutLeft}>
-        <GameCard game={card} variant="feature" onPress={() => router.push(`/games/${item.id}`)} />
-      </Animated.View>
-    );
-  };
-
-  const SingleGame: ListRenderItem<ListGame> = ({ item }) => {
-    const card = mapListGameToCard(item, {
-      badge: `${Math.trunc(item.total_rating)}%`,
-    });
-
-    return (
-      <Animated.View style={styles.itemContainer} entering={FadeInRight} exiting={FadeOutLeft}>
-        <GameCard game={card} variant="feature" onPress={() => router.push(`/games/${item.id}`)} />
-      </Animated.View>
-    );
-  };
-
-  const GameList: FC<{ title: PopKey; games: ListGame[] }> = ({ title, games }) => (
-    <View>
-      <AppText style={styles.categoryTitle}>{popTypeTitleMap[title]}</AppText>
-      <FlatList horizontal style={styles.listContainer} data={games} renderItem={SingleGame} />
-    </View>
-  );
 
   const isError = isPopularError || isUpcomingError;
   const isPending = isPopularPending || isUpcomingPending;

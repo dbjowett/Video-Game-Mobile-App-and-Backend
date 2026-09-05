@@ -21,10 +21,9 @@ export function useAddGameToList() {
         text1: 'Success',
         text2: 'Game was added to list',
       });
-      qc.invalidateQueries({ queryKey: ['game-lists'] });
+      void qc.invalidateQueries({ queryKey: ['game-lists'] });
     },
     onError: (e) => {
-      console.error('Error:', e);
       Alert.alert('Something went wrong', e.message);
     },
   });

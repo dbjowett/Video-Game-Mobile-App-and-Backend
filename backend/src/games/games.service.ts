@@ -76,7 +76,7 @@ const LIST_GAME_FIELDS_QUERY = `
 
 @Injectable()
 export class GamesService {
-  private cache: Map<string, any> = new Map();
+  private cache: Map<string, ListGame[]> = new Map();
   private readonly logger: Logger = new Logger(GamesService.name);
 
   constructor(private readonly igdbService: IgdbService) {}
@@ -282,7 +282,7 @@ export class GamesService {
       Math.floor(end.getTime() / 1000),
     );
 
-    return [...games].sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0)).slice(0, limit);
+    return games.toSorted((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0)).slice(0, limit);
   }
 
   // @Cron(CronExpression.EVERY_DAY_AT_10AM)

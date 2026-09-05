@@ -1,5 +1,5 @@
 import { type MantineFontSize, Title, type TitleProps } from '@mantine/core';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 
 import classes from './JumboTitle.module.css';
 

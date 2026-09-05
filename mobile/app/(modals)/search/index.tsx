@@ -11,7 +11,7 @@ import { AppText, View } from '@/components/Themed';
 import { useAddToList } from '@/providers/AddToListProvider';
 import { useSearchStore } from '@/store/searchStore';
 import { spacing } from '@/theme/constants/spacing';
-import { useTheme } from '@/theme/theme-context';
+import { useTheme } from '@/theme/ThemeContext';
 import { mapListGameToCard } from '@/utils/gameCard';
 
 const GameItem = ({

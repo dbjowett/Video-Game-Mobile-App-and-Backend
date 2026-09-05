@@ -1,3 +1,4 @@
 NOTES.md
 node_modules
 .husky/_
+backend/tsconfig.build.tsbuildinfo
