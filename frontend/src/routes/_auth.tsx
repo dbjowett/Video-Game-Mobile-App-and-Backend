@@ -1,7 +1,13 @@
-import { IconVideo } from '@tabler/icons-react';
+import { IconCalendar, IconList, IconSearch } from '@tabler/icons-react';
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
 import { DashboardLayout } from '../components/AppLayout/AppLayout';
+
+const linkItems = [
+  { Icon: IconSearch, path: '/', content: 'Explore' },
+  { Icon: IconCalendar, path: '/upcoming', content: 'Upcoming' },
+  { Icon: IconList, path: '/lists', content: 'Game Lists' },
+];
 
 export const Route = createFileRoute('/_auth')({
   loader: async ({ context, location }) => {
@@ -22,7 +28,7 @@ export const Route = createFileRoute('/_auth')({
 function AppLayoutComponent() {
   return (
     <div>
-      <DashboardLayout linkItems={[{ Icon: IconVideo, path: '/about', content: 'About' }]}>
+      <DashboardLayout linkItems={linkItems}>
         <Outlet />
       </DashboardLayout>
     </div>

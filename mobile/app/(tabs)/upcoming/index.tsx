@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { fetchGameReleases } from '@vg/queries/fetchGameReleases';
 import { ListGame } from '@vg/types';
 import { router } from 'expo-router';
 import { Calendar as CalendarIcon } from 'lucide-react-native';
@@ -14,12 +15,6 @@ import { radius } from '@/theme/constants/radius';
 import { spacing } from '@/theme/constants/spacing';
 import { useTheme } from '@/theme/ThemeContext';
 import { mapListGameToCard } from '@/utils/gameCard';
-
-const fetchReleasesByMonth = async (month: string) =>
-  await api.get(`games/releases?month=${month}`).json<ListGame[]>();
-
-const fetchReleasesByRange = async (start: string, end: string) =>
-  await api.get(`games/releases?start=${start}&end=${end}`).json<ListGame[]>();
 
 const toLocalDateString = (date: Date): string => {
   const year = date.getFullYear();
@@ -136,7 +131,7 @@ const UpcomingReleasesScreen = () => {
 
   const { data: monthGames } = useQuery({
     queryKey: ['game-releases', visibleMonth],
-    queryFn: () => fetchReleasesByMonth(visibleMonth),
+    queryFn: () => fetchGameReleases(api, { month: visibleMonth }),
   });
 
   const {
@@ -146,7 +141,7 @@ const UpcomingReleasesScreen = () => {
     isError,
   } = useQuery({
     queryKey: ['game-releases-window', fetchWindow.start, fetchWindow.end],
-    queryFn: () => fetchReleasesByRange(fetchWindow.start, fetchWindow.end),
+    queryFn: () => fetchGameReleases(api, { start: fetchWindow.start, end: fetchWindow.end }),
   });
 
   const gamesByDateForMonth = useMemo(() => groupByDate(monthGames), [monthGames]);

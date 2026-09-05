@@ -1,31 +1,18 @@
-import ky, { HTTPError, KyInstance } from 'ky';
+import { createApiClient } from '@vg/queries/createApiClient';
+import { HTTPError } from 'ky';
 
-export const api: KyInstance = ky.create({
-  prefix: import.meta.env.VITE_API_URL,
-  credentials: 'include',
-  retry: {
-    limit: 1,
-    statusCodes: [401],
-  },
+const { api: baseApi, apiNoAuth } = createApiClient({
+  baseUrl: import.meta.env.VITE_API_URL,
+  getAccessToken: () => localStorage.getItem('token'),
+});
+
+export const api = baseApi.extend({
   hooks: {
-    beforeRequest: [
-      ({ request }) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-          request.headers.set('Authorization', `Bearer ${token}`);
-        }
-      },
-    ],
     beforeRetry: [
       async ({ request, error }) => {
         if (error instanceof HTTPError && error.response.status === 401) {
           try {
-            const data = await ky
-              .post('auth/refresh', {
-                prefix: import.meta.env.VITE_API_URL,
-                credentials: 'include',
-              })
-              .json<{ access_token: string }>();
+            const data = await apiNoAuth.post('auth/refresh').json<{ access_token: string }>();
 
             if (data?.access_token) {
               localStorage.setItem('token', data.access_token);
@@ -44,18 +31,4 @@ export const api: KyInstance = ky.create({
   },
 });
 
-export const apiNoAuth: KyInstance = ky.create({
-  prefix: import.meta.env.VITE_API_URL,
-  credentials: 'include',
-  retry: { limit: 0 },
-  hooks: {
-    beforeRequest: [
-      ({ request }) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-          request.headers.set('Authorization', `Bearer ${token}`);
-        }
-      },
-    ],
-  },
-});
+export { apiNoAuth };

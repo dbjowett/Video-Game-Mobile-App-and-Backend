@@ -1,11 +1,12 @@
-import { BadRequestException, Controller, Get, Param, Query } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { ListGame, PopGameResults } from '@vg/types';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { Public } from 'src/common/utils';
 
 import { SearchGamesDto } from './games.dto';
 import { GamesService } from './games.service';
 
-// @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('games')
 export class GamesController {
   constructor(private readonly gamesService: GamesService) {}
@@ -29,6 +30,7 @@ export class GamesController {
     return await this.gamesService.searchGames(queryParams);
   }
 
+  @Public()
   @Get('releases')
   async getReleases(
     @Query('month') month?: string,

@@ -13,7 +13,10 @@ import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthIndexRouteImport } from './routes/_auth/index'
 import { Route as AuthAboutRouteImport } from './routes/_auth/about'
+import { Route as AuthListsRouteImport } from './routes/_auth/lists'
 import { Route as AuthProfileRouteImport } from './routes/_auth/profile'
+import { Route as AuthUpcomingRouteImport } from './routes/_auth/upcoming'
+import { Route as AuthGamesIdRouteImport } from './routes/_auth/games/$id'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
@@ -34,9 +37,24 @@ const AuthAboutRoute = AuthAboutRouteImport.update({
   path: '/about',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthListsRoute = AuthListsRouteImport.update({
+  id: '/lists',
+  path: '/lists',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthProfileRoute = AuthProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthUpcomingRoute = AuthUpcomingRouteImport.update({
+  id: '/upcoming',
+  path: '/upcoming',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthGamesIdRoute = AuthGamesIdRouteImport.update({
+  id: '/games/$id',
+  path: '/games/$id',
   getParentRoute: () => AuthRoute,
 } as any)
 
@@ -44,34 +62,60 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthIndexRoute
   '/login': typeof LoginRoute
   '/about': typeof AuthAboutRoute
+  '/lists': typeof AuthListsRoute
   '/profile': typeof AuthProfileRoute
+  '/upcoming': typeof AuthUpcomingRoute
+  '/games/$id': typeof AuthGamesIdRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/about': typeof AuthAboutRoute
+  '/lists': typeof AuthListsRoute
   '/profile': typeof AuthProfileRoute
+  '/upcoming': typeof AuthUpcomingRoute
   '/': typeof AuthIndexRoute
+  '/games/$id': typeof AuthGamesIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_auth': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
   '/_auth/about': typeof AuthAboutRoute
+  '/_auth/lists': typeof AuthListsRoute
   '/_auth/profile': typeof AuthProfileRoute
+  '/_auth/upcoming': typeof AuthUpcomingRoute
   '/_auth/': typeof AuthIndexRoute
+  '/_auth/games/$id': typeof AuthGamesIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/about' | '/profile'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/about'
+    | '/lists'
+    | '/profile'
+    | '/upcoming'
+    | '/games/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/about' | '/profile' | '/'
+  to:
+    | '/login'
+    | '/about'
+    | '/lists'
+    | '/profile'
+    | '/upcoming'
+    | '/'
+    | '/games/$id'
   id:
     | '__root__'
     | '/_auth'
     | '/login'
     | '/_auth/about'
+    | '/_auth/lists'
     | '/_auth/profile'
+    | '/_auth/upcoming'
     | '/_auth/'
+    | '/_auth/games/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -109,6 +153,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAboutRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/lists': {
+      id: '/_auth/lists'
+      path: '/lists'
+      fullPath: '/lists'
+      preLoaderRoute: typeof AuthListsRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/profile': {
       id: '/_auth/profile'
       path: '/profile'
@@ -116,19 +167,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthProfileRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/upcoming': {
+      id: '/_auth/upcoming'
+      path: '/upcoming'
+      fullPath: '/upcoming'
+      preLoaderRoute: typeof AuthUpcomingRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/games/$id': {
+      id: '/_auth/games/$id'
+      path: '/games/$id'
+      fullPath: '/games/$id'
+      preLoaderRoute: typeof AuthGamesIdRouteImport
+      parentRoute: typeof AuthRoute
+    }
   }
 }
 
 interface AuthRouteChildren {
   AuthAboutRoute: typeof AuthAboutRoute
+  AuthListsRoute: typeof AuthListsRoute
   AuthProfileRoute: typeof AuthProfileRoute
+  AuthUpcomingRoute: typeof AuthUpcomingRoute
   AuthIndexRoute: typeof AuthIndexRoute
+  AuthGamesIdRoute: typeof AuthGamesIdRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthAboutRoute: AuthAboutRoute,
+  AuthListsRoute: AuthListsRoute,
   AuthProfileRoute: AuthProfileRoute,
+  AuthUpcomingRoute: AuthUpcomingRoute,
   AuthIndexRoute: AuthIndexRoute,
+  AuthGamesIdRoute: AuthGamesIdRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

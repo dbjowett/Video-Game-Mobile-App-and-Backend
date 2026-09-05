@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { ListGame } from '@vg/types';
+import { fetchGameSearch } from '@vg/queries/fetchGameSearch';
 
 import { api } from '../utils/api';
 
 const fetchGames = async (query: string) => {
   try {
-    return await api.get(`games/search/?q=${query}`).json<ListGame[]>();
+    return await fetchGameSearch(api, query);
   } catch {
     // oxlint-disable-next-line unicorn/no-useless-undefined -- keeps consistent-return happy
     return undefined;

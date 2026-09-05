@@ -174,6 +174,9 @@ importers:
       '@mantine/core':
         specifier: ^9.6.0
         version: 9.6.0(@mantine/hooks@9.6.0(react@19.2.8))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@mantine/dates':
+        specifier: ^9.6.0
+        version: 9.6.0(@mantine/core@9.6.0(@mantine/hooks@9.6.0(react@19.2.8))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@mantine/hooks@9.6.0(react@19.2.8))(dayjs@1.11.23)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@mantine/form':
         specifier: ^9.6.0
         version: 9.6.0(react@19.2.8)
@@ -192,12 +195,18 @@ importers:
       '@tanstack/react-router':
         specifier: ^1.170.32
         version: 1.170.32(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@vg/queries':
+        specifier: workspace:*
+        version: link:../packages/queries
       '@vg/types':
         specifier: workspace:*
         version: link:../packages/types
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.23
       ky:
         specifier: ^2.1.0
         version: 2.1.0
@@ -280,6 +289,9 @@ importers:
       '@tanstack/store':
         specifier: ^0.11.1
         version: 0.11.1
+      '@vg/queries':
+        specifier: workspace:*
+        version: link:../packages/queries
       '@vg/types':
         specifier: workspace:*
         version: link:../packages/types
@@ -422,6 +434,15 @@ importers:
       oxlint:
         specifier: ^1.80.0
         version: 1.80.0(oxlint-tsgolint@7.0.2001)
+
+  packages/queries:
+    dependencies:
+      '@vg/types':
+        specifier: workspace:*
+        version: link:../types
+      ky:
+        specifier: ^2.1.0
+        version: 2.1.0
 
   packages/types: {}
 
@@ -1683,6 +1704,15 @@ packages:
     resolution: {integrity: sha512-WpdtSv9q2k4RrAVUxBlABMyEul4vv94EkjoVuQglBBC7jVmLhBBgI64HltE6di/l6zvj9D7k1vgkbVjyxQsn1g==}
     peerDependencies:
       '@mantine/hooks': 9.6.0
+      react: ^19.2.0
+      react-dom: ^19.2.0
+
+  '@mantine/dates@9.6.0':
+    resolution: {integrity: sha512-fcMGrbwKj7F5KkRtwuKeXz/MBh+l0Y3ljLyJ3eaF7NL0CLJSXO7YJxpeZDXBMDF0w+iUs9c2zilnTTidh9ICPQ==}
+    peerDependencies:
+      '@mantine/core': 9.6.0
+      '@mantine/hooks': 9.6.0
+      dayjs: '>=1.0.0'
       react: ^19.2.0
       react-dom: ^19.2.0
 
@@ -4518,6 +4548,9 @@ packages:
   data-urls@3.0.2:
     resolution: {integrity: sha512-Jy/tj3ldjZJo63sVAvg6LHt2mHvl4V6AgRAmNDtLdm7faqtsx+aJG42rsyCo9JCoRVKwPFzKlIPx3DIibwSIaQ==}
     engines: {node: '>=12'}
+
+  dayjs@1.11.23:
+    resolution: {integrity: sha512-QDTCU0M0MxR3hQfnlDJfwekQiaanm1ubOD231u73WBckQ/fsamwRLiE2GBz6D3a/xF1NgfiDLJjXBa1hYOYTtQ==}
 
   debug@2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
@@ -10307,6 +10340,15 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
+  '@mantine/dates@9.6.0(@mantine/core@9.6.0(@mantine/hooks@9.6.0(react@19.2.8))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@mantine/hooks@9.6.0(react@19.2.8))(dayjs@1.11.23)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+    dependencies:
+      '@mantine/core': 9.6.0(@mantine/hooks@9.6.0(react@19.2.8))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@mantine/hooks': 9.6.0(react@19.2.8)
+      clsx: 2.1.1
+      dayjs: 1.11.23
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+
   '@mantine/form@9.6.0(react@19.2.8)':
     dependencies:
       '@standard-schema/spec': 1.1.0
@@ -12973,6 +13015,8 @@ snapshots:
       abab: 2.0.6
       whatwg-mimetype: 3.0.0
       whatwg-url: 11.0.0
+
+  dayjs@1.11.23: {}
 
   debug@2.6.9(supports-color@10.2.2):
     dependencies:

@@ -1,25 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
+import { fetchGameSearch } from '@vg/queries/fetchGameSearch';
 
 import { api } from '../utils/api';
 
-interface DetailGame {
-  cover: {
-    url: string;
-  };
-  name: string;
-  id: string;
-  total_rating: number;
-  description: string;
-}
-
 const fetchGames = async (query: string) => {
   try {
-    const data = await api(`games/?q=${query}`).json<DetailGame[]>();
-    return data.map((game: DetailGame) => ({
+    const data = await fetchGameSearch(api, query);
+    return data.map((game) => ({
       image: game.cover?.url ? `https:${game.cover.url}` : '',
       value: game.name,
       id: game.id,
-      rating: game?.total_rating,
+      rating: game.total_rating,
       description: `Game ID: ${game.id}`,
     }));
   } catch {

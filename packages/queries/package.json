@@ -1,0 +1,22 @@
+{
+  "name": "@vg/queries",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./createApiClient": "./createApiClient.ts",
+    "./fetchPopularGames": "./fetchPopularGames.ts",
+    "./fetchUpcomingGames": "./fetchUpcomingGames.ts",
+    "./fetchGameReleases": "./fetchGameReleases.ts",
+    "./fetchGameDetails": "./fetchGameDetails.ts",
+    "./fetchGameSearch": "./fetchGameSearch.ts",
+    "./fetchGameLists": "./fetchGameLists.ts"
+  },
+  "dependencies": {
+    "@vg/types": "workspace:*",
+    "ky": "^2.1.0"
+  }
+}

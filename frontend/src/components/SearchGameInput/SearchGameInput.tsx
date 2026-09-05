@@ -9,7 +9,7 @@ interface Item {
   image: string;
   value: string;
   description: string;
-  id: string;
+  id: number;
 }
 
 function SelectOption({ image, value, description }: Item) {
@@ -42,7 +42,7 @@ export function SearchGameInput() {
 
   const options = (data || []).map((item) => (
     <Combobox.Option
-      onClick={() => void navigate({ to: `/game/${item.id}` })}
+      onClick={() => void navigate({ to: `/games/${item.id}` })}
       value={item.value}
       key={item.id}
     >

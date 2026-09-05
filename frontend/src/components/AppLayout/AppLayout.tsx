@@ -1,4 +1,5 @@
-import { Button, Flex, Text } from '@mantine/core';
+import { ActionIcon, Flex, Popover, Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { IconLogout, IconSearch } from '@tabler/icons-react';
 import { motion } from 'motion/react';
 import { FC, ReactElement, ReactNode, useState } from 'react';
@@ -50,6 +51,11 @@ export const DashboardLayout: FC<LayoutProps> = ({ children, linkItems }) => {
 
 const Sidebar = ({ open, setOpen, linkItems }: SidebarProps) => {
   const isLoading = false;
+  const [searchTooltipOpened, { open: openSearchTooltip, close: closeSearchTooltip }] =
+    useDisclosure(false);
+  const [logoutTooltipOpened, { open: openLogoutTooltip, close: closeLogoutTooltip }] =
+    useDisclosure(false);
+
   return (
     <motion.nav
       layout
@@ -65,7 +71,24 @@ const Sidebar = ({ open, setOpen, linkItems }: SidebarProps) => {
           ) : (
             <motion.div layout>
               <Flex h="68px" align="center" justify="center">
-                <IconSearch />
+                <Popover opened={searchTooltipOpened} position="right" withArrow offset={10}>
+                  <Popover.Target>
+                    <ActionIcon
+                      variant="subtle"
+                      size="lg"
+                      onClick={() => setOpen(true)}
+                      onMouseEnter={openSearchTooltip}
+                      onMouseLeave={closeSearchTooltip}
+                    >
+                      <IconSearch size={20} />
+                    </ActionIcon>
+                  </Popover.Target>
+                  <Popover.Dropdown bg="black" p="8px 12px">
+                    <Text c="white" fz="sm" fw="600">
+                      Search
+                    </Text>
+                  </Popover.Dropdown>
+                </Popover>
               </Flex>
             </motion.div>
           )}
@@ -99,12 +122,35 @@ const Sidebar = ({ open, setOpen, linkItems }: SidebarProps) => {
           </div>
         </motion.div>
         <motion.div layout>
-          <Flex>
-            <Text>Logout</Text>
-            <Button variant="subtle" onClick={() => void auth.logout()}>
-              <IconLogout />
-            </Button>
-          </Flex>
+          {open ? (
+            <Flex align="center" justify="space-between" px="sm">
+              <Text>Logout</Text>
+              <ActionIcon variant="subtle" size="lg" onClick={() => void auth.logout()}>
+                <IconLogout size={20} />
+              </ActionIcon>
+            </Flex>
+          ) : (
+            <Flex justify="center" py="xs">
+              <Popover opened={logoutTooltipOpened} position="right" withArrow offset={10}>
+                <Popover.Target>
+                  <ActionIcon
+                    variant="subtle"
+                    size="lg"
+                    onClick={() => void auth.logout()}
+                    onMouseEnter={openLogoutTooltip}
+                    onMouseLeave={closeLogoutTooltip}
+                  >
+                    <IconLogout size={20} />
+                  </ActionIcon>
+                </Popover.Target>
+                <Popover.Dropdown bg="black" p="8px 12px">
+                  <Text c="white" fz="sm" fw="600">
+                    Logout
+                  </Text>
+                </Popover.Dropdown>
+              </Popover>
+            </Flex>
+          )}
         </motion.div>
         <ToggleSection open={open} setOpen={setOpen} />
       </Flex>

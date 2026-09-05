@@ -1,32 +1,20 @@
+import { createApiClient } from '@vg/queries/createApiClient';
 import { Tokens } from '@vg/types';
 import { router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
-import ky from 'ky';
 
 import { deleteTokensFromStore, storeTokens } from '@/api/utils/tokenStorage';
 
-export const apiNoAuth = ky.create({
-  prefix: process.env.EXPO_PUBLIC_API_URL,
-  credentials: 'include',
-  retry: { limit: 0 },
+const { api: baseApi, apiNoAuth } = createApiClient({
+  baseUrl: process.env.EXPO_PUBLIC_API_URL,
+  getAccessToken: () => SecureStore.getItemAsync('accessToken'),
+});
+
+export const api = baseApi.extend({
   headers: {
     'Content-Type': 'application/json',
   },
-  throwHttpErrors: true,
-});
-
-export const api = apiNoAuth.extend({
-  retry: {
-    limit: 1,
-    statusCodes: [401],
-  },
   hooks: {
-    beforeRequest: [
-      async ({ request }) => {
-        const accessToken = await SecureStore.getItemAsync('accessToken');
-        if (accessToken) request.headers.set('Authorization', `Bearer ${accessToken}`);
-      },
-    ],
     afterResponse: [
       async ({ response }) => {
         if (response.status === 401) {
@@ -55,6 +43,8 @@ export const api = apiNoAuth.extend({
     ],
   },
 });
+
+export { apiNoAuth };
 
 async function refreshToken() {
   const storedRefreshToken = await SecureStore.getItemAsync('refreshToken');
