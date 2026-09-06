@@ -1,32 +1,23 @@
+// oxlint-disable no-unsafe-assignment, no-unsafe-call, no-unsafe-member-access -- cross-package @vg/types arrays, confirmed clean via tsc
 import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { DetailedGame, ListGame, PopGameResults, PopKey } from '@vg/types';
-import { IgdbGameType, IgdbPlatform } from 'src/igdb/igdb.enums';
+import {
+  ALLOWED_GAME_TYPE_IDS,
+  DEFAULT_PLATFORM_IDS,
+  DetailedGame,
+  ListGame,
+  PopGameResults,
+  PopKey,
+} from '@vg/types';
+import { HltbService } from 'src/hltb/hltb.service';
 import { IgdbService } from 'src/igdb/igdb.service';
 
 import { SearchGamesDto } from './games.dto';
 import { buildPopularityByIdsQuery, POPULARITY_MULTI_QUERY } from './queries';
-
-const platformIds = [
-  IgdbPlatform.PC,
-  IgdbPlatform.PS5,
-  IgdbPlatform.XboxSeriesX,
-  IgdbPlatform.Switch,
-  IgdbPlatform.PS4,
-  IgdbPlatform.XboxOne,
-];
-const allowedTypes = [
-  IgdbGameType.MainGame,
-  IgdbGameType.DlcAddon,
-  IgdbGameType.Expansion,
-  IgdbGameType.Bundle,
-  IgdbGameType.StandaloneExpansion,
-  IgdbGameType.Remake,
-];
 
 const STOREFRONT_HOSTNAMES: Record<string, string> = {
   'store.steampowered.com': 'Steam',
@@ -79,10 +70,18 @@ export class GamesService {
   private cache: Map<string, ListGame[]> = new Map();
   private readonly logger: Logger = new Logger(GamesService.name);
 
-  constructor(private readonly igdbService: IgdbService) {}
+  constructor(
+    private readonly igdbService: IgdbService,
+    private readonly hltbService: HltbService,
+  ) {}
 
-  async getListGames(gameIds: number[]): Promise<ListGame[]> {
-    const query = `${LIST_GAME_FIELDS_QUERY}; limit 12; where id = (${gameIds.join(',')});`;
+  async getListGames(gameIds: number[], platformIds?: number[]): Promise<ListGame[]> {
+    const platforms = platformIds?.length ? platformIds : DEFAULT_PLATFORM_IDS;
+    const query = `
+      ${LIST_GAME_FIELDS_QUERY};
+      limit 12;
+      where id = (${gameIds.join(',')}) & platforms = (${platforms.join(',')});
+    `;
     return this.igdbService.request<ListGame[]>('games', query);
   }
 
@@ -101,13 +100,16 @@ export class GamesService {
     return this.igdbService.request<PopularityMultiQuery[]>('multiquery', POPULARITY_MULTI_QUERY);
   }
 
-  async getPopularGames(): Promise<PopGameResults> {
+  async getPopularGames(platformIds?: number[]): Promise<PopGameResults> {
     try {
       const multiQueryRes = await this.getPopularGamesMultiQuery();
 
       const promises = multiQueryRes.map(async (res) => ({
         name: res.name,
-        gameInfo: await this.getListGames(res.result.map((r) => r.game_id)),
+        gameInfo: await this.getListGames(
+          res.result.map((r) => r.game_id),
+          platformIds,
+        ),
       }));
 
       const results = await Promise.all(promises);
@@ -197,26 +199,37 @@ export class GamesService {
     >('games', igdbQuery);
     if (data.length === 0) throw new Error('No game found for this id');
 
-    return { ...data[0], storefronts: getStorefrontLinks(data[0].external_games ?? []) };
+    const completionTimes = await this.hltbService.getCompletionTimes(data[0].name);
+
+    return {
+      ...data[0],
+      storefronts: getStorefrontLinks(data[0].external_games ?? []),
+      completionTimes,
+    };
   }
 
   async searchGames(queryParams: SearchGamesDto) {
     const igdbQuery = `
       ${LIST_GAME_FIELDS_QUERY}; 
-      where game_type = (${allowedTypes.join(',')}); 
+      where game_type = (${ALLOWED_GAME_TYPE_IDS.join(',')}); 
       search "${queryParams.q}";
     `;
     return this.igdbService.request<ListGame[]>('games', igdbQuery);
   }
 
-  private async getReleasesInRange(startUnix: number, endUnix: number): Promise<ListGame[]> {
+  private async getReleasesInRange(
+    startUnix: number,
+    endUnix: number,
+    platformIds?: number[],
+  ): Promise<ListGame[]> {
+    const platforms = platformIds?.length ? platformIds : DEFAULT_PLATFORM_IDS;
     const igdbQuery = `
     ${LIST_GAME_FIELDS_QUERY};
      where
       first_release_date >= ${startUnix} &
       first_release_date < ${endUnix} &
-      platforms = (${platformIds.join(',')}) &
-      game_type = (${allowedTypes.join(',')});
+      platforms = (${platforms.join(',')}) &
+      game_type = (${ALLOWED_GAME_TYPE_IDS.join(',')});
       sort first_release_date asc;
       limit 500;
     `;
@@ -230,7 +243,7 @@ export class GamesService {
     }));
   }
 
-  async getReleasesByMonth(month: string) {
+  async getReleasesByMonth(month: string, platformIds?: number[]) {
     if (!month) {
       throw new BadRequestException('Month query param is required in YYYY-MM format.');
     }
@@ -246,10 +259,11 @@ export class GamesService {
     return this.getReleasesInRange(
       Math.floor(start.getTime() / 1000),
       Math.floor(end.getTime() / 1000),
+      platformIds,
     );
   }
 
-  async getReleasesByDateRange(start: string, end: string) {
+  async getReleasesByDateRange(start: string, end: string, platformIds?: number[]) {
     const dateFormat = /^\d{4}-\d{2}-\d{2}$/;
     if (!dateFormat.test(start) || !dateFormat.test(end)) {
       throw new BadRequestException(
@@ -268,10 +282,15 @@ export class GamesService {
     return this.getReleasesInRange(
       Math.floor(startDate.getTime() / 1000),
       Math.floor(endDate.getTime() / 1000),
+      platformIds,
     );
   }
 
-  async getPopularUpcomingGames(days = 30, limit = 10): Promise<ListGame[]> {
+  async getPopularUpcomingGames(
+    days = 30,
+    limit = 10,
+    platformIds?: number[],
+  ): Promise<ListGame[]> {
     const start = new Date();
     start.setUTCHours(0, 0, 0, 0);
     const end = new Date(start);
@@ -280,6 +299,7 @@ export class GamesService {
     const games = await this.getReleasesInRange(
       Math.floor(start.getTime() / 1000),
       Math.floor(end.getTime() / 1000),
+      platformIds,
     );
 
     return games.toSorted((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0)).slice(0, limit);

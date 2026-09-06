@@ -195,6 +195,40 @@ const Page = () => {
           <View style={styles.summary}>
             <MoreText text={game.summary} />
           </View>
+          {game.completionTimes ? (
+            <View style={styles.completionTimesRow}>
+              {game.completionTimes.mainStory ? (
+                <View style={styles.completionTimeItem}>
+                  <AppText style={[styles.completionTimeLabel, { color: colors.textSecondary }]}>
+                    Main Story
+                  </AppText>
+                  <AppText style={styles.completionTimeValue}>
+                    {game.completionTimes.mainStory}h
+                  </AppText>
+                </View>
+              ) : null}
+              {game.completionTimes.mainExtra ? (
+                <View style={styles.completionTimeItem}>
+                  <AppText style={[styles.completionTimeLabel, { color: colors.textSecondary }]}>
+                    Main + Extra
+                  </AppText>
+                  <AppText style={styles.completionTimeValue}>
+                    {game.completionTimes.mainExtra}h
+                  </AppText>
+                </View>
+              ) : null}
+              {game.completionTimes.completionist ? (
+                <View style={styles.completionTimeItem}>
+                  <AppText style={[styles.completionTimeLabel, { color: colors.textSecondary }]}>
+                    Completionist
+                  </AppText>
+                  <AppText style={styles.completionTimeValue}>
+                    {game.completionTimes.completionist}h
+                  </AppText>
+                </View>
+              ) : null}
+            </View>
+          ) : null}
           <ScreenshotsSection
             screenshots={game.screenshots}
             onImagePress={(index) => {
@@ -278,6 +312,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
     color: tailwindColors.neutral['700'],
+  },
+
+  completionTimesRow: {
+    flexDirection: 'row',
+    gap: 24,
+    paddingHorizontal: 20,
+    paddingTop: 16,
+  },
+  completionTimeItem: {
+    gap: 2,
+  },
+  completionTimeLabel: {
+    fontSize: 12,
+  },
+  completionTimeValue: {
+    fontSize: 16,
+    fontWeight: '600',
   },
 
   image: {

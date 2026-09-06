@@ -3,9 +3,9 @@ import { fetchPopularGames } from '@vg/queries/fetchPopularGames';
 
 import { api } from '../utils/api';
 
-export const usePopularGames = () => {
+export const usePopularGames = (platformIds?: number[]) => {
   return useQuery({
-    queryKey: ['games', 'popular-games'],
-    queryFn: () => fetchPopularGames(api),
+    queryKey: ['games', 'popular-games', platformIds],
+    queryFn: () => fetchPopularGames(api, platformIds),
   });
 };

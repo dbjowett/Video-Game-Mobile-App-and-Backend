@@ -18,6 +18,14 @@
   }
 }
 
+.TopBar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--colour-border);
+  margin-bottom: 10px;
+}
+
 .Sidebar {
   background-color: #f5f8f7;
   border-right: 1px solid var(--colour-border);

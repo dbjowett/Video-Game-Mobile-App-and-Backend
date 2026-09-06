@@ -14,7 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthIndexRouteImport } from './routes/_auth/index'
 import { Route as AuthAboutRouteImport } from './routes/_auth/about'
 import { Route as AuthListsRouteImport } from './routes/_auth/lists'
-import { Route as AuthProfileRouteImport } from './routes/_auth/profile'
+import { Route as AuthSettingsRouteImport } from './routes/_auth/settings'
 import { Route as AuthUpcomingRouteImport } from './routes/_auth/upcoming'
 import { Route as AuthGamesIdRouteImport } from './routes/_auth/games/$id'
 
@@ -42,9 +42,9 @@ const AuthListsRoute = AuthListsRouteImport.update({
   path: '/lists',
   getParentRoute: () => AuthRoute,
 } as any)
-const AuthProfileRoute = AuthProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
+const AuthSettingsRoute = AuthSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => AuthRoute,
 } as any)
 const AuthUpcomingRoute = AuthUpcomingRouteImport.update({
@@ -63,7 +63,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/about': typeof AuthAboutRoute
   '/lists': typeof AuthListsRoute
-  '/profile': typeof AuthProfileRoute
+  '/settings': typeof AuthSettingsRoute
   '/upcoming': typeof AuthUpcomingRoute
   '/games/$id': typeof AuthGamesIdRoute
 }
@@ -71,7 +71,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/about': typeof AuthAboutRoute
   '/lists': typeof AuthListsRoute
-  '/profile': typeof AuthProfileRoute
+  '/settings': typeof AuthSettingsRoute
   '/upcoming': typeof AuthUpcomingRoute
   '/': typeof AuthIndexRoute
   '/games/$id': typeof AuthGamesIdRoute
@@ -82,7 +82,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_auth/about': typeof AuthAboutRoute
   '/_auth/lists': typeof AuthListsRoute
-  '/_auth/profile': typeof AuthProfileRoute
+  '/_auth/settings': typeof AuthSettingsRoute
   '/_auth/upcoming': typeof AuthUpcomingRoute
   '/_auth/': typeof AuthIndexRoute
   '/_auth/games/$id': typeof AuthGamesIdRoute
@@ -94,7 +94,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/about'
     | '/lists'
-    | '/profile'
+    | '/settings'
     | '/upcoming'
     | '/games/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -102,7 +102,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/about'
     | '/lists'
-    | '/profile'
+    | '/settings'
     | '/upcoming'
     | '/'
     | '/games/$id'
@@ -112,7 +112,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/_auth/about'
     | '/_auth/lists'
-    | '/_auth/profile'
+    | '/_auth/settings'
     | '/_auth/upcoming'
     | '/_auth/'
     | '/_auth/games/$id'
@@ -160,11 +160,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthListsRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_auth/profile': {
-      id: '/_auth/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof AuthProfileRouteImport
+    '/_auth/settings': {
+      id: '/_auth/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthSettingsRouteImport
       parentRoute: typeof AuthRoute
     }
     '/_auth/upcoming': {
@@ -187,7 +187,7 @@ declare module '@tanstack/react-router' {
 interface AuthRouteChildren {
   AuthAboutRoute: typeof AuthAboutRoute
   AuthListsRoute: typeof AuthListsRoute
-  AuthProfileRoute: typeof AuthProfileRoute
+  AuthSettingsRoute: typeof AuthSettingsRoute
   AuthUpcomingRoute: typeof AuthUpcomingRoute
   AuthIndexRoute: typeof AuthIndexRoute
   AuthGamesIdRoute: typeof AuthGamesIdRoute
@@ -196,7 +196,7 @@ interface AuthRouteChildren {
 const AuthRouteChildren: AuthRouteChildren = {
   AuthAboutRoute: AuthAboutRoute,
   AuthListsRoute: AuthListsRoute,
-  AuthProfileRoute: AuthProfileRoute,
+  AuthSettingsRoute: AuthSettingsRoute,
   AuthUpcomingRoute: AuthUpcomingRoute,
   AuthIndexRoute: AuthIndexRoute,
   AuthGamesIdRoute: AuthGamesIdRoute,

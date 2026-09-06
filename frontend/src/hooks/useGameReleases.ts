@@ -3,11 +3,13 @@ import { fetchGameReleases } from '@vg/queries/fetchGameReleases';
 
 import { api } from '../utils/api';
 
-export const useGameReleases = (params: { month: string } | { start: string; end: string }) => {
+type DateParams = { month: string } | { start: string; end: string };
+
+export const useGameReleases = (params: DateParams & { platformIds?: number[] }) => {
   const key =
     'month' in params
-      ? ['games', 'releases', params.month]
-      : ['games', 'releases', params.start, params.end];
+      ? ['games', 'releases', params.month, params.platformIds]
+      : ['games', 'releases', params.start, params.end, params.platformIds];
 
   return useQuery({
     queryKey: key,

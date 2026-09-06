@@ -7,17 +7,18 @@ datasource db {
 }
 
 model User {
-  id           String         @id @default(cuid())
-  email        String         @unique
-  username     String
-  googleId     String?        @unique
-  profileImage String?
-  password     String?
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  refreshToken RefreshToken[]
-  gameLists    GameList[]
-  gameListLike GameListLike[]
+  id                   String         @id @default(cuid())
+  email                String         @unique
+  username             String
+  googleId             String?        @unique
+  profileImage         String?
+  password             String?
+  preferredPlatformIds Int[]          @default([])
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  refreshToken         RefreshToken[]
+  gameLists            GameList[]
+  gameListLike         GameListLike[]
 }
 
 model RefreshToken {

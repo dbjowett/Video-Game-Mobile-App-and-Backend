@@ -1,3 +1,6 @@
 @import url('@mantine/core/styles.css');
 @import url('@mantine/notifications/styles.css');
 @import url('@mantine/dates/styles.css');
+/* Experimental features below — see project memory "Experimental Mantine features" to remove cleanly */
+@import url('@mantine/spotlight/styles.css');
+@import url('@mantine/nprogress/styles.css');

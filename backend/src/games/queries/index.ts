@@ -1,4 +1,5 @@
-import { IgdbPopularityType } from 'src/igdb/igdb.enums';
+// oxlint-disable no-unsafe-member-access -- oxlint can't resolve this cross-package const object's members; confirmed clean via tsc
+import { IgdbPopularityType } from '@vg/types';
 
 export const buildPopularityByIdsQuery = (gameIds: number[]) => `
   fields game_id, value;

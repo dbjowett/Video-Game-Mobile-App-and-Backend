@@ -38,9 +38,10 @@ export class ProfileService {
 
   async updateUserProfile(
     userId: string,
-    partialUser: Partial<Pick<User, 'profileImage' | 'username'>>,
+    partialUser: Partial<Pick<User, 'profileImage' | 'username' | 'preferredPlatformIds'>>,
   ): Promise<Omit<User, (typeof OMMITED_FIELDS)[number]>> {
-    const updateData: Partial<Pick<User, 'profileImage' | 'username'>> = {};
+    const updateData: Partial<Pick<User, 'profileImage' | 'username' | 'preferredPlatformIds'>> =
+      {};
 
     if (partialUser?.username) {
       updateData.username = partialUser.username;
@@ -48,6 +49,10 @@ export class ProfileService {
 
     if (partialUser?.profileImage) {
       updateData.profileImage = partialUser.profileImage;
+    }
+
+    if (partialUser?.preferredPlatformIds !== undefined) {
+      updateData.preferredPlatformIds = partialUser.preferredPlatformIds;
     }
 
     const user = await this.databaseService.user.update({

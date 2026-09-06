@@ -44,6 +44,35 @@ function RouteComponent() {
           {game.total_rating ? <Badge size="lg">{Math.trunc(game.total_rating)}%</Badge> : null}
         </Group>
         <Text>{game.summary}</Text>
+
+        {game.completionTimes ? (
+          <Group gap="lg">
+            {game.completionTimes.mainStory ? (
+              <Stack gap={0}>
+                <Text fz="xs" c="dimmed">
+                  Main Story
+                </Text>
+                <Text fw={600}>{game.completionTimes.mainStory}h</Text>
+              </Stack>
+            ) : null}
+            {game.completionTimes.mainExtra ? (
+              <Stack gap={0}>
+                <Text fz="xs" c="dimmed">
+                  Main + Extra
+                </Text>
+                <Text fw={600}>{game.completionTimes.mainExtra}h</Text>
+              </Stack>
+            ) : null}
+            {game.completionTimes.completionist ? (
+              <Stack gap={0}>
+                <Text fz="xs" c="dimmed">
+                  Completionist
+                </Text>
+                <Text fw={600}>{game.completionTimes.completionist}h</Text>
+              </Stack>
+            ) : null}
+          </Group>
+        ) : null}
       </Stack>
     </Container>
   );

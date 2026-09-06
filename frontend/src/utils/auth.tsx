@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import type { User } from '@vg/types';
 
-import { api, apiNoAuth } from './api';
+import { api } from './api';
 
 export type AuthStatus = 'loggedOut' | 'loggedIn' | 'loading';
 
@@ -10,8 +10,6 @@ export class Auth {
   user: User | null = null;
 
   async loadUser(): Promise<void> {
-    if (this.status !== 'loading') return;
-
     try {
       const user = await api.get('profile').json<User>();
       this.user = user;
@@ -42,5 +40,5 @@ export const auth = new Auth();
 export const useUser = () =>
   useQuery({
     queryKey: ['user'],
-    queryFn: () => apiNoAuth.get('profile').json<User>(),
+    queryFn: () => api.get('profile').json<User>(),
   });

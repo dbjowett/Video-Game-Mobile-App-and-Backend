@@ -41,6 +41,7 @@
     "class-validator": "^0.14.4",
     "cookie-parser": "^1.4.7",
     "express-session": "^1.19.0",
+    "howlongtobeat-core": "^1.1.1",
     "joi": "^18.2.5",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",

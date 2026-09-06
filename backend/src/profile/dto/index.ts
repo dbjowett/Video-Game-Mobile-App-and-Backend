@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer'; // Import the Type decorator
-import { IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsInt, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 class UserUpdateDto {
   @IsOptional()
@@ -9,6 +9,11 @@ class UserUpdateDto {
   @IsOptional()
   @IsString({ message: 'Profile image must be a string' })
   profileImage?: string;
+
+  @IsOptional()
+  @IsArray({ message: 'Preferred platform IDs must be an array' })
+  @IsInt({ each: true, message: 'Each preferred platform ID must be an integer' })
+  preferredPlatformIds?: number[];
 }
 
 export class UpdateProfileDto {

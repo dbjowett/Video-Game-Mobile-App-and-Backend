@@ -1,4 +1,4 @@
-import { IconCalendar, IconList, IconSearch } from '@tabler/icons-react';
+import { IconCalendar, IconList, IconSearch, IconSettings } from '@tabler/icons-react';
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
 import { DashboardLayout } from '../components/AppLayout/AppLayout';
@@ -7,6 +7,7 @@ const linkItems = [
   { Icon: IconSearch, path: '/', content: 'Explore' },
   { Icon: IconCalendar, path: '/upcoming', content: 'Upcoming' },
   { Icon: IconList, path: '/lists', content: 'Game Lists' },
+  { Icon: IconSettings, path: '/settings', content: 'Settings' },
 ];
 
 export const Route = createFileRoute('/_auth')({

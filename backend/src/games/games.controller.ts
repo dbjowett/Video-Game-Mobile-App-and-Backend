@@ -21,8 +21,8 @@ export class GamesController {
   // To populate the landing page on web and mobile
   @Public()
   @Get('popular-games')
-  async getPopGames(): Promise<PopGameResults> {
-    return await this.gamesService.getPopularGames();
+  async getPopGames(@Query('platforms') platforms?: string): Promise<PopGameResults> {
+    return await this.gamesService.getPopularGames(this.parsePlatforms(platforms));
   }
 
   @Get('search')
@@ -36,9 +36,12 @@ export class GamesController {
     @Query('month') month?: string,
     @Query('start') start?: string,
     @Query('end') end?: string,
+    @Query('platforms') platforms?: string,
   ): Promise<ListGame[]> {
-    if (month) return await this.gamesService.getReleasesByMonth(month);
-    if (start && end) return await this.gamesService.getReleasesByDateRange(start, end);
+    const platformIds = this.parsePlatforms(platforms);
+    if (month) return await this.gamesService.getReleasesByMonth(month, platformIds);
+    if (start && end)
+      return await this.gamesService.getReleasesByDateRange(start, end, platformIds);
     throw new BadRequestException('Either month or start and end query params are required.');
   }
 
@@ -48,11 +51,22 @@ export class GamesController {
   async getPopularUpcoming(
     @Query('days') days?: string,
     @Query('limit') limit?: string,
+    @Query('platforms') platforms?: string,
   ): Promise<ListGame[]> {
     return await this.gamesService.getPopularUpcomingGames(
       days ? Number(days) : undefined,
       limit ? Number(limit) : undefined,
+      this.parsePlatforms(platforms),
     );
+  }
+
+  private parsePlatforms(platforms?: string): number[] | undefined {
+    if (!platforms) return undefined;
+    const ids = platforms
+      .split(',')
+      .map(Number)
+      .filter((id) => !Number.isNaN(id));
+    return ids.length > 0 ? ids : undefined;
   }
 
   @Get(':id')

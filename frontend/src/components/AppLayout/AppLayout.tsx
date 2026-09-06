@@ -1,16 +1,17 @@
-import { ActionIcon, Flex, Popover, Text } from '@mantine/core';
+import { ActionIcon, Flex, Group, Kbd, Popover, Text, UnstyledButton } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { spotlight } from '@mantine/spotlight';
 import { IconLogout, IconSearch } from '@tabler/icons-react';
 import { motion } from 'motion/react';
 import { FC, ReactElement, ReactNode, useState } from 'react';
 
 import { auth } from '../../utils/auth';
-import { SearchGameInput } from '../SearchGameInput';
 import { LinkOption } from './components/LinkOption';
 import { LinksSkeleton } from './components/LinksSkeleton';
 import { TitleSection } from './components/TitleSection';
 import { ToggleSection } from './components/ToggleSection';
 import { COLLAPSE_DURATION, routeVariants, SIDEBAR_WIDTH } from './config';
+import { TopBar } from './TopBar/TopBar';
 import { IconType } from './types';
 
 import styles from './AppLayout.module.scss';
@@ -43,6 +44,9 @@ export const DashboardLayout: FC<LayoutProps> = ({ children, linkItems }) => {
     <div className={styles.Layout}>
       <Sidebar setOpen={toggleSidebar} open={open} linkItems={linkItems} />
       <motion.main layout transition={{ duration: COLLAPSE_DURATION }} className={styles.Main}>
+        <div className={styles.TopBar}>
+          <TopBar />
+        </div>
         {children}
       </motion.main>
     </div>
@@ -67,7 +71,28 @@ const Sidebar = ({ open, setOpen, linkItems }: SidebarProps) => {
         <motion.div layout style={{ height: '100%' }}>
           <TitleSection open={open} />
           {open ? (
-            <SearchGameInput />
+            <Flex px="sm" py="xs">
+              <UnstyledButton
+                onClick={() => spotlight.open()}
+                p="8px 12px"
+                w="100%"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  borderRadius: 'var(--mantine-radius-md)',
+                  border: '1px solid var(--mantine-color-default-border)',
+                }}
+              >
+                <Group gap="xs">
+                  <IconSearch size={16} />
+                  <Text c="dimmed" fz="sm">
+                    Search...
+                  </Text>
+                </Group>
+                <Kbd size="xs">⌘K</Kbd>
+              </UnstyledButton>
+            </Flex>
           ) : (
             <motion.div layout>
               <Flex h="68px" align="center" justify="center">
@@ -76,7 +101,7 @@ const Sidebar = ({ open, setOpen, linkItems }: SidebarProps) => {
                     <ActionIcon
                       variant="subtle"
                       size="lg"
-                      onClick={() => setOpen(true)}
+                      onClick={() => spotlight.open()}
                       onMouseEnter={openSearchTooltip}
                       onMouseLeave={closeSearchTooltip}
                     >
